@@ -1,24 +1,24 @@
 <script setup>
-import IntroducaoView from './IntroducaoView.vue'
-import TiposView from './TiposView.vue'
-import AlertasView from './AlertasView.vue'
-import LeiView from './LeiView.vue'
-import AjudaView from './AjudaView.vue'
-import DireitosView from './DireitosView.vue'
+import Tipos from './Tipos.vue'
+import Alertas from './Alertas.vue'
+import Lei from './Lei.vue'
+import Ajuda from './Ajuda.vue'
+import Direitos from './Direitos.vue'
+import Introducao from './Introducao.vue'
 </script>
 
 <template>
-  <IntroducaoView />
+  <Introducao />
 
-  <TiposView />
+  <Tipos />
 
-  <AlertasView />
+  <Alertas />
 
-  <LeiView />
+  <Lei />
 
-  <DireitosView />
+  <Direitos />
 
-  <AjudaView />
+  <Ajuda />
 </template>
 
 <style>

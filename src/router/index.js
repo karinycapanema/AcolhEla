@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ViolenciaView from '../views/violencia/ViolenciaView.vue'
+import Violencia from '@/components/EntenderViolencia/Violencia.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
 
   routes: [
     {
-      path: '/',
+      path: '/entender',
       name: 'entender',
-      component: ViolenciaView,
+      component: Violencia,
     },
 
    
