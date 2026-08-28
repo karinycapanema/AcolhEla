@@ -1,4 +1,4 @@
-<script setup>
+<style scoped>
 
 defineProps({
   type: {
@@ -10,17 +10,13 @@ defineProps({
 defineEmits(['click'])
 
 </script>
-
-<template>
-
- <button
-    class="app-button"
-    :type="type"
-    @click="$emit('click')"
-  >
+  
+  <template>
+  
+  <button class="app-button" :type="type">
     <slot></slot>
   </button>
-
+  
 </template>
 
 <style scoped>
@@ -36,7 +32,6 @@ defineEmits(['click'])
   border-radius: 8px;
   background-color: #65071d;
   color: #ffffff;
-  font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
@@ -51,5 +46,4 @@ defineEmits(['click'])
 .app-button:active {
   transform: translateY(0);
 }
-
 </style>
