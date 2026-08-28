@@ -1,8 +1,15 @@
 <script setup>
 import FormUsuario from '@/components/CadastroUsuario/FormUsuario.vue';
+import AppHeader from '@/components/layout/AppHeader.vue';
+import AppFooter from '@/components/layout/AppFooter.vue';
 </script>
 
 <template>
+
+  <header>
+    <AppHeader/>
+  </header>
+
   <main class="cadastro">
 
     <section class="conteudo">
@@ -16,6 +23,11 @@ import FormUsuario from '@/components/CadastroUsuario/FormUsuario.vue';
 
     </section>
   </main>
+
+  <footer>
+    <AppFooter />
+  </footer>
+
 </template>
 
 <style scoped>
