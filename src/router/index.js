@@ -6,6 +6,7 @@ import LoginView from '@/views/LoginView.vue'
 import DenunciaView from '@/views/DenunciaView.vue'
 import DenunciaSucesso from '@/components/Denuncia/DenunciaSucesso.vue'
 import DenunciaRevisao from '@/components/Denuncia/DenunciaRevisao.vue'
+import MapaView from '@/components/MapaAcolhimento/MapaView.vue'
 import ComoAcolherView from '@/views/ComoAcolherView.vue'
 import CapacitacaoView from '@/views/CapacitacaoView.vue'
 import SobreView from '@/views/SobreView.vue'
@@ -44,6 +45,11 @@ const router = createRouter({
       path: '/denuncia-enviada',
       name: 'denuncia-sucesso.vue',
       component: DenunciaSucesso,
+    },
+    {
+      path: '/MapaAcolhimento',
+      name: 'Mapa-acolhimento.vue',
+      component: MapaView,
     },
 
     {
