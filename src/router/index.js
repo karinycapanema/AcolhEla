@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import VoluntarioView from '../views/VoluntarioView.vue'
 import Violencia from '@/components/EntenderViolencia/Violencia.vue'
-
 import HomeView from '../views/HomeView.vue'
 import CadastroUsuarioView from '@/views/CadastroUsuarioView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -41,6 +41,11 @@ const router = createRouter({
       name: 'denuncia-sucesso.vue',
       component: DenunciaSucesso,
     },
+    {
+      path: '/voluntario',
+      name: 'VoluntarioView',
+      component: VoluntarioView
+    }
   ]
 })
 
