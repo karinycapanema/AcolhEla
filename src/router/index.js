@@ -7,6 +7,7 @@ import LoginView from '@/views/LoginView.vue'
 import DenunciaView from '@/views/DenunciaView.vue'
 import DenunciaSucesso from '@/components/Denuncia/DenunciaSucesso.vue'
 import DenunciaRevisao from '@/components/Denuncia/DenunciaRevisao.vue'
+import EntenderView from '@/views/EntenderView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +18,7 @@ const router = createRouter({
       name: 'home',
       component: HomeView
     },
+    {
       path: '/cadastro',
       name: 'CadastroUsuarioView.vue',
       component: CadastroUsuarioView,
@@ -42,9 +44,14 @@ const router = createRouter({
       component: DenunciaSucesso,
     },
     {
-      path: '/voluntario',
+      path: '/cadastro-acolher',
       name: 'VoluntarioView',
       component: VoluntarioView
+    },
+    {
+      path: '/violencia',
+      name: 'EntenderViolencia',
+      component: EntenderView
     }
   ]
 })

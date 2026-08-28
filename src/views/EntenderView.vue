@@ -1,8 +1,14 @@
+<script setup>
+import AppHeader from '@/components/layout/AppHeader.vue';
+import AppFooter from '@/components/layout/AppFooter.vue';
+</script>
 <template>
   <div class="pagina">
 
     <header>
       
+      <AppHeader/>
+
     </header>
 
     <section class="introducao">
@@ -199,7 +205,7 @@
     </section>
 
     <footer>
-
+      <AppFooter/>
     </footer>
 
   </div>

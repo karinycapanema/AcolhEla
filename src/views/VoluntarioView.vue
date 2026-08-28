@@ -1,4 +1,9 @@
 <template>
+
+  <header>
+    <AppHeader />
+  </header>
+
   <main class="pagina-voluntario">
 
     <section class="cabecalho-voluntario">
@@ -116,9 +121,14 @@
       </p>
     </section>
   </main>
+  <footer>
+    <AppFooter />
+  </footer>
 </template>
 
 <script setup>
+import AppHeader from '@/components/layout/AppHeader.vue';
+import AppFooter from '@/components/layout/AppFooter.vue';
 import { reactive } from 'vue'
 
 const opcoesAjuda = [
