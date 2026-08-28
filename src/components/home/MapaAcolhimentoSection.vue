@@ -62,7 +62,7 @@
 
   font-family: Georgia, "Times New Roman", serif;
 
-  font-size: 42px;
+  font-size: 55px;
 
   line-height: 1.2;
 
@@ -72,11 +72,10 @@
 .mapa-textos p {
   margin-bottom: 22px;
 
-  color: #333333;
+  color: #4A0011;
 
-  font-family: Arial, sans-serif;
-
-  font-size: 20px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 26px;
 
   line-height: 1.6;
 }

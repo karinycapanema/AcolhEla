@@ -1,10 +1,9 @@
 <template>
   <div class="home">
 
-    <!-- Header -->
     <AppHeader />
 
-    <!-- Conteúdo da página -->
+
     <main>
       <HeroSection />
 
@@ -16,10 +15,10 @@
 
       <ParticiparSection />
 
-      <MapaSection />
+      <MapaAcolhimentoSection/>
     </main>
 
-    <!-- Footer -->
+
     <AppFooter />
 
   </div>
