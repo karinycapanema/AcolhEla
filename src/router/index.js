@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Violencia from '@/components/EntenderViolencia/Violencia.vue'
 
 import HomeView from '../views/HomeView.vue'
 import CadastroUsuarioView from '@/views/CadastroUsuarioView.vue'
@@ -15,7 +16,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
-    }
+    },
       path: '/cadastro',
       name: 'CadastroUsuarioView.vue',
       component: CadastroUsuarioView,
