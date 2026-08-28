@@ -2,6 +2,8 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import AppHeader from '../layout/AppHeader.vue'
+import AppFooter from '../layout/AppFooter.vue'
 
 const busca = ref('')
 const filtroSelecionado = ref('todos')
@@ -164,6 +166,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+  <header>
+    <AppHeader/>
+  </header>
   <div class="pagina">
     <div class="intro">
       <h1>Mapa de Acolhimento</h1>
@@ -255,6 +260,9 @@ onBeforeUnmount(() => {
       </div>
     </section>
   </div>
+  <footer>
+    <AppFooter/>
+  </footer>
 </template>
 
 <style scoped>

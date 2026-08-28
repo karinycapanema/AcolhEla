@@ -28,22 +28,6 @@ import Valores from '@/components/SobreNos/Valores.vue';
         </div>
       </section>
 
-      <section class="cards">
-        <RouterLink to="/historia" class="card">
-          <h2>Conheça nossa história</h2>
-          <p>Saiba como surgiu o AcolhEla, nossa missão e nossos objetivos.</p>
-          <span>Conhecer →</span>
-        </RouterLink>
-
-        <RouterLink to="/valores" class="card">
-          <h2>Nossos valores</h2>
-          <p>Conheça os princípios que orientam nosso projeto.</p>
-          <span>Conhecer →</span>
-        </RouterLink>
-
-        
-      </section>
-
       <section>
         <div>
           <Historia/>

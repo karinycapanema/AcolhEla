@@ -199,8 +199,8 @@ import AppFooter from '@/components/layout/AppFooter.vue';
       </p>
 
       <div class="botoes-ajuda">
-        <a href="tel:180">Ligar 180</a>
-        <a href="#">Buscar apoio</a>
+        <a href="tel:180" class="button-ajuda">Ligar 180</a>
+        <RouterLink to="/denuncia" class="button-ajuda">Buscar apoio</RouterLink>
       </div>
     </section>
 
@@ -504,7 +504,7 @@ a {
   gap: 20px;
 }
 
-.botoes-ajuda a {
+.button-ajuda {
   padding: 13px 30px;
   border-radius: 25px;
   color: #4a0011;

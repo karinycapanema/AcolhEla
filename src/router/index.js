@@ -48,12 +48,12 @@ const router = createRouter({
       component: DenunciaSucesso,
     },
       {
-      path: '/CursoAcolher',
+      path: '/curso',
       name: 'Curso',
       component: CursoView,
     },
     {
-      path: '/MapaAcolhimento',
+      path: '/mapa',
       name: 'Mapa-acolhimento.vue',
       component: MapaView,
     },

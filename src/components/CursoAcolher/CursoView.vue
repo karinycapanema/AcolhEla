@@ -1,4 +1,6 @@
 <script setup>
+import AppHeader from '../layout/AppHeader.vue'
+import AppFooter from '../layout/AppFooter.vue'
 const cursos = [
   {
     titulo: 'Reconhecendo a violência',
@@ -110,6 +112,9 @@ const modulos = [
 </script>
 
 <template>
+  <header>
+    <AppHeader/>
+  </header>
   <main class="pagina-cursos">
     <section class="intro">
       <div class="intro-conteudo">
@@ -257,6 +262,9 @@ const modulos = [
       </div>
     </section>
   </main>
+  <footer>
+    <AppFooter/>
+  </footer>
 </template>
 
 <style scoped>
