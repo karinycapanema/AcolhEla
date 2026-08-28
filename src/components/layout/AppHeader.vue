@@ -1,16 +1,16 @@
 <template>
   <header class="header">
-    <!-- LOGO -->
+   
     <div class="logo">
       <RouterLink to="/">
         AcolhEla
       </RouterLink>
     </div>
 
-    <!-- MENU -->
+
     <nav class="menu">
 
-      <!-- QUERO ACOLHIMENTO -->
+    
       <div class="menu-item dropdown">
         <span class="menu-title">
           Quero Acolhimento
@@ -31,7 +31,7 @@
         </div>
       </div>
 
-      <!-- QUERO ACOLHER -->
+
       <div class="menu-item dropdown">
         <span class="menu-title">
           Quero Acolher
@@ -52,7 +52,6 @@
         </div>
       </div>
 
-      <!-- QUERO ENTENDER -->
       <div class="menu-item">
         <RouterLink
           to="/violencia"
@@ -62,7 +61,7 @@
         </RouterLink>
       </div>
 
-      <!-- SOBRE NÓS -->
+   
       <div class="menu-item dropdown">
         <span class="menu-title">
           Sobre nós
@@ -75,7 +74,7 @@
         </div>
       </div>
 
-      <!-- CONTATO -->
+      
       <div class="menu-item">
         <button
           type="button"
@@ -88,7 +87,7 @@
     </nav>
   </header>
 
-  <!-- MODAL -->
+  
   <div
     v-if="modalContato"
     class="modal"
@@ -196,7 +195,6 @@ function enviarFormulario() {
 
 <style scoped>
 
-/* CONFIGURAÇÕES GERAIS */
 
 * {
   margin: 0;
@@ -205,7 +203,7 @@ function enviarFormulario() {
 }
 
 
-/* HEADER */
+
 
 .header {
   width: 100%;
@@ -221,7 +219,7 @@ function enviarFormulario() {
 }
 
 
-/* LOGO */
+
 
 .logo a {
   color: #ffffff;
@@ -236,7 +234,7 @@ function enviarFormulario() {
 }
 
 
-/* MENU */
+
 
 .menu {
   height: 100%;
@@ -257,7 +255,7 @@ function enviarFormulario() {
 }
 
 
-/* TÍTULOS */
+
 
 .menu-title {
   color: #ffffff;
@@ -278,8 +276,6 @@ function enviarFormulario() {
   color: #f5dce1;
 }
 
-
-/* DROPDOWN */
 
 .dropdown-menu {
   position: absolute;
@@ -310,18 +306,12 @@ function enviarFormulario() {
   z-index: 100;
 }
 
-
-/* ABRIR DROPDOWN */
-
 .dropdown:hover .dropdown-menu {
   opacity: 1;
   visibility: visible;
 
   transform: translateX(-50%) translateY(0);
 }
-
-
-/* LINKS DO DROPDOWN */
 
 .dropdown-menu a {
   display: block;
@@ -345,9 +335,6 @@ function enviarFormulario() {
 
   color: #8f2438;
 }
-
-
-/* BOTÃO CONTATO */
 
 .contato-btn {
   border: none;
@@ -378,9 +365,6 @@ function enviarFormulario() {
   transform: translateY(-1px);
 }
 
-
-/* MODAL */
-
 .modal {
   position: fixed;
 
@@ -399,8 +383,6 @@ function enviarFormulario() {
   z-index: 1000;
 }
 
-
-/* CAIXA DO MODAL */
 
 .modal-content {
   position: relative;
@@ -432,8 +414,6 @@ function enviarFormulario() {
 }
 
 
-/* BOTÃO FECHAR */
-
 .fechar {
   position: absolute;
 
@@ -455,8 +435,6 @@ function enviarFormulario() {
   color: #a92d42;
 }
 
-
-/* FORMULÁRIO */
 
 .modal-content form {
   display: flex;
@@ -503,8 +481,6 @@ function enviarFormulario() {
 }
 
 
-/* BOTÃO ENVIAR */
-
 .enviar-btn {
   margin-top: 15px;
 
@@ -528,8 +504,6 @@ function enviarFormulario() {
   background-color: #8f2438;
 }
 
-
-/* RESPONSIVIDADE */
 
 @media (max-width: 1000px) {
 

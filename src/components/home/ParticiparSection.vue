@@ -1,15 +1,14 @@
 <template>
   <section class="participar-section">
 
-    <!-- TÍTULO -->
+ 
     <div class="participar-titulo">
       <h2>Gostou do projeto e se interessou em fazer parte?</h2>
     </div>
 
-    <!-- CARDS -->
     <div class="participar-cards">
 
-      <!-- CARD ACOLHER -->
+
       <RouterLink to="/acolher" class="participar-card">
 
         <img
@@ -24,7 +23,7 @@
       </RouterLink>
 
 
-      <!-- CARD APRENDER -->
+
       <RouterLink to="/capacitar" class="participar-card">
 
         <img
@@ -46,9 +45,7 @@
 
 <style scoped>
 
-/* =========================
-   SEÇÃO
-   ========================= */
+
 
 .participar-section {
   width: 100%;
@@ -60,9 +57,6 @@
 }
 
 
-/* =========================
-   TÍTULO
-   ========================= */
 
 .participar-titulo {
   width: fit-content;
@@ -96,9 +90,6 @@
 }
 
 
-/* =========================
-   CARDS
-   ========================= */
 
 .participar-cards {
   width: 100%;
@@ -116,9 +107,6 @@
 }
 
 
-/* =========================
-   CARD
-   ========================= */
 
 .participar-card {
   position: relative;
@@ -140,9 +128,7 @@
 }
 
 
-/* =========================
-   IMAGEM
-   ========================= */
+
 
 .participar-card img {
   width: 100%;
@@ -158,9 +144,7 @@
 }
 
 
-/* =========================
-   TEXTO SOBRE A IMAGEM
-   ========================= */
+
 
 .participar-texto {
   position: absolute;
@@ -194,9 +178,6 @@
 }
 
 
-/* =========================
-   EFEITO AO PASSAR O MOUSE
-   ========================= */
 
 .participar-card:hover {
   transform: translateY(-5px);
@@ -207,9 +188,6 @@
 }
 
 
-/* =========================
-   TABLET
-   ========================= */
 
 @media (max-width: 1000px) {
 
@@ -239,10 +217,6 @@
   }
 }
 
-
-/* =========================
-   CELULAR
-   ========================= */
 
 @media (max-width: 700px) {
 

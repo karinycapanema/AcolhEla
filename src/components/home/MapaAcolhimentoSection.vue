@@ -40,10 +40,6 @@ Criamos o Mapa do Acolhimento para ajudarmos as usuárias a acharem lugares segu
 }
 
 
-/* =========================
-   TEXTOS
-   ========================= */
-
 .mapa-textos {
   width: 520px;
   max-width: 520px;
@@ -75,10 +71,6 @@ Criamos o Mapa do Acolhimento para ajudarmos as usuárias a acharem lugares segu
 }
 
 
-/* =========================
-   IMAGEM
-   ========================= */
-
 .mapa-imagem {
   width: 350px;
   flex-shrink: 0;
@@ -105,10 +97,6 @@ Criamos o Mapa do Acolhimento para ajudarmos as usuárias a acharem lugares segu
   transform: scale(1.04);
 }
 
-
-/* =========================
-   TABLET
-   ========================= */
 
 @media (max-width: 900px) {
 
@@ -137,11 +125,6 @@ Criamos o Mapa do Acolhimento para ajudarmos as usuárias a acharem lugares segu
     max-width: 400px;
   }
 }
-
-
-/* =========================
-   CELULAR
-   ========================= */
 
 @media (max-width: 600px) {
 

@@ -4,7 +4,6 @@
 
     <div class="footer-content">
 
-      <!-- COLUNA 1 - DENÚNCIAS -->
       <div class="footer-column denuncias">
         <h2>Denúncias</h2>
 
@@ -50,8 +49,6 @@
         </a>
       </div>
 
-
-      <!-- COLUNA 2 - ACOLHELA -->
       <div class="footer-column acolhela">
 
         <!-- Volta para o topo da página -->
@@ -97,7 +94,7 @@
       </div>
 
 
-      <!-- COLUNA 3 - MAIS SOBRE -->
+    
       <div class="footer-column mais-sobre">
 
         <h2>Mais sobre</h2>
@@ -147,9 +144,6 @@
 
 <style scoped>
 
-/* ==============================
-   FOOTER
-   ============================== */
 
 .footer {
   position: relative;
@@ -165,10 +159,6 @@
 }
 
 
-/* ==============================
-   CAMADA ROSA SOBRE A IMAGEM
-   ============================== */
-
 .footer-overlay {
   position: absolute;
   inset: 0;
@@ -178,10 +168,6 @@
   z-index: 1;
 }
 
-
-/* ==============================
-   CONTEÚDO
-   ============================== */
 
 .footer-content {
   position: relative;
@@ -199,19 +185,11 @@
 }
 
 
-/* ==============================
-   COLUNAS
-   ============================== */
-
 .footer-column {
   display: flex;
   flex-direction: column;
 }
 
-
-/* ==============================
-   TÍTULOS
-   ============================== */
 
 .footer-column h2,
 .footer-logo {
@@ -226,10 +204,6 @@
   text-decoration: none;
 }
 
-
-/* ==============================
-   COLUNA DENÚNCIAS
-   ============================== */
 
 .denuncias {
   padding-left: 63px;
@@ -262,10 +236,6 @@
 }
 
 
-/* ==============================
-   COLUNA ACOLHELA
-   ============================== */
-
 .acolhela {
   align-items: center;
   text-align: center;
@@ -287,11 +257,6 @@
   opacity: 0.75;
 }
 
-
-/* ==============================
-   FRASE
-   ============================== */
-
 .footer-slogan {
   margin: 0;
 
@@ -302,11 +267,6 @@
   font-weight: 600;
   line-height: 1.4;
 }
-
-
-/* ==============================
-   E-MAIL
-   ============================== */
 
 .footer-email {
   margin-top: 61px;
@@ -325,11 +285,6 @@
 .footer-email:hover {
   opacity: 0.75;
 }
-
-
-/* ==============================
-   REDES SOCIAIS
-   ============================== */
 
 .footer-social {
   display: flex;
@@ -362,11 +317,6 @@
   opacity: 0.8;
 }
 
-
-/* ==============================
-   COLUNA MAIS SOBRE
-   ============================== */
-
 .mais-sobre {
   align-items: center;
   text-align: center;
@@ -396,11 +346,6 @@
 .mais-sobre a:hover {
   opacity: 0.75;
 }
-
-
-/* ==============================
-   RESPONSIVIDADE
-   ============================== */
 
 @media (max-width: 1000px) {
 
@@ -445,11 +390,6 @@
     margin-top: 30px;
   }
 }
-
-
-/* ==============================
-   CELULAR
-   ============================== */
 
 @media (max-width: 600px) {
 
