@@ -36,7 +36,6 @@
           </article>
         </div>
 
-        <RouterLink to="/equipe" class="botao">Conheça nossa equipe →</RouterLink>
       </section>
     </main>
 

@@ -1,5 +1,15 @@
+<script setup>
+import AppHeader from '@/components/layout/AppHeader.vue';
+import AppFooter from '@/components/layout/AppFooter.vue';
+import Equipe from '@/components/SobreNos/Equipe.vue';
+import Historia from '@/components/SobreNos/Historia.vue';
+import Valores from '@/components/SobreNos/Valores.vue';
+</script>
 <template>
-    <AppHeader />
+    
+    <header>
+      <AppHeader />
+    </header>
 
     <main class="container">
       <section class="hero">
@@ -31,17 +41,26 @@
           <span>Conhecer →</span>
         </RouterLink>
 
-        <RouterLink to="/equipe" class="card">
-          <h2>Nossa equipe</h2>
-          <p>Conheça as pessoas que fazem o AcolhEla acontecer.</p>
-          <span>Conhecer →</span>
-        </RouterLink>
+        
+      </section>
+
+      <section>
+        <div>
+          <Historia/>
+        </div>
+        <div>
+          <Valores/>
+        </div>
+        <div>
+          <Equipe/>
+        </div>
+
       </section>
 
       <section class="ajuda">
         <h2>Faça parte dessa transformação</h2>
         <p>Sua doação, seu tempo ou seu conhecimento podem mudar histórias e salvar vidas.</p>
-        <a href="mailto:acolhela@gmail.com" class="botao-claro">Quero ajudar</a>
+        <RouterLink to="/cadastro-acolher" class="botao-claro"> Quero ajudar</RouterLink>
       </section>
 
       <section class="stats">
@@ -60,7 +79,9 @@
       </section>
     </main>
 
-    <AppFooter />
+    <footer>
+      <AppFooter />
+    </footer>
 </template>
 
 <style scoped>

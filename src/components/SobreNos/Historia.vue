@@ -46,7 +46,6 @@
           </article>
         </div>
 
-        <RouterLink to="/valores" class="botao">Conheça nossos valores →</RouterLink>
       </section>
     </main>
 

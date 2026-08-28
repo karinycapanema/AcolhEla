@@ -16,8 +16,6 @@
             <p class="nome">{{ membro.nome }}</p>
           </div>
         </div>
-
-        <RouterLink to="/sobre" class="botao">← Voltar para Sobre nós</RouterLink>
       </section>
     </main>
 

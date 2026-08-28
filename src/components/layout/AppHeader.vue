@@ -21,7 +21,7 @@
             Mapa do acolhimento
           </RouterLink>
 
-          <RouterLink to="/denunciar">
+          <RouterLink to="/denuncia">
             Desejo denunciar
           </RouterLink>
 
@@ -68,7 +68,7 @@
         </span>
 
         <div class="dropdown-menu">
-          <RouterLink to="/quem-somos">
+          <RouterLink to="/sobre">
             Quem somos
           </RouterLink>
         </div>

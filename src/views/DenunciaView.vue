@@ -1,7 +1,13 @@
 <script setup>
 import FormDenuncia from '@/components/Denuncia/FormDenuncia.vue';
+import AppHeader from '@/components/layout/AppHeader.vue';
+import AppFooter from '@/components/layout/AppFooter.vue';
 </script>
 <template>
+  <header>
+    <AppHeader/>
+  </header>
+
   <main class="pagina-denuncia">
 
     <section class="titulo-pagina">
@@ -15,6 +21,9 @@ import FormDenuncia from '@/components/Denuncia/FormDenuncia.vue';
     <FormDenuncia />
 
   </main>
+  <footer>
+    <AppFooter/>
+  </footer>
 </template>
 
 <style scoped>
