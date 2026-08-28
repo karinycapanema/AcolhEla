@@ -4,6 +4,10 @@ import LoginView from '@/views/LoginView.vue'
 import DenunciaView from '@/views/DenunciaView.vue'
 import DenunciaSucesso from '@/components/Denuncia/DenunciaSucesso.vue'
 import DenunciaRevisao from '@/components/Denuncia/DenunciaRevisao.vue'
+import ValoresView from '@/components/SobreNos/ValoresView.vue'
+import HistoriaView from '@/components/SobreNos/HistoriaView.vue'
+import SobreView from '@/components/SobreNos/SobreView.vue'
+import EquipeView from '@/components/SobreNos/EquipeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +38,32 @@ const router = createRouter({
       name: 'denuncia-sucesso.vue',
       component: DenunciaSucesso,
     },
+    {
+      path: '/sobre',
+      name: 'sobre',
+      component: SobreView
+    },
+    {
+      path: '/historia',
+      name: 'historia',
+      component: HistoriaView
+    },
+    {
+      path: '/valores',
+      name: 'valores',
+      component: ValoresView
+    },
+    {
+      path: '/equipe',
+      name: 'equipe',
+      component: EquipeView
+    },
+
+    {
+      path: '/quem-somos',
+      redirect: '/sobre'
+    },
+
   ]
 })
 
