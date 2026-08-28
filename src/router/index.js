@@ -7,6 +7,7 @@ import LoginView from '@/views/LoginView.vue'
 import DenunciaView from '@/views/DenunciaView.vue'
 import DenunciaSucesso from '@/components/Denuncia/DenunciaSucesso.vue'
 import DenunciaRevisao from '@/components/Denuncia/DenunciaRevisao.vue'
+import ComoAcolherView from '@/views/ComoAcolherView.vue'
 import CapacitacaoView from '@/views/CapacitacaoView.vue'
 import ValoresView from '@/components/SobreNos/ValoresView.vue'
 import HistoriaView from '@/components/SobreNos/HistoriaView.vue'
@@ -29,7 +30,7 @@ const router = createRouter({
       component: CadastroUsuarioView,
     },
     {
-      path:'/login',
+      path: '/login',
       name: 'LoginView.vue',
       component: LoginView,
     },
@@ -47,6 +48,12 @@ const router = createRouter({
       path: '/denuncia-enviada',
       name: 'denuncia-sucesso.vue',
       component: DenunciaSucesso,
+    },
+
+    {
+      path: '/como-acolher',
+      name: 'como-acolher',
+      component: ComoAcolherView,
     },
     {
       path: "/capacitacao",
