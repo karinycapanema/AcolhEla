@@ -11,28 +11,24 @@
         <div class="cards">
           <article class="card">
             <span class="numero">01</span>
-            <span class="icone">🛡️</span>
             <h2>Segurança</h2>
             <p>Protegemos dados e pessoas com respeito, sigilo e responsabilidade.</p>
           </article>
 
           <article class="card">
             <span class="numero">02</span>
-            <span class="icone">💗</span>
             <h2>Empatia</h2>
             <p>Acolhemos histórias com humanidade, empatia e sem julgamentos.</p>
           </article>
 
           <article class="card">
             <span class="numero">03</span>
-            <span class="icone">🙋‍♀️</span>
             <h2>Respeito</h2>
             <p>Valorizamos cada mulher, suas escolhas, sua voz e sua história.</p>
           </article>
 
           <article class="card">
             <span class="numero">04</span>
-            <span class="icone">🤝</span>
             <h2>Colaboração</h2>
             <p>
               Acreditamos que juntos podemos criar uma rede de apoio mais forte e transformar vidas.
