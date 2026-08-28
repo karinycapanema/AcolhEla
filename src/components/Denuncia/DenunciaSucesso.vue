@@ -1,6 +1,9 @@
 <script setup>
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import AppButton from '../ui/AppButton.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const byPrefixAndName = {
   fas: {
@@ -9,7 +12,7 @@ const byPrefixAndName = {
 }
 
 function voltarInicio() {
-  window.location.href = '/'
+  router.push('/denuncia')
 }
 </script>
 <template>

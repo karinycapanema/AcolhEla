@@ -1,5 +1,4 @@
-<style scoped>
-
+<script setup>
 defineProps({
   type: {
     type: String,
@@ -7,16 +6,17 @@ defineProps({
   }
 })
 
-defineEmits(['click'])
-
+const emit = defineEmits(['click'])
 </script>
-  
-  <template>
-  
-  <button class="app-button" :type="type">
+
+<template>
+  <button
+    class="app-button"
+    :type="type"
+    @click="emit('click', $event)"
+  >
     <slot></slot>
   </button>
-  
 </template>
 
 <style scoped>

@@ -1,7 +1,9 @@
 <script setup>
-import App from '@/App.vue'
 import { ref } from 'vue'
 import AppButton from '../ui/AppButton.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const denuncia = ref({
   relato: '',
@@ -28,13 +30,13 @@ function formatarSituacoes(situacoes) {
 }
 
 function corrigir() {
-  window.location.href = '/'
+  router.push('/denuncia')
 }
 
 function confirmar() {
   localStorage.removeItem('denuncia')
 
-  window.location.href = '/denuncia-enviada'
+  router.push('/denuncia-enviada')
 }
 </script>
 <template>
@@ -98,7 +100,7 @@ function confirmar() {
       <div class="botoes">
 
         <AppButton @click="corrigir">
-            Corrigir imformações
+            Corrigir informações
         </AppButton>
         
         <AppButton @click="confirmar">

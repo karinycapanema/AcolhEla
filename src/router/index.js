@@ -21,19 +21,19 @@ const router = createRouter({
     },
     {
       path: '/denuncia',
-      name: 'denuncia',
+      name: 'denunciaView.vue',
       component: DenunciaView,
     },
     {
       path: '/revisar-denuncia',
-      name: 'denuncia-revisao',
+      name: 'denuncia-revisao.vue',
       component: DenunciaRevisao,
     },
     {
       path: '/denuncia-enviada',
-      name: 'denuncia-sucesso',
+      name: 'denuncia-sucesso.vue',
       component: DenunciaSucesso,
-    } 
+    },
   ]
 })
 

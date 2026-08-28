@@ -8,7 +8,7 @@ import FormDenuncia from '@/components/Denuncia/FormDenuncia.vue';
       <h1>Desejo Denunciar</h1>
 
       <p>
-        Você não está sozinho.
+        Você não está sozinha(o).
       </p>
     </section>
 

@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import AppButton from '@/components/ui/AppButton.vue'
 
+
 const nome = ref('')
 const email = ref('')
 const telefone = ref('')
@@ -125,7 +126,7 @@ const formatarTelefone = () => {
         <div class="input-com-icone">
             <input id="senha" v-model="senha" :type="mostrarSenha ? 'text' : 'password'" placeholder="••••••••" required/>
 
-            <FontAwesomeIcon class="icone-input":icon="mostrarSenha ? ['fas', 'unlock'] : ['fas', 'lock']" 
+            <FontAwesomeIcon class="icone-input" :icon="mostrarSenha ? ['fas', 'unlock'] : ['fas', 'lock']" 
             @click="mostrarSenha = !mostrarSenha"/>
 
         </div>
