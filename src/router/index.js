@@ -4,6 +4,7 @@ import LoginView from '@/views/LoginView.vue'
 import DenunciaView from '@/views/DenunciaView.vue'
 import DenunciaSucesso from '@/components/Denuncia/DenunciaSucesso.vue'
 import DenunciaRevisao from '@/components/Denuncia/DenunciaRevisao.vue'
+import CursoView from '@/components/CursoAcolher/CursoView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +34,11 @@ const router = createRouter({
       path: '/denuncia-enviada',
       name: 'denuncia-sucesso.vue',
       component: DenunciaSucesso,
+    },
+      {
+      path: '/CursoAcolher',
+      name: 'Curso',
+      component: CursoView,
     },
   ]
 })
