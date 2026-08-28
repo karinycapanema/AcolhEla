@@ -39,19 +39,19 @@ const motivos = [
 const etapas = [
   {
     numero: '1',
-    icone: '/img/celular.png',
+    icone: '/img/cell-phone.png',
     titulo: 'Assista',
     texto: 'Aulas curtas pelo celular'
   },
   {
     numero: '2',
-    icone: '/img/livro.png',
+    icone: '/img/book.png',
     titulo: 'Aprenda',
     texto: 'Conteúdos simples'
   },
   {
     numero: '3',
-    icone: '/img/trofeu.png',
+    icone: '/img/trophy.png',
     titulo: 'Conclua',
     texto: 'Receba seu certificado'
   }
