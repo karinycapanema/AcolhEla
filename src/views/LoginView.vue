@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import AppButton from '@/components/ui/AppButton.vue'
+import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
 
 const router = useRouter()
 
@@ -49,6 +51,9 @@ const fazerLogin = () => {
 }
 </script>
 <template>
+  <header>
+    <AppHeader/>
+  </header>
   <div class="login-container">
     <div class="login-box">
 
@@ -100,6 +105,9 @@ const fazerLogin = () => {
 
     </div>
   </div>
+  <footer>
+    <AppFooter/>
+  </footer>
 </template>
 <style scoped>
 
