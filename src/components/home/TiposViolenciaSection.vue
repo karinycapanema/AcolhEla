@@ -5,7 +5,6 @@
 
     <div class="cards-violencia">
 
-      <!-- Física -->
       <div class="card-violencia">
         <img
           src="/img/fisica.png"
@@ -16,8 +15,7 @@
           Física
         </div>
       </div>
-
-      <!-- Patrimonial -->
+     
       <div class="card-violencia">
         <img
           src="/img/patrimonial.png"
@@ -29,7 +27,6 @@
         </div>
       </div>
 
-      <!-- Moral -->
       <div class="card-violencia">
         <img
           src="/img/moral.png"
@@ -41,7 +38,6 @@
         </div>
       </div>
 
-      <!-- Psicológica -->
       <div class="card-violencia">
         <img
           src="/img/psicologica.png"
@@ -53,7 +49,7 @@
         </div>
       </div>
 
-      <!-- Sexual -->
+     
       <div class="card-violencia">
         <img
           src="/img/sexual.png"
@@ -83,13 +79,8 @@
 .tipos-violencia {
   width: 100%;
   padding: 80px 40px;
-  background-color: #fff3e6;
+  background-color: #FDF1E2;
 }
-
-
-/* =========================
-   TÍTULO
-   ========================= */
 
 .tipos-violencia h2 {
   margin: 0 auto 55px;
@@ -102,17 +93,12 @@
 
   font-family: Georgia, "Times New Roman", serif;
 
-  font-size: 42px;
+  font-size: 55px;
 
   font-weight: bold;
 
   line-height: 1.25;
 }
-
-
-/* =========================
-   CARDS
-   ========================= */
 
 .cards-violencia {
   width: 100%;
@@ -129,15 +115,10 @@
   gap: 25px;
 }
 
-
-/* =========================
-   CARD INDIVIDUAL
-   ========================= */
-
 .card-violencia {
   width: 210px;
 
-  background-color: white;
+  background-color: #FDF1E2;
 
   overflow: hidden;
 
@@ -149,10 +130,6 @@
 }
 
 
-/* =========================
-   IMAGEM
-   ========================= */
-
 .card-violencia img {
   display: block;
 
@@ -162,11 +139,6 @@
 
   object-fit: cover;
 }
-
-
-/* =========================
-   NOME
-   ========================= */
 
 .nome-violencia {
   width: 100%;
@@ -181,7 +153,7 @@
 
   background-color: #efa8c3;
 
-  color: white;
+  color: #FDF1E2;
 
   font-family: Georgia, "Times New Roman", serif;
 
@@ -190,10 +162,6 @@
   text-align: center;
 }
 
-
-/* =========================
-   BOTÃO
-   ========================= */
 
 .botao-violencia {
   display: block;
@@ -204,15 +172,15 @@
 
   padding: 15px 35px;
 
-  background-color: #4d0017;
+  background-color: #4A0011;
 
-  color: white;
+  color: #FDF1E2;
 
   border-radius: 25px;
 
   font-family: Arial, sans-serif;
 
-  font-size: 17px;
+  font-size: 19px;
 
   font-weight: 600;
 
@@ -225,10 +193,6 @@
   transform: scale(1.05);
 }
 
-
-/* =========================
-   TABLET
-   ========================= */
 
 @media (max-width: 1100px) {
 
