@@ -5,7 +5,7 @@
     <div class="hero-imagem">
 
       <img
-        src="/imagens/hero.png"
+        src="/img/hero.png"
         alt="Campanha contra a violência contra a mulher"
       />
 

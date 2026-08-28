@@ -8,7 +8,7 @@
       <!-- Física -->
       <div class="card-violencia">
         <img
-          src="/imagens/violencia-fisica.png"
+          src="/img/fisica.png"
           alt="Violência Física"
         />
 
@@ -20,7 +20,7 @@
       <!-- Patrimonial -->
       <div class="card-violencia">
         <img
-          src="/imagens/violencia-patrimonial.png"
+          src="/img/patrimonial.png"
           alt="Violência Patrimonial"
         />
 
@@ -32,7 +32,7 @@
       <!-- Moral -->
       <div class="card-violencia">
         <img
-          src="/imagens/violencia-moral.png"
+          src="/img/moral.png"
           alt="Violência Moral"
         />
 
@@ -44,7 +44,7 @@
       <!-- Psicológica -->
       <div class="card-violencia">
         <img
-          src="/imagens/violencia-psicologica.png"
+          src="/img/psicologica.png"
           alt="Violência Psicológica"
         />
 
@@ -56,7 +56,7 @@
       <!-- Sexual -->
       <div class="card-violencia">
         <img
-          src="/imagens/violencia-sexual.png"
+          src="/img/sexual.png"
           alt="Violência Sexual"
         />
 

@@ -25,7 +25,7 @@
 
       <div class="sobre-imagem">
         <img
-          src="/imagens/sobre.png"
+          src="/img/sobre.png"
           alt="Mulheres acolhendo umas às outras"
         />
       </div>

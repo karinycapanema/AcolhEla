@@ -4,7 +4,7 @@
     <div class="ajuda-conteudo">
 
       <div class="ajuda-icone">
-        <img src="/imagens/alerta.png" alt="Alerta">
+        <img src="/img/Alerta.png" alt="Alerta">
       </div>
 
       <div class="ajuda-texto">
