@@ -59,7 +59,7 @@
           AcolhEla
         </a>
 
-        <p class="footer-slogan">
+        <p class="footer-slogan">fff8ee
           Toda mulher tem o<br />
           direito de viver sem medo.
         </p>
@@ -173,7 +173,7 @@
   position: absolute;
   inset: 0;
 
-  background-color: rgba(137, 20, 48, 0.72);
+  background-color: rgba(192, 62, 92, 0.72);
 
   z-index: 1;
 }
@@ -217,7 +217,7 @@
 .footer-logo {
   margin: 0;
 
-  color: #fff8ee;
+  color: #FDF1E2;
 
   font-family: Georgia, "Times New Roman", serif;
   font-size: 56px;
