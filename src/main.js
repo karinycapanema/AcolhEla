@@ -10,8 +10,4 @@ library.add(faUserClock, faEnvelope, faPhone, faLock,  faUnlock)
 
 const app = createApp(App)
 
-app.component('FontAwesomeIcon', FontAwesomeIcon)
-
-app.use(router)
-
-app.mount('#app')
+app.use(router).component('font-awesome-icon', FontAwesomeIcon).mount('#app')

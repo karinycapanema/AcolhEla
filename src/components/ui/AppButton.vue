@@ -1,19 +1,26 @@
-<script setup>
+<style scoped>
+
 defineProps({
   type: {
     type: String,
-    default: 'button',
-  },
+    default: 'button'
+  }
 })
-</script>
 
-<template>
+defineEmits(['click'])
+
+</script>
+  
+  <template>
+  
   <button class="app-button" :type="type">
     <slot></slot>
   </button>
+  
 </template>
 
 <style scoped>
+
 .app-button {
   width: 480px;
   height: 48px;
