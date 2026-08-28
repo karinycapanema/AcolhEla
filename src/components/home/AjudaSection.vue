@@ -40,10 +40,6 @@
 
 <style scoped>
 
-/* =========================
-   SEÇÃO
-   ========================= */
-
 .ajuda-section {
   width: 100%;
 
@@ -51,11 +47,6 @@
 
   background-color: #ffffff;
 }
-
-
-/* =========================
-   CONTEÚDO
-   ========================= */
 
 .ajuda-conteudo {
   width: 100%;
@@ -71,11 +62,6 @@
 
   gap: 60px;
 }
-
-
-/* =========================
-   ÍCONE
-   ========================= */
 
 .ajuda-icone {
   display: flex;
@@ -117,11 +103,6 @@
   font-weight: bold;
 }
 
-
-/* =========================
-   TEXTO
-   ========================= */
-
 .ajuda-texto {
   display: flex;
 
@@ -136,11 +117,11 @@
 .ajuda-texto h2 {
   margin: 0;
 
-  color: #4d0017;
+  color: #4A0011;
 
   font-family: Georgia, "Times New Roman", serif;
 
-  font-size: 38px;
+  font-size: 50px;
 
   font-weight: bold;
 
@@ -151,19 +132,14 @@
 .ajuda-texto p {
   margin: 10px 0 30px;
 
-  color: #4d0017;
+  color: #4A0011;
 
   font-family: Georgia, "Times New Roman", serif;
 
-  font-size: 34px;
+  font-size: 40px;
 
   font-weight: bold;
 }
-
-
-/* =========================
-   BOTÕES
-   ========================= */
 
 .ajuda-botoes {
   display: flex;
@@ -200,35 +176,24 @@
 }
 
 
-/* Botão denunciar */
-
 .btn-denunciar {
-  background-color: #4d0017;
+  background-color: #4A0011;
 
-  color: #ffffff;
+  color: #FEB9CD;
 }
 
-
-/* Botão 180 */
 
 .btn-180 {
-  background-color: #efa8c3;
+  background-color: #FEB9CD;
 
-  color: #4d0017;
+  color: #4A0011;
 }
-
-
-/* Efeito */
 
 .btn-denunciar:hover,
 .btn-180:hover {
   transform: scale(1.05);
 }
 
-
-/* =========================
-   TABLET
-   ========================= */
 
 @media (max-width: 900px) {
 
@@ -263,11 +228,6 @@
   }
 
 }
-
-
-/* =========================
-   CELULAR
-   ========================= */
 
 @media (max-width: 650px) {
 
@@ -309,7 +269,7 @@
   .btn-180 {
     width: 260px;
 
-    font-size: 15px;
+    font-size: 20px;
   }
 
 }

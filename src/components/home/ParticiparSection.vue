@@ -1,59 +1,42 @@
 <template>
   <section class="participar-section">
 
-    <h2>
-      Gostou do projeto e se interessou em fazer parte?
-    </h2>
+    <!-- TÍTULO -->
+    <div class="participar-titulo">
+      <h2>Gostou do projeto e se interessou em fazer parte?</h2>
+    </div>
 
+    <!-- CARDS -->
     <div class="participar-cards">
 
-      <!-- QUERO ACOLHER -->
-      <div class="participar-card">
+      <!-- CARD ACOLHER -->
+      <RouterLink to="/acolher" class="participar-card">
 
-        <div class="participar-icone">
-          ♡
-        </div>
-
-        <h3>Quero acolher</h3>
-
-        <p>
-          Faça parte da nossa rede de apoio e ajude
-          a acolher mulheres que precisam de ajuda.
-        </p>
-
-        <RouterLink
-          to="/cadastro-acolher"
-          class="btn-participar"
+        <img
+          src="/img/acolher.png"
+          alt="Quero acolher"
         >
+
+        <div class="participar-texto">
           Quero acolher
-        </RouterLink>
-
-      </div>
-
-
-      <!-- QUERO ME CAPACITAR -->
-      <div class="participar-card">
-
-        <div class="participar-icone">
-          ✦
         </div>
 
-        <h3>Quero me capacitar</h3>
+      </RouterLink>
 
-        <p>
-          Aprenda mais sobre violência contra a
-          mulher e descubra como oferecer um
-          acolhimento seguro e adequado.
-        </p>
 
-        <RouterLink
-          to="/capacitar"
-          class="btn-participar"
+      <!-- CARD APRENDER -->
+      <RouterLink to="/capacitar" class="participar-card">
+
+        <img
+          src="/img/aprender.png"
+          alt="Quero aprender"
         >
-          Quero me capacitar para acolher
-        </RouterLink>
 
-      </div>
+        <div class="participar-texto">
+          Quero aprender
+        </div>
+
+      </RouterLink>
 
     </div>
 
@@ -69,10 +52,11 @@
 
 .participar-section {
   width: 100%;
+  padding: 55px 6% 60px;
 
-  padding: 80px 6%;
+  background-color: #FEB9CD;
 
-  background-color: #f3a8c3;
+  box-sizing: border-box;
 }
 
 
@@ -80,20 +64,35 @@
    TÍTULO
    ========================= */
 
-.participar-section h2 {
+.participar-titulo {
+  width: fit-content;
+
   margin: 0 auto 55px;
 
-  text-align: center;
+  padding: 12px 32px;
 
-  color: #4d0017;
+  background-color: #FDF1E2;
+
+  border-radius: 40px;
+
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+
+.participar-titulo h2 {
+  margin: 0;
+
+  color: #4A0011;
 
   font-family: Georgia, "Times New Roman", serif;
 
-  font-size: 42px;
+  font-size: 38px;
 
   font-weight: bold;
 
-  line-height: 1.3;
+  line-height: 1.2;
+
+  text-align: center;
 }
 
 
@@ -103,8 +102,7 @@
 
 .participar-cards {
   width: 100%;
-
-  max-width: 1050px;
+  max-width: 1100px;
 
   margin: 0 auto;
 
@@ -112,9 +110,9 @@
 
   justify-content: center;
 
-  align-items: stretch;
+  align-items: center;
 
-  gap: 40px;
+  gap: 55px;
 }
 
 
@@ -123,141 +121,89 @@
    ========================= */
 
 .participar-card {
-  width: 480px;
+  position: relative;
 
-  min-height: 430px;
+  width: 500px;
+  height: 290px;
 
-  padding: 40px 45px;
+  overflow: hidden;
 
-  background-color: #ffffff;
+  border-radius: 35px;
 
-  border-radius: 20px;
+  text-decoration: none;
 
-  display: flex;
+  display: block;
 
-  flex-direction: column;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
 
-  align-items: center;
-
-  justify-content: center;
-
-  text-align: center;
-
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-
-  transition: 0.2s ease;
-}
-
-
-.participar-card:hover {
-  transform: translateY(-5px);
-
-  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.16);
+  transition: transform 0.25s ease;
 }
 
 
 /* =========================
-   ÍCONE
+   IMAGEM
    ========================= */
 
-.participar-icone {
-  width: 80px;
+.participar-card img {
+  width: 100%;
+  height: 100%;
 
-  height: 80px;
+  display: block;
 
-  margin-bottom: 20px;
+  object-fit: cover;
 
-  border: 3px solid #4d0017;
+  filter: grayscale(100%);
 
-  border-radius: 50%;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  color: #4d0017;
-
-  font-size: 45px;
-
-  line-height: 1;
+  transition: transform 0.3s ease;
 }
 
 
 /* =========================
-   TÍTULO DOS CARDS
+   TEXTO SOBRE A IMAGEM
    ========================= */
 
-.participar-card h3 {
-  margin: 0 0 20px;
+.participar-texto {
+  position: absolute;
 
-  color: #4d0017;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: 70%;
+
+  padding: 12px 25px;
+
+  background-color: #FDF1E2;
+
+  color: #4A0011;
+
+  border-radius: 35px;
 
   font-family: Georgia, "Times New Roman", serif;
 
   font-size: 30px;
 
   font-weight: bold;
+
+  text-align: center;
+
+  box-sizing: border-box;
+
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.12);
 }
 
 
 /* =========================
-   TEXTO
+   EFEITO AO PASSAR O MOUSE
    ========================= */
 
-.participar-card p {
-  max-width: 370px;
-
-  margin: 0 0 30px;
-
-  color: #4d0017;
-
-  font-family: Georgia, "Times New Roman", serif;
-
-  font-size: 19px;
-
-  line-height: 1.5;
+.participar-card:hover {
+  transform: translateY(-5px);
 }
 
-
-/* =========================
-   BOTÃO
-   ========================= */
-
-.btn-participar {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  min-width: 220px;
-
-  min-height: 50px;
-
-  padding: 14px 25px;
-
-  background-color: #4d0017;
-
-  color: #ffffff;
-
-  border-radius: 28px;
-
-  font-family: Arial, sans-serif;
-
-  font-size: 16px;
-
-  font-weight: 600;
-
-  text-decoration: none;
-
-  transition: 0.2s ease;
-}
-
-
-.btn-participar:hover {
-  transform: scale(1.05);
+.participar-card:hover img {
+  transform: scale(1.04);
 }
 
 
@@ -267,22 +213,30 @@
 
 @media (max-width: 1000px) {
 
+  .participar-section {
+    padding: 50px 5%;
+  }
+
+  .participar-titulo {
+    margin-bottom: 40px;
+  }
+
+  .participar-titulo h2 {
+    font-size: 32px;
+  }
+
   .participar-cards {
-    gap: 25px;
+    gap: 30px;
   }
 
   .participar-card {
-    width: 45%;
-
-    min-height: 400px;
-
-    padding: 30px;
+    width: 45vw;
+    height: 260px;
   }
 
-  .participar-section h2 {
-    font-size: 36px;
+  .participar-texto {
+    font-size: 26px;
   }
-
 }
 
 
@@ -293,55 +247,41 @@
 @media (max-width: 700px) {
 
   .participar-section {
-    padding: 60px 20px;
+    padding: 40px 20px 50px;
   }
 
-  .participar-section h2 {
-    font-size: 30px;
+  .participar-titulo {
+    width: 90%;
 
-    margin-bottom: 40px;
+    padding: 12px 20px;
+
+    margin-bottom: 35px;
+  }
+
+  .participar-titulo h2 {
+    font-size: 26px;
   }
 
   .participar-cards {
     flex-direction: column;
-
-    align-items: center;
 
     gap: 25px;
   }
 
   .participar-card {
     width: 100%;
+    max-width: 500px;
 
-    max-width: 400px;
-
-    min-height: 380px;
-
-    padding: 30px 25px;
+    height: 250px;
   }
 
-  .participar-card h3 {
-    font-size: 27px;
+  .participar-texto {
+    width: 70%;
+
+    font-size: 24px;
+
+    padding: 10px 15px;
   }
-
-  .participar-card p {
-    font-size: 17px;
-  }
-
-  .participar-icone {
-    width: 70px;
-
-    height: 70px;
-
-    font-size: 38px;
-  }
-
-  .btn-participar {
-    min-width: 200px;
-
-    font-size: 15px;
-  }
-
 }
 
 </style>
