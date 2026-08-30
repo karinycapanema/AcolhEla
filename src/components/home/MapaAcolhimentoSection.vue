@@ -6,13 +6,7 @@
       <h2>Conheça nosso Mapa do Acolhimento!</h2>
 
       <p>
-        Encontre locais próximos a você que oferecem apoio e
-        acolhimento para mulheres vítimas de violência.
-      </p>
-
-      <p>
-        No nosso mapa você poderá encontrar serviços
-        especializados, instituições e locais que podem ajudar.
+Criamos o Mapa do Acolhimento para ajudarmos as usuárias a acharem lugares seguros para denúncia e abrigo.
       </p>
 
     </div>
@@ -46,10 +40,6 @@
 }
 
 
-/* =========================
-   TEXTOS
-   ========================= */
-
 .mapa-textos {
   width: 520px;
   max-width: 520px;
@@ -62,7 +52,7 @@
 
   font-family: Georgia, "Times New Roman", serif;
 
-  font-size: 42px;
+  font-size: 50px;
 
   line-height: 1.2;
 
@@ -72,19 +62,14 @@
 .mapa-textos p {
   margin-bottom: 22px;
 
-  color: #333333;
+  color: #4A0011;
 
-  font-family: Arial, sans-serif;
-
-  font-size: 20px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
 
   line-height: 1.6;
 }
 
-
-/* =========================
-   IMAGEM
-   ========================= */
 
 .mapa-imagem {
   width: 350px;
@@ -113,10 +98,6 @@
 }
 
 
-/* =========================
-   TABLET
-   ========================= */
-
 @media (max-width: 900px) {
 
   .mapa-section {
@@ -144,11 +125,6 @@
     max-width: 400px;
   }
 }
-
-
-/* =========================
-   CELULAR
-   ========================= */
 
 @media (max-width: 600px) {
 

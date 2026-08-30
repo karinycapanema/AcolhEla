@@ -25,7 +25,7 @@
 
       <div class="sobre-imagem">
         <img
-          src="/imagens/sobre.png"
+          src="/img/sobre.png"
           alt="Mulheres acolhendo umas às outras"
         />
       </div>
@@ -43,7 +43,7 @@
   padding: 70px 6%;
 }
 
-/* Área que junta texto e imagem */
+
 .sobre-conteudo {
   width: 100%;
   max-width: 1300px;
@@ -57,10 +57,6 @@
   gap: 70px;
 }
 
-/* =========================
-   TEXTO
-   ========================= */
-
 .sobre-texto {
   flex: 1;
 
@@ -70,11 +66,11 @@
 .sobre-texto h2 {
   margin: 0 0 30px;
 
-  color: #4d0017;
+  color: #4A0011;
 
   font-family: Georgia, 'Times New Roman', serif;
 
-  font-size: 42px;
+  font-size: 60px;
 
   font-weight: bold;
 
@@ -84,33 +80,29 @@
 .sobre-texto p {
   margin: 0 0 30px;
 
-  color: #4d0017;
+  color: #4A0011;
 
   font-family: Georgia, 'Times New Roman', serif;
 
-  font-size: 22px;
+  font-size: 30px;
 
   line-height: 1.6;
 }
-
-/* =========================
-   BOTÃO
-   ========================= */
 
 .btn-sobre {
   display: inline-block;
 
   padding: 15px 30px;
 
-  background-color: #f3a7c1;
+  background-color: #FEB9CD;
 
-  color: #4d0017;
+  color: #4A0011;
 
   border-radius: 25px;
 
   font-family: Arial, sans-serif;
 
-  font-size: 17px;
+  font-size: 22px;
 
   font-weight: 600;
 
@@ -124,11 +116,6 @@
 .btn-sobre:hover {
   transform: scale(1.05);
 }
-
-
-/* =========================
-   IMAGEM
-   ========================= */
 
 .sobre-imagem {
   flex: 0 0 auto;
@@ -150,11 +137,6 @@
 
   border-radius: 0;
 }
-
-
-/* =========================
-   RESPONSIVIDADE
-   ========================= */
 
 @media (max-width: 900px) {
 
