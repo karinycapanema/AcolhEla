@@ -4,6 +4,8 @@ import AppFooter from '@/components/layout/AppFooter.vue';
 import Equipe from '@/components/SobreNos/Equipe.vue';
 import Historia from '@/components/SobreNos/Historia.vue';
 import Valores from '@/components/SobreNos/Valores.vue';
+
+
 </script>
 <template>
     
@@ -24,7 +26,8 @@ import Valores from '@/components/SobreNos/Valores.vue';
         </div>
 
         <div class="hero-imagem">
-        <img src="../../../public/img/equipe/logo.png" alt="mulher" class="hero-imagem">
+          
+           <img src="/img/equipe/logo.png" alt="mulher" class="stats-icone">
         </div>
       </section>
 
@@ -53,7 +56,7 @@ import Valores from '@/components/SobreNos/Valores.vue';
           <p>+3.200 Denúncias realizadas</p>
         </div>
 
-          <img src="../../../public/img/equipe/logo.png" alt="mulher" class="stats-icone">
+         <img src="/img/equipe/logo.png" alt="mulher" class="stats-icone">
 
 
         <div>
