@@ -7,10 +7,7 @@ import LoginView from '@/views/LoginView.vue'
 import DenunciaView from '@/views/DenunciaView.vue'
 import DenunciaSucesso from '@/components/Denuncia/DenunciaSucesso.vue'
 import DenunciaRevisao from '@/components/Denuncia/DenunciaRevisao.vue'
-import ValoresView from '@/components/SobreNos/ValoresView.vue'
-import HistoriaView from '@/components/SobreNos/HistoriaView.vue'
 import SobreView from '@/components/SobreNos/SobreView.vue'
-import EquipeView from '@/components/SobreNos/EquipeView.vue'
 import EntenderView from '@/views/EntenderView.vue'
 
 const router = createRouter({
@@ -51,21 +48,6 @@ const router = createRouter({
       path: '/sobre',
       name: 'sobre',
       component: SobreView
-    },
-    {
-      path: '/historia',
-      name: 'historia',
-      component: HistoriaView
-    },
-    {
-      path: '/valores',
-      name: 'valores',
-      component: ValoresView
-    },
-    {
-      path: '/equipe',
-      name: 'equipe',
-      component: EquipeView
     },
     {
       path: '/cadastro-acolher',
