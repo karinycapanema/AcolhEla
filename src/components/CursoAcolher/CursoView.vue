@@ -1,710 +1,771 @@
 <script setup>
+import { ref, computed } from 'vue'
 import AppHeader from '../layout/AppHeader.vue'
 import AppFooter from '../layout/AppFooter.vue'
-const cursos = [
-  {
-    titulo: 'Reconhecendo a violência',
-    descricao: 'Aprenda a identificar sinais de violência e situações de risco.'
-  },
-  {
-    titulo: 'Conheça seus direitos',
-    descricao: 'Entenda seus direitos e os caminhos para buscar ajuda.'
-  },
-  {
-    titulo: 'Fortaleça sua autonomia',
-    descricao: 'Descubra caminhos para fortalecer sua independência.'
-  },
-  {
-    titulo: 'Plano de segurança',
-    descricao: 'Aprenda a criar estratégias para se proteger.'
-  }
-]
 
-const motivos = [
-  {
-    icone: '♡',
-    titulo: 'Reconheça os sinais',
-    texto: 'Aprenda a identificar comportamentos abusivos, sinais de controle, ameaças e situações que podem representar riscos.'
-  },
-  {
-    icone: '⚖',
-    titulo: 'Conheça seus direitos',
-    texto: 'Conheça as leis que protegem as mulheres e saiba quais medidas podem ser buscadas em uma situação de violência.'
-  },
-  {
-    icone: '♧',
-    titulo: 'Fortaleça sua autonomia',
-    texto: 'Descubra caminhos para recuperar sua independência e construir novos projetos para sua vida.'
-  }
-]
 
-const etapas = [
-  {
-    numero: '1',
-    icone: '/img/cell-phone.png',
-    titulo: 'Assista',
-    texto: 'Aulas curtas pelo celular'
-  },
-  {
-    numero: '2',
-    icone: '/img/book.png',
-    titulo: 'Aprenda',
-    texto: 'Conteúdos simples'
-  },
-  {
-    numero: '3',
-    icone: '/img/trophy.png',
-    titulo: 'Conclua',
-    texto: 'Receba seu certificado'
-  }
-]
+const tela = ref('inicio')            // 'inicio' | 'curso' | 'final'
+const aula = ref(0)                   // índice do módulo atual
+const nome = ref('')                  // nome digitado para o certificado
+const videoAssistido = ref(false)     // libera o questionário quando true
+const respostas = ref([])             // respostas do usuário em cada pergunta
 
-const modulos = [
+const aulas = [
   {
     titulo: 'Entendendo a violência',
-    itens: [
-      'O que caracteriza violência doméstica',
-      'Tipos de violência',
-      'Sinais de um relacionamento abusivo'
+    resumo: 'Aprenda a reconhecer os diferentes tipos de violência e como eles podem aparecer no dia a dia.',
+    video: '/public/videos/felipeVideo.mp4',
+    dica: 'A violência não acontece somente de forma física. Comportamentos psicológicos, morais, sexuais e patrimoniais também podem causar danos.',
+    conteudo: [
+      {
+        titulo: 'O que é violência?',
+        texto: 'Violência é qualquer ação ou comportamento que cause dano, sofrimento, medo, constrangimento ou prejuízo a outra pessoa.'
+      },
+      {
+        titulo: 'Tipos de violência',
+        texto: 'A violência pode ser física, psicológica, sexual, moral ou patrimonial. Uma situação pode envolver mais de um tipo.'
+      }
+    ],
+    perguntas: [
+      {
+        pergunta: 'Uma pessoa constantemente humilha outra, ameaça deixá-la e tenta controlar suas amizades. De acordo com o vídeo, esse comportamento pode ser considerado:',
+        opcoes: ['Violência psicológica', 'Apenas uma discussão comum', 'Uma demonstração de carinho'],
+        correta: 0,
+        explicacao: 'Humilhações, ameaças e controle podem caracterizar violência psicológica.'
+      },
+      {
+        pergunta: 'De acordo com o conteúdo apresentado, qual afirmação está correta?',
+        opcoes: ['Somente agressões físicas são violência.', 'Existem diferentes formas de violência.', 'Violência acontece somente dentro de casa.'],
+        correta: 1,
+        explicacao: 'A violência pode ocorrer de diferentes formas e em diferentes contextos.'
+      }
     ]
   },
   {
     titulo: 'Reconhecendo situações de risco',
-    itens: [
-      'Sinais de alerta',
-      'Ameaças e perseguição',
-      'Quando procurar ajuda'
+    resumo: 'Aprenda a identificar comportamentos que podem indicar uma situação de risco ou abuso.',
+    video: '/videos/reconhecendo-situacoes-de-risco.mp4',
+    dica: 'A responsabilidade pela violência nunca é da vítima.',
+    conteudo: [
+      {
+        titulo: 'Sinais de alerta',
+        texto: 'Ameaças, perseguição, isolamento, controle excessivo e invasão de privacidade podem indicar uma situação de risco.'
+      },
+      {
+        titulo: 'Controle também importa',
+        texto: 'Controlar amizades, roupas, redes sociais, localização ou exigir senhas pode representar uma tentativa de controlar outra pessoa.'
+      }
+    ],
+    perguntas: [
+      {
+        pergunta: 'Uma pessoa exige a senha das redes sociais da parceira e fica irritada quando ela conversa com amigos. Segundo o vídeo, esse comportamento pode indicar:',
+        opcoes: ['Controle excessivo', 'Comunicação saudável', 'Respeito à privacidade'],
+        correta: 0,
+        explicacao: 'Exigir senhas e controlar amizades são exemplos de comportamentos de controle.'
+      },
+      {
+        pergunta: 'Qual das situações apresentadas representa um sinal de alerta?',
+        opcoes: ['Respeitar os limites da outra pessoa.', 'Perseguir alguém após ela pedir para ser deixada em paz.', 'Conversar sobre problemas de maneira respeitosa.'],
+        correta: 1,
+        explicacao: 'A perseguição pode representar uma situação de risco.'
+      }
     ]
   },
   {
-    titulo: 'Conhecendo seus direitos',
-    itens: [
-      'Lei Maria da Penha',
-      'Medidas protetivas',
-      'Rede de proteção'
+    titulo: 'Meus direitos',
+    resumo: 'Conheça informações básicas sobre direitos e mecanismos de proteção.',
+    video: '/videos/meus-direitos.mp4',
+    dica: 'Conhecer seus direitos permite buscar orientação e proteção com mais informação.',
+    conteudo: [
+      {
+        titulo: 'Lei Maria da Penha',
+        texto: 'A Lei Maria da Penha estabelece mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.'
+      },
+      {
+        titulo: 'Medidas de proteção',
+        texto: 'Existem mecanismos legais destinados à proteção de mulheres em situação de violência.'
+      }
+    ],
+    perguntas: [
+      {
+        pergunta: 'Segundo o vídeo, qual é um dos objetivos da Lei Maria da Penha?',
+        opcoes: ['Prevenir e combater a violência doméstica e familiar contra a mulher.', 'Regular o uso das redes sociais.', 'Criar regras para relacionamentos.'],
+        correta: 0,
+        explicacao: 'A Lei Maria da Penha possui mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.'
+      },
+      {
+        pergunta: 'Por que conhecer os próprios direitos pode ser importante em uma situação de violência?',
+        opcoes: ['Porque permite conhecer possibilidades de proteção e apoio.', 'Porque elimina automaticamente todos os problemas.', 'Porque impede a busca por ajuda.'],
+        correta: 0,
+        explicacao: 'Conhecer os direitos ajuda a compreender possibilidades de proteção e orientação.'
+      }
     ]
   },
   {
-    titulo: 'Criando um plano de segurança',
-    itens: [
-      'Pessoas de confiança',
-      'Documentos importantes',
-      'Locais seguros'
+    titulo: 'Autodefesa e segurança',
+    resumo: 'Aprenda princípios de prevenção e planejamento para situações de risco.',
+    video: '/videos/autodefesa.mp4',
+    dica: 'Autodefesa também envolve prevenção, percepção de riscos e planejamento. Em situações perigosas, priorize sua segurança.',
+    conteudo: [
+      {
+        titulo: 'Prevenção',
+        texto: 'Reconhecer situações de risco e pensar previamente em formas seguras de buscar ajuda pode fazer parte de um plano de segurança.'
+      },
+      {
+        titulo: 'Plano de segurança',
+        texto: 'Um plano pode envolver pessoas de confiança, lugares seguros, contatos importantes e estratégias para buscar ajuda.'
+      }
+    ],
+    perguntas: [
+      {
+        pergunta: 'Uma pessoa percebe que está em uma situação de risco. Qual atitude está de acordo com o conteúdo do vídeo?',
+        opcoes: ['Planejar formas seguras de buscar ajuda.', 'Se colocar deliberadamente em maior perigo.', 'Ignorar todos os sinais de risco.'],
+        correta: 0,
+        explicacao: 'Planejar formas seguras de buscar ajuda pode fazer parte de um plano de segurança.'
+      },
+      {
+        pergunta: 'Qual elemento pode fazer parte de um plano de segurança?',
+        opcoes: ['Pessoas de confiança e lugares seguros.', 'Isolamento completo.', 'Compartilhar senhas com qualquer pessoa.'],
+        correta: 0,
+        explicacao: 'Pessoas de confiança e lugares seguros podem fazer parte de um planejamento de segurança.'
+      }
     ]
   },
   {
-    titulo: 'Segurança digital',
-    itens: [
-      'Proteção de contas',
-      'Senhas e privacidade',
-      'Cuidados com localização'
-    ]
-  },
-  {
-    titulo: 'Construindo novos caminhos',
-    itens: [
-      'Rede de apoio',
-      'Independência financeira',
-      'Acesso a oportunidades'
+    titulo: 'Rede de apoio',
+    resumo: 'Entenda como pessoas e serviços podem ajudar em situações de violência.',
+    video: '/videos/rede-apoio.mp4',
+    dica: 'Buscar ajuda não é sinal de fraqueza. Uma rede de apoio pode ajudar a encontrar caminhos de proteção.',
+    conteudo: [
+      {
+        titulo: 'O que é uma rede de apoio?',
+        texto: 'Pode ser formada por familiares, amigos, professores, profissionais e outras pessoas de confiança.'
+      },
+      {
+        titulo: 'Buscar ajuda',
+        texto: 'Conversar com alguém de confiança e procurar serviços especializados pode ser um caminho para obter orientação e apoio.'
+      }
+    ],
+    perguntas: [
+      {
+        pergunta: 'De acordo com o vídeo, quem pode fazer parte de uma rede de apoio?',
+        opcoes: ['Somente familiares.', 'Pessoas de confiança, como amigos, familiares ou profissionais.', 'Somente pessoas que já passaram pela mesma situação.'],
+        correta: 1,
+        explicacao: 'Uma rede de apoio pode envolver diferentes pessoas de confiança.'
+      },
+      {
+        pergunta: 'Qual atitude está de acordo com o conteúdo apresentado?',
+        opcoes: ['Buscar uma pessoa de confiança quando precisar de apoio.', 'Se isolar completamente.', 'Ignorar uma situação que causa medo.'],
+        correta: 0,
+        explicacao: 'Buscar uma pessoa de confiança pode ser um primeiro passo para encontrar apoio.'
+      }
     ]
   }
 ]
+
+respostas.value = aulas.map(a => a.perguntas.map(() => null))
+
+
+const progresso = computed(() => ((aula.value + 1) / aulas.length) * 100)
+
+const podeContinuar = computed(() => {
+  if (!videoAssistido.value) return false
+  return respostas.value[aula.value].every(
+    (resposta, index) => resposta === aulas[aula.value].perguntas[index].correta
+  )
+})
+
+const totalPerguntas = computed(() =>
+  aulas.reduce((total, a) => total + a.perguntas.length, 0)
+)
+
+
+function iniciar() {
+  tela.value = 'curso'
+  aula.value = 0
+  videoAssistido.value = false
+  window.scrollTo(0, 0)
+}
+
+function responder(pergunta, opcao) {
+  respostas.value[aula.value][pergunta] = opcao
+}
+
+function proxima() {
+  if (!podeContinuar.value) return
+
+  if (aula.value < aulas.length - 1) {
+    aula.value++
+    videoAssistido.value = false
+    window.scrollTo(0, 0)
+  } else {
+    tela.value = 'final'
+    window.scrollTo(0, 0)
+  }
+}
+
+function imprimir() {
+  if (!nome.value.trim()) {
+    alert('Digite seu nome primeiro!')
+    return
+  }
+  window.print()
+}
 </script>
 
-<template>
-  <header>
-    <AppHeader/>
-  </header>
-  <main class="pagina-cursos">
-    <section class="intro">
-      <div class="intro-conteudo">
-        <h1>Cursos do AcolheEla</h1>
 
-        <p class="descricao">
-          Reconhecendo a violência e construindo um plano de segurança.
-          Aprenda a identificar sinais de violência, conhecer seus direitos
-          e descobrir formas de fortalecer sua segurança.
-        </p>
+ <template>
 
-        <div class="informacoes">
-          <span>
-            <img src="/img/clock.png" alt="Relógio">
-            2 horas
-          </span>
+  <AppHeader />
 
-          <span>
-            <img src="/img/open-book.png" alt="Livro">
-            6 aulas
-          </span>
+  <div class="curso">
 
-          <span>
-            <img src="/img/money.png" alt="Dinheiro">
-            Gratuito
-          </span>
+    <!-- INÍCIO -->
+    <div v-if="tela === 'inicio'">
+      <section class="inicio">
+        <div class="inicio-texto">
+          <h1>Curso AcolhEla</h1>
+          <h2>Informação também é uma forma de proteção.</h2>
+          <p>
+            Aprenda sobre violência, direitos, autodefesa,
+            segurança e rede de apoio.
+          </p>
+          <button @click="iniciar">Começar curso</button>
         </div>
+      </section>
 
-        <div class="aprendizado">
-          <h3>O que você irá aprender com o nosso curso:</h3>
-
-          <ul>
-            <li>Novas habilidades</li>
-            <li>Seus direitos</li>
-            <li>Fortaleça sua autonomia!</li>
-          </ul>
-        </div>
-      </div>
-
-      <h2 class="titulo-destaque">Cursos em destaque</h2>
-
-      <div class="cursos-grid">
-        <article
-          v-for="curso in cursos"
-          :key="curso.titulo"
-          class="curso-card"
-        >
-          <div class="curso-conteudo">
-            <h3>{{ curso.titulo }}</h3>
-            <p>{{ curso.descricao }}</p>
-          </div>
-
-          <button
-            class="botao-curso"
-            :aria-label="`Começar o curso: ${curso.titulo}`"
-          >
-            começar!
-          </button>
-        </article>
-      </div>
-    </section>
-
-    <section class="motivos">
-      <h2>Motivos para realizar o curso!</h2>
-
-      <div class="motivos-grid">
-        <article
-          v-for="motivo in motivos"
-          :key="motivo.titulo"
-          class="motivo-card"
-        >
-          <div class="motivo-icone">{{ motivo.icone }}</div>
-          <h3>{{ motivo.titulo }}</h3>
-          <p>{{ motivo.texto }}</p>
-        </article>
-      </div>
-
-      <div class="como-funciona">
-        <h2>Como funciona?</h2>
-
-        <p class="subtitulo">
-          Aprenda do seu ritmo, de onde estiver!
-        </p>
-
-        <div class="etapas">
-          <div
-            v-for="etapa in etapas"
-            :key="etapa.numero"
-            class="etapa"
-          >
-            <div class="numero">
-              {{ etapa.numero }}
-            </div>
-
-            <div class="etapa-icone">
-              <img
-                :src="etapa.icone"
-                :alt="etapa.titulo"
-              >
-            </div>
-
-            <h3>{{ etapa.titulo }}</h3>
-
-            <p>{{ etapa.texto }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="conteudo">
-      <div class="conteudo-box">
-        <h2>O que você vai aprender?</h2>
-
-        <div class="modulos">
-          <article
-            v-for="modulo in modulos"
-            :key="modulo.titulo"
-            class="modulo"
-          >
-            <strong>{{ modulo.titulo }}</strong>
-
-            <ul>
-              <li
-                v-for="item in modulo.itens"
-                :key="item"
-              >
-                {{ item }}
-              </li>
-            </ul>
-          </article>
-        </div>
-      </div>
-
-      <div class="comecar">
-        <h2>Pronto para começar?</h2>
-
+      <section class="sobre">
+        <h2>Sobre o curso</h2>
         <p>
-          Conheça o caminho para transformar medo em
-          força e informação em proteção.
+          Ao longo dos módulos, você assistirá a vídeos
+          educativos e responderá atividades relacionadas
+          diretamente ao conteúdo apresentado.
         </p>
+        <div class="info">
+          <div>
+            <strong>{{ aulas.length }}</strong>
+            <span>Módulos</span>
+          </div>
+          <div>
+            <strong>{{ totalPerguntas }}</strong>
+            <span>Perguntas</span>
+          </div>
+          <div>
+            <strong>100%</strong>
+            <span>Gratuito</span>
+          </div>
+        </div>
+      </section>
 
-        <button class="botao-final">
-          COMEÇAR
-        </button>
+      <section class="aulas">
+        <h2>Conteúdo do curso</h2>
+        <div class="lista-aulas">
+          <div
+            v-for="(aulaItem, index) in aulas"
+            :key="index"
+            class="card-aula"
+          >
+            <span>0{{ index + 1 }}</span>
+            <div>
+              <h3>{{ aulaItem.titulo }}</h3>
+              <p>{{ aulaItem.resumo }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="final-inicio">
+        <h2>Vamos começar?</h2>
+        <p>
+          Assista aos vídeos e responda às atividades
+          para avançar no curso.
+        </p>
+        <button @click="iniciar">Começar agora</button>
+      </section>
+    </div>
+
+    <!-- CURSO -->
+    <div v-if="tela === 'curso'" class="pagina-aula">
+      <div class="topo-aula">
+        <button class="voltar" @click="tela = 'inicio'">← Voltar</button>
+        <span>Módulo {{ aula + 1 }} de {{ aulas.length }}</span>
       </div>
-    </section>
-  </main>
-  <footer>
-    <AppFooter/>
-  </footer>
+
+      <div class="progresso">
+        <div :style="{ width: progresso + '%' }"></div>
+      </div>
+
+      <main class="conteudo">
+        <h1>{{ aulas[aula].titulo }}</h1>
+        <p class="introducao">{{ aulas[aula].resumo }}</p>
+
+       
+        <section class="video-area">
+          <h2>Assista ao vídeo</h2>
+
+    
+          <video
+            :key="aula"
+            controls
+            class="video"
+            :src="aulas[aula].video"
+            @ended="videoAssistido = true"
+          >
+            Seu navegador não suporta vídeos.
+          </video>
+
+          <p v-if="!videoAssistido">
+            Assista ao vídeo para liberar o questionário.
+          </p>
+          <p v-else class="video-concluido">✓ Vídeo concluído!</p>
+        </section>
+
+  
+        <section v-if="videoAssistido" class="conteudo-video">
+          <div
+            v-for="(parte, index) in aulas[aula].conteudo"
+            :key="index"
+            class="parte"
+          >
+            <h2>{{ parte.titulo }}</h2>
+            <p>{{ parte.texto }}</p>
+          </div>
+
+
+          <div class="importante">
+            <h3>Importante</h3>
+            <p>{{ aulas[aula].dica }}</p>
+          </div>
+
+
+          <div class="atividade">
+            <h2>Questionário</h2>
+            <p class="instrucao">
+              Responda às perguntas com base no conteúdo
+              apresentado no vídeo.
+            </p>
+
+            <div
+              v-for="(pergunta, index) in aulas[aula].perguntas"
+              :key="index"
+              class="pergunta"
+            >
+              <h3>{{ index + 1 }}. {{ pergunta.pergunta }}</h3>
+
+              <button
+                v-for="(opcao, i) in pergunta.opcoes"
+                :key="i"
+                class="opcao"
+                :class="{
+                  correta: respostas[aula][index] === i && i === pergunta.correta,
+                  incorreta: respostas[aula][index] === i && i !== pergunta.correta
+                }"
+                @click="responder(index, i)"
+              >
+                {{ opcao }}
+              </button>
+
+              <p v-if="respostas[aula][index] !== null" class="resultado">
+                {{
+                  respostas[aula][index] === pergunta.correta
+                    ? '✓ ' + pergunta.explicacao
+                    : '✕ Tente novamente!'
+                }}
+              </p>
+            </div>
+          </div>
+
+  
+          <button
+            class="proxima"
+            :disabled="!podeContinuar"
+            @click="proxima"
+          >
+            {{ aula === aulas.length - 1 ? 'Concluir curso' : 'Próximo módulo →' }}
+          </button>
+        </section>
+      </main>
+    </div>
+
+    <div v-if="tela === 'final'" class="conclusao">
+      <div class="icone">✓</div>
+      <h1>Curso concluído!</h1>
+      <p>Parabéns! Você chegou ao final do Curso AcolhEla.</p>
+
+      <div class="certificado">
+        <h2>Certificado de conclusão</h2>
+        <p>Digite seu nome para gerar o certificado.</p>
+        <input v-model="nome" placeholder="Seu nome">
+        <button @click="imprimir">Gerar certificado</button>
+      </div>
+    </div>
+
+  </div>
+
+    <AppFooter />
+    
 </template>
 
+
 <style scoped>
-:global(html) {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-:global(body) {
-  width: 100%;
-  min-width: 100%;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-}
-
-:global(#app) {
-  width: 100%;
-  max-width: none;
-  min-width: 100%;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-}
-
-.pagina-cursos {
-  width: 100%;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  background: #ffffff;
-  color: #222222;
-  font-family: Georgia, "Times New Roman", serif;
-}
-
-.pagina-cursos * {
+* {
   box-sizing: border-box;
 }
-
-.intro {
-  width: 100%;
-  max-width: 1230px;
-  margin: 0 auto;
-  padding: 65px 40px 80px;
+.curso {
+  min-height: 100vh;
+  background: #fffaf8;
+  color: #3d3033;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  zoom: 1.25;
 }
-
-.intro-conteudo {
-  width: 100%;
+h1 {
+  font-weight: 400;
 }
-
-.intro h1 {
-  margin: 0 0 12px;
-  font-size: 38px;
-  line-height: 1.2;
-  font-weight: 700;
-}
-
-.descricao {
-  width: 100%;
-  max-width: 780px;
-  margin: 0 0 30px;
-  font-size: 16px;
+p {
   line-height: 1.6;
 }
-
-.informacoes {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 780px;
-  max-width: 100%;
-  gap: 120px;
-  margin: 30px 0 42px;
-  font-size: 16px;
-}
-
-.informacoes span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-
-.informacoes img {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-}
-
-.aprendizado {
-  margin-top: 25px;
-}
-
-.aprendizado h3 {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.aprendizado ul {
-  margin: 0;
-  padding-left: 28px;
-  font-size: 15px;
-  line-height: 1.9;
-}
-
-.titulo-destaque {
-  margin: 42px 0 24px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: 500;
-}
-
-.cursos-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 30px;
-  width: 100%;
-}
-
-.curso-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  min-height: 215px;
-  padding: 22px;
-  border-radius: 18px;
-  background: #ffe8c3;
-}
-
-.curso-conteudo h3 {
-  margin: 0 0 10px;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.curso-conteudo p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #5a4632;
-}
-
-.botao-curso {
-  align-self: flex-start;
-  margin-top: 18px;
-  padding: 7px 24px;
+button {
   border: none;
-  border-radius: 22px;
-  background: #f5a6c7;
-  color: #222222;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 12px;
+  border-radius: 16px;
+  padding: 14px 27px;
+  background: #620017;
+  color: white;
+  font-size: 18.75px;
   cursor: pointer;
-  transition: 0.2s ease;
+}
+button:hover {
+  opacity: .9;
+  transform: scale(1.04);
+  transition: 0.35s ease;
+  border: none;
 }
 
-.botao-curso:hover {
-  transform: scale(1.05);
+/* INÍCIO */
+.inicio {
+  max-width: 1000px;
+  margin: auto;
+  padding: 90px 40px;
+}
+.inicio-texto {
+  max-width: 700px;
+}
+.inicio h1 {
+  margin: 0 0 15px;
+  font-size: 72.5px;
+  color: #620017;
+  font-weight: bold;
+}
+.inicio h2 {
+  font-size: 40px;
+  color: #620017;
+}
+.inicio p {
+  max-width: 620px;
+  margin-bottom: 30px;
+  font-size: 21px;
+  color: #4A0011;
+  margin-top: 20px;
 }
 
-.motivos {
-  width: 100%;
-  max-width: 1230px;
-  margin: 0 auto;
-  padding: 80px 40px;
-}
-
-.motivos > h2 {
-  margin: 0 0 36px;
-  font-size: 24px;
-  font-weight: 600;
-  text-align: left;
-}
-
-.motivos-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 25px;
-  width: 100%;
-}
-
-.motivo-card {
-  min-height: 198px;
-  padding: 22px 24px;
-  border-radius: 11px;
-  background: #ffedcf;
+/* SOBRE */
+.sobre {
+  max-width: 850px;
+  margin: auto;
+  padding: 50px 30px;
   text-align: center;
 }
-
-.motivo-icone {
-  margin-bottom: 12px;
-  font-size: 30px;
+.sobre h2, .aulas h2 {
+  font-size: 40px;
+  color: #620017;
 }
-
-.motivo-card h3 {
-  margin: 0 0 18px;
-  font-size: 14px;
+.sobre > p {
+  max-width: 700px;
+  margin: auto;
+  color: #3A3A3A;
 }
-
-.motivo-card p {
-  margin: 0;
-  color: #a05252;
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.como-funciona {
-  margin-top: 80px;
-  text-align: center;
-}
-
-.como-funciona h2 {
-  margin: 0 0 18px;
-  font-size: 24px;
-}
-
-.subtitulo {
-  margin: 0 0 42px;
-  font-size: 15px;
-}
-
-.etapas {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.info {
+  display: flex;
+  justify-content: center;
   gap: 70px;
-  width: 100%;
-  max-width: 750px;
-  margin: 0 auto;
+  margin-top: 35px;
 }
-
-.etapa {
+.info div {
   display: flex;
   flex-direction: column;
-  align-items: center;
+}
+.info strong {
+  font-size: 33.75px;
+  color: #8e2842;
+}
+
+/* AULAS */
+.aulas {
+  max-width: 850px;
+  margin: auto;
+  padding: 50px 30px;
+}
+.aulas h2 {
   text-align: center;
+  margin-bottom: 30px;
 }
-
-.numero {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 29px;
-  height: 29px;
-  margin-bottom: 36px;
-  border: 1px solid #222222;
-  border-radius: 50%;
-  font-size: 14px;
-}
-
-.etapa-icone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 60px;
-  margin-bottom: 15px;
-}
-
-.etapa-icone img {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-}
-
-.etapa h3 {
-  margin: 0 0 10px;
-  font-size: 15px;
-}
-
-.etapa p {
-  max-width: 130px;
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.conteudo {
-  width: 100%;
-  max-width: 1230px;
-  margin: 0 auto;
-  padding: 80px 40px 95px;
-}
-
-.conteudo-box {
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 18px;
-  border-radius: 14px;
-  background: #ffedcf;
-}
-
-.conteudo-box h2 {
-  margin: 0 0 15px 12px;
-  font-size: 18px;
-}
-
-.modulos {
+.lista-aulas {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
-.modulo {
-  padding: 11px 16px;
-  border-radius: 9px;
-  background: #f7a9c8;
+.card-aula {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: white;
+  border: 1px solid #eadde0;
+  border-radius: 10px;
+  background-color: #FEB9CD;
+  border-color: #e2728e;
 }
-
-.modulo strong {
-  display: block;
-  margin-bottom: 3px;
-  font-size: 11px;
-  font-weight: 500;
+.card-aula > span {
+  font-size: 27px;
+  color: #a52d47;
 }
-
-.modulo ul {
+.card-aula h3 {
+  margin: 0 0 5px;
+  font-size: 25px;
+  color: #4A0011;
+}
+.card-aula p {
   margin: 0;
-  padding-left: 18px;
+  font-size: 17.5px;
+  color: #4A0011;
 }
 
-.modulo li {
-  font-size: 10px;
-  line-height: 1.5;
-}
-
-.comecar {
-  width: 100%;
+/* FINAL DA PÁGINA */
+.final-inicio {
   max-width: 600px;
-  margin: 35px auto 0;
-  padding: 24px 36px;
-  border-radius: 11px;
-  background: #5b0015;
-  color: white;
+  margin: 50px auto 80px;
+  padding: 40px;
   text-align: center;
+  background: #f9e7ea;
+  border-radius: 12px;
+  background-color: #FEB9CD;
+}
+.final-inicio h2 {
+  margin-top: 0;
+  color: #620017;
+}
+.final-inicio p {
+  margin: 9px 0 9px 0;
 }
 
-.comecar h2 {
-  margin: 0 0 7px;
+/* CURSO */
+.pagina-aula {
+  min-height: 100vh;
+  padding-bottom: 70px;
+}
+.topo-aula {
+  max-width: 850px;
+  margin: auto;
+  padding: 25px 30px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.voltar {
+  padding: 5px;
+  background: none;
+  color: #620017;
+}
+.progresso {
+  max-width: 790px;
+  height: 6px;
+  margin: 0 auto 40px;
+  background: #eadde0;
+  border-radius: 10px;
+}
+.progresso div {
+  height: 100%;
+  background: #8e2842;
+  border-radius: 10px;
+}
+.conteudo {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px 40px;
+}
+.conteudo > h1 {
+  margin-bottom: 10px;
+  font-size: 45px;
+  color: #620017;
+}
+.introducao {
+  margin-bottom: 40px;
+  color: #8e2842;
+  font-size: 17px;
+}
+
+/* VÍDEO */
+.video-area {
+  margin: 35px 0;
+}
+.video-area h2 {
+  color: #620017;
+}
+.video {
+  width: 100%;
+  max-height: 450px;
+  border-radius: 10px;
+  background: #000;
+}
+.video-area p {
+  font-size: 14px;
+  color: #66595b;
+}
+.video-concluido {
+  color: #477052 !important;
+  font-weight: bold;
+}
+
+/* CONTEÚDO */
+.parte {
+  margin-bottom: 30px;
+}
+.parte h2 {
+  font-size: 31.25px;
+}
+.parte p {
+  font-size: 16px;
+}
+.importante {
+  margin: 35px 0;
+  padding: 20px;
+  background: #f9e7ea;
+  border-left: 4px solid #8e2842;
+}
+.importante h3 {
+  margin-top: 0;
+  color: #620017;
+}
+
+/* QUESTIONÁRIO */
+.atividade {
+  margin-top: 45px;
+}
+.instrucao {
+  color: #66595b;
+}
+.pergunta {
+  margin: 30px 0;
+}
+.pergunta h3 {
   font-size: 19px;
 }
-
-.comecar p {
-  max-width: 350px;
-  margin: 0 auto 18px;
-  font-size: 12px;
-  line-height: 1.6;
+.opcao {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  text-align: left;
+  background: white;
+  color: #3d3033;
+  border: 1px solid #e1d5d8;
+}
+.opcao.correta {
+  background: #e5f1e7;
+  border-color: #8eb69a;
+}
+.opcao.incorreta {
+  background: #f8e2e5;
+  border-color: #d49aa4;
+}
+.resultado {
+  font-size: 14px;
+  color: #66595b;
+}
+.proxima {
+  margin-top: 20px;
+}
+.proxima:disabled {
+  opacity: .4;
+  cursor: not-allowed;
 }
 
-.botao-final {
-  padding: 10px 42px;
-  border: none;
-  border-radius: 22px;
-  background: #ffedcf;
-  color: #222222;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 13px;
-  cursor: pointer;
-  transition: 0.2s ease;
+/* CONCLUSÃO */
+.conclusao {
+  max-width: 700px;
+  margin: auto;
+  padding: 90px 30px;
+  text-align: center;
+}
+.icone {
+  width: 60px;
+  height: 60px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f2c4d0;
+  color: #620017;
+  font-size: 25px;
+}
+.conclusao h1 {
+  font-size: 48px;
+  color: #620017;
+}
+.certificado {
+  margin-top: 60px;
+  padding: 35px;
+  background: white;
+  border: 1px solid #ddc7cc;
+  border-radius: 10px;
+}
+.certificado h2 {
+  color: #620017;
+}
+.certificado input {
+  width: 90%;
+  margin: 15px 0 20px;
+  padding: 12px;
+  border: 1px solid #d8c7cb;
+  border-radius: 6px;
+  font-size: 20px;
 }
 
-.botao-final:hover {
-  transform: scale(1.05);
-}
-
-@media (max-width: 1300px) {
-  .intro,
-  .motivos,
-  .conteudo {
-    padding-left: 35px;
-    padding-right: 35px;
+@media (max-width: 700px) {
+  .inicio {
+    padding: 60px 25px;
   }
-}
-
-@media (max-width: 800px) {
-  .intro,
-  .motivos,
-  .conteudo {
-    padding-left: 25px;
-    padding-right: 25px;
+  .inicio h1 {
+    font-size: 53.75px;
   }
-
-  .intro h1 {
-    font-size: 32px;
+  .inicio h2 {
+    font-size: 32.5px;
   }
-
-  .descricao {
-    font-size: 14px;
-  }
-
-  .informacoes {
-    width: 100%;
+  .info {
     gap: 30px;
-    flex-wrap: wrap;
   }
-
-  .cursos-grid {
-    grid-template-columns: 1fr;
+  .conteudo {
+    padding: 20px 25px;
   }
-
-  .motivos-grid {
-    grid-template-columns: 1fr;
+  .conteudo > h1 {
+    font-size: 45px;
   }
-
-  .etapas {
-    grid-template-columns: 1fr;
-    gap: 45px;
-  }
-
-  .motivo-card {
-    min-height: auto;
+  .topo-aula {
+    padding: 20px;
   }
 }
 
-@media (max-width: 500px) {
-  .intro,
-  .motivos,
-  .conteudo {
-    padding-left: 18px;
-    padding-right: 18px;
+@media print {
+  body * {
+    visibility: hidden;
   }
-
-  .intro h1 {
-    font-size: 28px;
+  .certificado, .certificado * {
+    visibility: visible;
   }
-
-  .descricao {
-    font-size: 13px;
-  }
-
-  .informacoes {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-  }
-
-  .curso-card {
-    height: auto;
+  .certificado {
+    position: absolute;
+    left: 5%;
+    top: 20%;
+    width: 90%;
   }
 }
 </style>
