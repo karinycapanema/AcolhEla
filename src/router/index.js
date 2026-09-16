@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import VoluntarioView from '../views/VoluntarioView.vue'
+import PerfilVoluntariaView from '@/views/PerfilVoluntariaView.vue'
 import HomeView from '../views/HomeView.vue'
 import CadastroUsuarioView from '@/views/CadastroUsuarioView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -12,6 +13,7 @@ import ComoAcolherView from '@/views/ComoAcolherView.vue'
 import CapacitacaoView from '@/views/CapacitacaoView.vue'
 import SobreView from '@/views/SobreView.vue'
 import EntenderView from '@/views/EntenderView.vue'
+import PerfilVitimaView from '@/views/PerfilVitimaView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,7 +49,12 @@ const router = createRouter({
       name: 'denuncia-sucesso.vue',
       component: DenunciaSucesso,
     },
-      {
+    {
+      path: '/perfil-vitima',
+      name: 'perfil-vitima',
+      component: PerfilVitimaView
+    },
+    {
       path: '/curso',
       name: 'Curso',
       component: CursoView,
@@ -77,6 +84,11 @@ const router = createRouter({
       path: '/cadastro-acolher',
       name: 'VoluntarioView',
       component: VoluntarioView
+    },
+    {
+      path: '/perfil-voluntaria',
+      name: 'perfil-voluntaria',
+      component: PerfilVoluntariaView
     },
     {
       path: '/violencia',
