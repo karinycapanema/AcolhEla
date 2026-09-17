@@ -40,9 +40,13 @@
 <style scoped>
 
 .hero-section {
+
   width: 100%;
+
   margin: 0;
+
   padding: 0;
+
 }
 
 
@@ -51,15 +55,18 @@
 ========================= */
 
 .hero-imagem {
+
   position: relative;
 
   width: 100%;
 
   overflow: hidden;
+
 }
 
 
 .hero-imagem img {
+
   width: 100%;
 
   height: auto;
@@ -69,6 +76,7 @@
   transform: scale(1.03);
 
   transform-origin: center center;
+
 }
 
 
@@ -77,9 +85,11 @@
 ========================= */
 
 .hero-conteudo {
+
   position: absolute;
 
   top: 50%;
+
   right: 6%;
 
   transform: translateY(-50%);
@@ -90,7 +100,8 @@
 
   align-items: center;
 
-  width: 350px;
+  width: 410px;
+
 }
 
 
@@ -99,43 +110,53 @@
 ========================= */
 
 .hero-balao {
-  width: 330px;
+
+  width: 390px;
 
   background-color: #b7b7b7;
 
-  padding: 22px 25px;
+  padding: 28px 32px;
 
   border-radius: 20px 0;
 
   text-align: center;
 
   box-shadow:
+
     0 3px 10px
+
     rgba(0, 0, 0, 0.15);
+
 }
 
 
 .hero-balao p {
+
   margin: 0;
 
   color: black;
 
   font-family:
+
     Georgia,
+
     'Times New Roman',
+
     serif;
 
-  font-size: 25px;
+  font-size: 30px;
 
   font-weight: bold;
 
   font-style: italic;
 
   line-height: 1.35;
+
 }
 
 
 .hero-balao strong {
+
   display: block;
 
   margin-top: 16px;
@@ -143,15 +164,19 @@
   color: black;
 
   font-family:
+
     Georgia,
+
     'Times New Roman',
+
     serif;
 
-  font-size: 24px;
+  font-size: 29px;
 
   font-weight: bold;
 
   font-style: italic;
+
 }
 
 
@@ -160,9 +185,10 @@
 ========================= */
 
 .btn-cadastro {
-  margin-top: 22px;
 
-  padding: 11px 25px;
+  margin-top: 25px;
+
+  padding: 13px 30px;
 
   background-color: #d9d9d9;
 
@@ -172,22 +198,27 @@
 
   font-family: Arial, sans-serif;
 
-  font-size: 16px;
+  font-size: 19px;
 
   font-weight: 600;
 
   text-decoration: none;
 
   box-shadow:
+
     0 3px 8px
+
     rgba(0, 0, 0, 0.15);
 
   transition: 0.2s ease;
+
 }
 
 
 .btn-cadastro:hover {
+
   transform: scale(1.05);
+
 }
 
 
