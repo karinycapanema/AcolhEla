@@ -63,8 +63,6 @@
 
       <hr class="divisor" />
 
-
-
       <section class="historia">
         <p class="mini-titulo">Nossa história</p>
         <h1>Como nasceu o <span>AcolhEla</span>?</h1>
