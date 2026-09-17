@@ -12,57 +12,169 @@ let mapa = null
 let marcadores = []
 
 const locais = [
+  
   {
     id: 1,
-    tipo: 'delegacia',
-    titulo: 'Delegacia da Mulher',
-    descricao: 'Atendimento especializado para registro de denúncias e orientações!',
-    botao: 'Ver rota!',
-    cor: '#812E81',
-    latitude: -26.3044,
-    longitude: -48.8487
-  },
-  {
-    id: 2,
-    tipo: 'hospital',
-    titulo: 'Hospital Regional',
-    descricao: 'Atendimento hospitalar para mulheres em situação de emergência.',
-    botao: 'Saiba mais',
-    cor: '#B81833',
-    latitude: -26.2927,
-    longitude: -48.8462
-  },
-  {
-    id: 3,
     tipo: 'apoio',
-    titulo: 'Apoio psicológico gratuito!',
-    descricao: 'Atendimento psicológico para mulheres em situação de vulnerabilidade.',
+    titulo: 'CREAS Sul',
+    descricao: 'Oferece acolhimento e acompanhamento especializado para pessoas em situação de violência, auxiliando na proteção e no acesso à rede de apoio.',
     botao: 'Saiba mais',
     cor: '#3B803B',
-    latitude: -26.3008,
-    longitude: -48.8460
+    latitude: -26.32573273269251,
+    longitude:  -48.84054667963756
   },
-  {
+    {
+    id: 2,
+    tipo: 'apoio',
+    titulo: 'CREAS 3',
+    descricao: 'Realiza atendimento especializado e acompanhamento psicossocial para pessoas e famílias que enfrentam situações de violência ou vulnerabilidade social',
+    botao: 'Saiba mais',
+    cor: '#3B803B',
+    latitude: -26.293979946791847,
+    longitude:  -48.857005632479634
+  },
+
+    {
+    id: 3,
+    tipo: 'apoio',
+    titulo: 'CREAS 2',
+    descricao: 'Oferece acolhimento, orientação e acompanhamento psicossocial para pessoas em situação de violência e outras violações de direitos',
+    botao: 'Saiba mais',
+    cor: '#3B803B',
+    latitude: -26.322462616653226,
+    longitude:  -48.83831129151787
+  },
+    {
     id: 4,
-    tipo: 'abrigo',
-    titulo: 'Abrigo temporário',
-    descricao: 'Espaço sigiloso e seguro para mulheres em situação de risco.',
-    botao: 'Ver opções!',
-    cor: '#B81833',
-    latitude: -26.3090,
-    longitude: -48.8500
+    tipo: 'apoio',
+    titulo: 'CREAS 4',
+    descricao: 'Presta atendimento psicossocial especializado a pessoas e famílias que enfrentam situações de violência e violação de direitos',
+    botao: 'Saiba mais',
+    cor: '#3B803B',
+    latitude: -26.305799715833494,
+    longitude:  -48.84529060584507
   },
   {
     id: 5,
+    tipo: 'abrigo',
+    titulo: 'Abrigo temporário',
+    descricao: 'Espaço sigiloso e seguro para mulheres em situação de risco, favor ligar ao número: 3436-3534 ou 3434-5718 para mais informações',
+    botao: 'endereço fictício, favor ligar ao número na descrição',
+    cor: '#ecae43',
+    latitude: -26.3090,
+    longitude: -48.8500
+  },
+
+  { id:6 ,
+     tipo: 'hospital'
+    , titulo: 'Hospital são josé',
+    descricao: 'referência dentre os hospitais públicos de grande porte',
+    botao: 'SaibaMais',
+    cor: '#B81833',
+    latitude: -26.30976,
+   longitude:-48.84713
+   },
+
+  { 
+    id:7 ,
+    tipo: 'hospital',
+    titulo: 'Hospital Regional Hans Dieter ',
+    descricao: 'infraestrutura robusta de nível terciário, focada em alta complexidade médica.',
+    botao: 'SaibaMais',
+    cor: '#B81833',
+    latitude: -26.282,
+    longitude: -48.813 
+  },
+
+  { 
+    id:8 ,
+    tipo: 'hospital',
+    titulo: 'Hospital infantil Dr. Jeser Amarante',
+    descricao: 'hospital público estadual de alta complexidade voltado exclusivamente para o atendimento pediátrico',
+    botao: 'SaibaMais',
+    cor: '#B81833',
+    latitude: -26.299444,
+    longitude: -48.840556 
+  } ,
+   { 
+    id: 9,
+    tipo: 'delegacia',
+    titulo: 'Delegacia Especializada no Atendimento à Mulher',
+    descricao: ' O espaço físico é subdividido para oferecer um atendimento acolhedor e exclusivo para mulheres vítimas de violência doméstica e familiar',
+    botao: 'SaibaMais',
+    cor: '#812E81',
+    latitude: -26.311409662464,
+    longitude:-48.84299439203333
+  },
+     { 
+    id: 10,
+    tipo: 'delegacia',
+    titulo: 'DIC Polícia Civil',
+    descricao: 'Unidade da Polícia Civil localizada no complexo de segurança da Boa Vista',
+    botao: 'SaibaMais',
+    cor: '#812E81',
+    latitude:-26.30602875753503,
+    longitude:  -48.833262904621044
+  } ,
+
+  { 
+    id: 11 ,
+    tipo: 'delegacia',
+    titulo: '2ª Delegacia de Polícia Civil',
+    descricao: 'responsável por ocorrências de diversos bairros da região sul de Joinville.',
+    botao: 'SaibaMais',
+    cor: '#812E81',
+    latitude: -26.33631408102287,
+    longitude: -48.81958505921077
+  }, 
+
+     { 
+    id: 12,
+    tipo: 'delegacia',
+    titulo: '4ª Delegacia de Polícia',
+    descricao: 'Unidade da Polícia Civil localizada na região do Aventureiro, atendendo ocorrências da região norte/nordeste de Joinville.',
+    botao: 'SaibaMais',
+    cor: '#812E81',
+    latitude:-26.26741329521001, 
+    longitude:  -48.82210147578651 
+  } ,
+
+   { 
+    id: 13,
+    tipo: 'delegacia',
+    titulo: '1ª Delegacia de Polícia Civil',
+    descricao: 'atende ocorrências da região de Costa e Silva e bairros próximos. Também pode receber registros de ocorrências envolvendo mulheres.',
+    botao: 'SaibaMais',
+    cor: '#812E81',
+    latitude: -26.27278927462599, 
+    longitude:  -48.86329901379665
+  },
+
+   { 
+    id:14 ,
     tipo: 'juridica',
-    titulo: 'Assistência judiciária',
-    descricao: 'Ajuda com medidas protetivas, denúncias e orientação legal gratuita.',
-    botao: 'Saiba mais',
+    titulo: 'Defensoria Pública de Santa Catarina',
+    descricao: 'É uma das principais opções para assistência jurídica. O Tribunal de Justiça de SC informa que a Defensoria pode prestar orientação jurídica, atendimento e acompanhamento de medidas protetivas de urgência para mulheres,',
+    botao: 'SaibaMais',
     cor: '#29689E',
-    latitude: -26.2990,
-    longitude: -48.8420
+    latitude:-26.294931157539107,
+    longitude:   -48.83978170716148 
+  } ,
+
+     { 
+    id:15 ,
+    tipo: 'juridica',
+    titulo: 'Defensoria Pública da União',
+    descricao: 'atende questões que pertencem à Justiça Federal',
+    botao: 'SaibaMais',
+    cor: '#29689E',
+    latitude: -26.304840987511476,
+    longitude:   -48.846836518198806
   }
-]
+  
+  
+ ]
+
 
 
 const locaisFiltrados = computed(() => {
@@ -233,6 +345,15 @@ onBeforeUnmount(() => {
           >
             Apoio psicológico
           </button>
+
+          <button
+          :class="{ selecionado: filtroSelecionado === 'juridica' }"
+          :aria-pressed="filtroSelecionado === 'juridica'"
+          @click="selecionarFiltro('juridica')"
+          >
+          Assistência Jurídica
+        </button>
+        
         </div>
       </div>
     </section>
@@ -282,6 +403,7 @@ onBeforeUnmount(() => {
   margin: 0 0 8px;
   font-size: 34px;
   font-weight: bold;
+  color: ;
 }
 
 .intro p {
@@ -361,6 +483,7 @@ onBeforeUnmount(() => {
   background-color: #FFECCC;
   border-radius: 20px;
   box-sizing: border-box;
+  color: #4A0011;
 }
 
 .segmento1 .Buscalocal .tiposLocais button {
@@ -377,6 +500,7 @@ onBeforeUnmount(() => {
   cursor: pointer;
   transition: 0.2s;
   box-sizing: border-box;
+  color: #4A0011;
 }
 
 .segmento1 .Buscalocal .tiposLocais button:last-child {
@@ -534,10 +658,12 @@ onBeforeUnmount(() => {
 
   .intro h1 {
     font-size: 28px;
+    color: #4A0011;
   }
 
   .intro p {
     font-size: 15px;
+    color: #4A0011;
   }
 
   .segmento1 .mapa {
