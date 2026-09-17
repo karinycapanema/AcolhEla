@@ -1,16 +1,16 @@
 <script setup>
-import AppHeader from '@/components/layout/AppHeader.vue';
-import AppFooter from '@/components/layout/AppFooter.vue';
+import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
 </script>
+
 <template>
-
   <header>
-      <AppHeader/>
-    </header>
-  <div class="pagina">
+    <AppHeader />
+  </header>
 
-    
+  <div class="pagina">
     <main>
+
       <section class="titulo">
         <h1>Capacitação</h1>
 
@@ -18,6 +18,51 @@ import AppFooter from '@/components/layout/AppFooter.vue';
           Aprenda, informe-se e esteja preparado para oferecer um acolhimento responsável e
           humanizado.
         </p>
+      </section>
+
+      <section class="acolhimento">
+        <div class="texto-acolhimento">
+          <h2>O Que é Acolhimento Humanizado?</h2>
+
+          <p>
+            Acolher é mais do que ouvir. É criar um espaço seguro, oferecer apoio emocional sem
+            julgamentos e orientar com responsabilidade. Não é necessário ser profissional para
+            fazer a diferença, mas é essencial se preparar adequadamente.
+          </p>
+
+          <ul>
+            <li>Escuta ativa e sem julgamentos</li>
+            <li>Respeito ao tempo e escolhas da vítima</li>
+            <li>Orientação para redes de apoio especializadas</li>
+          </ul>
+        </div>
+
+        <div class="circulo"></div>
+      </section>
+
+
+      <section class="impacto">
+        <h2>Impacto do Acolhimento</h2>
+
+        <div class="impacto-cards">
+          <div class="impacto-card">
+            <strong>85%</strong>
+
+            <p>das mulheres sentem-se mais seguras após o primeiro acolhimento</p>
+          </div>
+
+          <div class="impacto-card">
+            <strong>2.400+</strong>
+
+            <p>voluntários já fazem parte da nossa rede</p>
+          </div>
+
+          <div class="impacto-card">
+            <strong>92%</strong>
+
+            <p>recomendam o programa de capacitação</p>
+          </div>
+        </div>
       </section>
 
       <section class="videos">
@@ -179,8 +224,9 @@ import AppFooter from '@/components/layout/AppFooter.vue';
       </section>
     </main>
   </div>
+
   <footer>
-    <AppFooter/>
+    <AppFooter />
   </footer>
 </template>
 
@@ -209,7 +255,7 @@ main {
 
   margin: 0;
 
-  padding: 50px 6vw 80px;
+  padding: 50px 7vw 80px;
 }
 
 .titulo {
@@ -223,21 +269,145 @@ main {
 .titulo h1 {
   color: #680019;
 
-  font-size: clamp(36px, 4vw, 58px);
+  font-size: 32px;
 
-  margin-bottom: 12px;
+  margin-bottom: 22px;
 }
 
 .titulo p {
   color: #6b4650;
 
-  font-size: clamp(13px, 1.2vw, 17px);
+  font-size: 20px;
 
-  line-height: 1.5;
+  line-height: 1.7;
 
-  max-width: 750px;
+  max-width: 850px;
 
   margin: 0 auto;
+}
+
+.acolhimento {
+  width: 100%;
+
+  min-height: 300px;
+
+  background-color: #fff1df;
+
+  border-radius: 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 45px 7%;
+
+  margin-bottom: 50px;
+}
+
+.texto-acolhimento {
+  width: 65%;
+}
+
+.texto-acolhimento h2 {
+  color: #5b001c;
+
+  font-size: 32px;
+
+  margin-bottom: 22px;
+}
+
+.texto-acolhimento p {
+  color: #4d3c3c;
+
+  font-size: 18px;
+
+  line-height: 1.6;
+
+  margin-bottom: 20px;
+}
+
+.texto-acolhimento ul {
+  padding-left: 22px;
+}
+
+.texto-acolhimento li {
+  color: #3f3030;
+
+  font-size: 18px;
+
+  line-height: 1.9;
+}
+
+.circulo {
+  width: clamp(130px, 16vw, 220px);
+
+  height: clamp(130px, 16vw, 220px);
+
+  background-color: #62001d;
+
+  border-radius: 50%;
+
+  flex-shrink: 0;
+}
+
+.impacto {
+  width: 100%;
+
+  text-align: center;
+
+  margin-bottom: 65px;
+}
+
+.impacto h2 {
+  color: #5b001c;
+
+  font-size: 32px;
+
+  margin-bottom: 35px;
+}
+
+.impacto-cards {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 20px;
+}
+
+.impacto-card {
+  width: 30%;
+
+  max-width: 350px;
+
+  min-height: 140px;
+
+  background-color: #fff1df;
+
+  border-radius: 18px;
+
+  padding: 25px;
+}
+
+.impacto-card strong {
+  display: block;
+
+  color: #5b001c;
+
+  font-size: 32px;
+
+  margin-bottom: 10px;
+}
+
+.impacto-card p {
+  color: #755e5e;
+
+  font-size: 18px;
+
+  line-height: 1.5;
 }
 
 .videos {
@@ -283,7 +453,7 @@ main {
 .video-card h2 {
   color: #5b001c;
 
-  font-size: clamp(19px, 1.7vw, 26px);
+  font-size: 20px;
 
   margin-top: 20px;
 
@@ -293,7 +463,7 @@ main {
 .video-card p {
   color: #4d3c3c;
 
-  font-size: clamp(13px, 1vw, 16px);
+  font-size: 18px;
 
   line-height: 1.6;
 }
@@ -309,7 +479,7 @@ main {
 .materiais > h2 {
   color: #5b001c;
 
-  font-size: clamp(25px, 2.5vw, 35px);
+  font-size: 32px;
 
   margin-bottom: 10px;
 }
@@ -317,7 +487,7 @@ main {
 .subtitulo {
   color: #6b4650;
 
-  font-size: clamp(13px, 1vw, 16px);
+  font-size: 18px;
 
   margin-bottom: 35px;
 }
@@ -387,7 +557,7 @@ main {
 .material-texto h3 {
   color: #5b001c;
 
-  font-size: clamp(15px, 1.3vw, 19px);
+  font-size: 20px;
 
   margin-bottom: 7px;
 }
@@ -395,7 +565,7 @@ main {
 .material-texto p {
   color: #755e5e;
 
-  font-size: clamp(11px, 0.9vw, 14px);
+  font-size: 18px;
 
   line-height: 1.5;
 }
@@ -426,19 +596,9 @@ main {
   opacity: 0.9;
 }
 
-@media (max-width: 900px) {
-  main {
-    padding: 40px 30px 60px;
-  }
-
-  .videos {
-    gap: 25px;
-  }
-
-  .video-card iframe {
-    height: 250px;
-  }
-}
+/* ==========================================
+   CELULAR
+   ========================================== */
 
 @media (max-width: 700px) {
   main {
@@ -447,6 +607,56 @@ main {
 
   .titulo {
     margin-bottom: 35px;
+  }
+
+  .titulo h1 {
+    font-size: 32px;
+  }
+
+  .titulo p {
+    font-size: 18px;
+  }
+
+  .acolhimento {
+    flex-direction: column;
+
+    text-align: center;
+
+    gap: 30px;
+
+    padding: 30px 25px;
+  }
+
+  .texto-acolhimento {
+    width: 100%;
+  }
+
+  .texto-acolhimento ul {
+    text-align: left;
+  }
+
+  .circulo {
+    width: 130px;
+
+    height: 130px;
+  }
+
+  .impacto {
+    margin-bottom: 50px;
+  }
+
+  .impacto-cards {
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 20px;
+  }
+
+  .impacto-card {
+    width: 100%;
+
+    max-width: 400px;
   }
 
   .videos {
@@ -472,4 +682,3 @@ main {
   }
 }
 </style>
-```
