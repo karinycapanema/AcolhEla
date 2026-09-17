@@ -1,7 +1,13 @@
 <script setup>
 import { ref } from 'vue'
 import AppButton from '@/components/ui/AppButton.vue'
+import { useRoute, useRouter } from 'vue-router'
 
+
+const route = useRoute()
+const router = useRouter()
+
+const cadastroVitima = route.query.tipo === 'vitima'
 
 const nome = ref('')
 const email = ref('')
@@ -58,6 +64,28 @@ const enviarCadastro = () => {
 }
 
 localStorage.setItem('usuario', JSON.stringify(usuario))
+
+if (cadastroVitima) {
+
+  localStorage.setItem(
+    'vitima',
+    JSON.stringify(usuario)
+  )
+
+  localStorage.setItem(
+    'usuarioLogado',
+    'true'
+  )
+
+  localStorage.setItem(
+    'tipoUsuario',
+    'vitima'
+  )
+
+  router.push('/denuncia')
+
+  return
+}
 
 alert('Cadastro realizado com sucesso!')
 

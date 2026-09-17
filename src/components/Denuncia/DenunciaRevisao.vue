@@ -34,6 +34,41 @@ function corrigir() {
 }
 
 function confirmar() {
+
+  const vitima = JSON.parse(
+    localStorage.getItem('vitima')
+  )
+
+  if (!vitima) {
+    alert('Não foi possível identificar a vítima.')
+    return
+  }
+
+  const denunciasSalvas = JSON.parse(
+    localStorage.getItem('denuncias')
+  ) || []
+
+  const novaDenuncia = {
+    id: Date.now(),
+
+    emailVitima: vitima.email,
+
+    relato: denuncia.value.relato,
+    situacoes: denuncia.value.situacoes,
+    data: denuncia.value.data,
+    local: denuncia.value.local,
+    anonima: denuncia.value.anonima,
+    nome: denuncia.value.nome,
+    contato: denuncia.value.contato
+  }
+
+  denunciasSalvas.push(novaDenuncia)
+
+  localStorage.setItem(
+    'denuncias',
+    JSON.stringify(denunciasSalvas)
+  )
+
   localStorage.removeItem('denuncia')
 
   router.push('/denuncia-enviada')
