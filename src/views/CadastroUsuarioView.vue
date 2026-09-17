@@ -32,12 +32,10 @@ import AppFooter from '@/components/layout/AppFooter.vue';
 
 <style scoped>
 .cadastro {
-  min-height: 100vh;
   background: #f7f7f8;
 }
 
 .conteudo {
-  min-height: calc(100vh - 4px);
   display: flex;
   flex-direction: column;
   align-items: center;

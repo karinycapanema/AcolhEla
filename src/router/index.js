@@ -14,6 +14,7 @@ import CapacitacaoView from '@/views/CapacitacaoView.vue'
 import SobreView from '@/views/SobreView.vue'
 import EntenderView from '@/views/EntenderView.vue'
 import PerfilVitimaView from '@/views/PerfilVitimaView.vue'
+import EditarPerfilView from '@/views/EditarPerfilView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -89,6 +90,11 @@ const router = createRouter({
       path: '/perfil-voluntaria',
       name: 'perfil-voluntaria',
       component: PerfilVoluntariaView
+    },
+    {
+      path: '/editar-perfil',
+      name: 'editar-perfil',
+      component: EditarPerfilView
     },
     {
       path: '/violencia',

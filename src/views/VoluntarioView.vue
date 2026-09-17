@@ -64,13 +64,23 @@ const enviarCadastro = () => {
   }
 
   localStorage.setItem(
-    'voluntaria',
-    JSON.stringify(voluntaria)
-  )
+  'voluntaria',
+  JSON.stringify(voluntaria)
+)
 
-  alert('Cadastro de voluntária realizado com sucesso!')
+localStorage.setItem(
+  'usuarioLogado',
+  'true'
+)
 
-  router.push('/login')
+localStorage.setItem(
+  'tipoUsuario',
+  'voluntaria'
+)
+
+alert('Cadastro de voluntária realizado com sucesso!')
+
+router.push('/perfil-voluntaria')
 }
 </script>
 
