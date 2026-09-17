@@ -12,6 +12,10 @@ import ComoAcolherView from '@/views/ComoAcolherView.vue'
 import CapacitacaoView from '@/views/CapacitacaoView.vue'
 import SobreView from '@/views/SobreView.vue'
 import EntenderView from '@/views/EntenderView.vue'
+import PerfilVitimaView from '@/views/PerfilVitimaView.vue'
+import EditarPerfilView from '@/views/EditarPerfilView.vue'
+import PerfilVoluntariaView from '@/views/PerfilVoluntariaView.vue'
+import MensagensView from '@/views/MensagensView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,7 +51,7 @@ const router = createRouter({
       name: 'denuncia-sucesso.vue',
       component: DenunciaSucesso,
     },
-      {
+    {
       path: '/curso',
       name: 'Curso',
       component: CursoView,
@@ -57,7 +61,6 @@ const router = createRouter({
       name: 'Mapa-acolhimento.vue',
       component: MapaView,
     },
-
     {
       path: '/como-acolher',
       name: 'como-acolher',
@@ -82,8 +85,29 @@ const router = createRouter({
       path: '/violencia',
       name: 'EntenderView',
       component: EntenderView
+    },
+    {
+      path: '/perfil-vitima',
+      name: 'perfil-vitima',
+      component: PerfilVitimaView
+    },
+    {
+      path: '/perfil-voluntaria',
+      name: 'perfil-voluntaria',
+      component: PerfilVoluntariaView
+    },
+    {
+      path: '/editar-perfil',
+      name: 'editar-perfil',
+      component: EditarPerfilView
+    },
+    {
+      path: '/mensagens',
+      name: 'mensagens',
+      component: MensagensView
     }
-  ]
+   ]
 })
+
 
 export default router
