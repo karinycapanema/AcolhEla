@@ -20,7 +20,7 @@
         </div>
 
         <div class="hero-imagem">
-          <img src="../../../public/img/equipe/logo.png" alt="mulher" />
+          <img src="/img/equipe/logo.png" alt="mulher" />
         </div>
       </section>
 
@@ -53,7 +53,7 @@
           <p>+3.200 Denúncias realizadas</p>
         </div>
 
-        <img src="../../../public/img/equipe/logo.png" alt="mulher" class="stats-icone" />
+        <img src="/img/equipe/logo.png" alt="mulher" class="stats-icone" />
 
         <div>
           <p>+1.800 Voluntários ativos</p>
@@ -75,7 +75,7 @@
 
         <div class="cards-coluna">
           <article class="card-linha">
-            <span class="icone"><img src="../../../public/img/defesa.png" alt="escudo"></span>
+            <span class="icone"><img src="/img/defesa.png" alt="escudo"></span>
             <div>
               <h2>Missão do projeto</h2>
               <p>
@@ -86,7 +86,7 @@
           </article>
 
           <article class="card-linha">
-            <span class="icone"><img src="../../../public/img/alvo.png" alt="alvo"></span>
+            <span class="icone"><img src="/img/alvo.png" alt="alvo"></span>
             <div>
               <h2>Objetivo do projeto</h2>
               <p>
@@ -97,7 +97,7 @@
           </article>
 
           <article class="card-linha">
-            <span class="icone"><img src="../../../public/img/pessoas.png" alt="pessoa"></span>
+            <span class="icone"><img src="/img/pessoas.png" alt="pessoa"></span>
             <div>
               <h2>Por que fazemos?</h2>
               <p>
