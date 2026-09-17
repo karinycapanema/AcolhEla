@@ -1,8 +1,15 @@
 <script setup>
 import FormUsuario from '@/components/CadastroUsuario/FormUsuario.vue';
+import AppHeader from '@/components/layout/AppHeader.vue';
+import AppFooter from '@/components/layout/AppFooter.vue';
 </script>
 
 <template>
+
+  <header>
+    <AppHeader/>
+  </header>
+
   <main class="cadastro">
 
     <section class="conteudo">
@@ -16,16 +23,19 @@ import FormUsuario from '@/components/CadastroUsuario/FormUsuario.vue';
 
     </section>
   </main>
+
+  <footer>
+    <AppFooter />
+  </footer>
+
 </template>
 
 <style scoped>
 .cadastro {
-  min-height: 100vh;
   background: #f7f7f8;
 }
 
 .conteudo {
-  min-height: calc(100vh - 4px);
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,135 +1,10 @@
-<template>
-
-  <header>
-    <AppHeader />
-  </header>
-
-  <main class="pagina-voluntario">
-
-    <section class="cabecalho-voluntario">
-      <h1>Cadastro de Voluntário</h1>
-      <p>Faça parte da nossa rede de apoio e ajude a transformar vidas</p>
-    </section>
-
-    <form class="formulario-voluntario" @submit.prevent="enviarCadastro">
-
-      <h2>Informações Pessoais</h2>
-
-      <div class="campo campo-grande">
-        <label for="nome">Nome Completo</label>
-        <input
-          id="nome"
-          v-model="formulario.nome"
-          type="text"
-          placeholder="Seu nome completo"
-          required
-        >
-      </div>
-
-      <div class="linha-campos">
-
-        <div class="campo">
-          <label for="email">E-mail</label>
-          <input
-            id="email"
-            v-model="formulario.email"
-            type="email"
-            placeholder="seu@gmail.com"
-            required
-          >
-        </div>
-
-        <div class="campo">
-          <label for="telefone">Telefone</label>
-          <input
-            id="telefone"
-            v-model="formulario.telefone"
-            type="tel"
-            placeholder="(00) 00000-0000"
-            required
-          >
-        </div>
-
-      </div>
-
-      <div class="linha-campos">
-
-        <div class="campo">
-          <label for="cidade">Cidade</label>
-          <input
-            id="cidade"
-            v-model="formulario.cidade"
-            type="text"
-            placeholder="Sua cidade"
-            required
-          >
-        </div>
-
-        <div class="campo">
-          <label for="estado">Estado</label>
-          <input
-            id="estado"
-            v-model="formulario.estado"
-            type="text"
-            placeholder="Seu estado"
-            required
-          >
-        </div>
-
-      </div>
-
-      <div class="campo-ajuda">
-        <label>Tipo de Ajuda que Posso Oferecer</label>
-
-        <div class="opcoes-ajuda">
-
-          <label
-            v-for="opcao in opcoesAjuda"
-            :key="opcao"
-            class="opcao-ajuda"
-          >
-            <input
-              v-model="formulario.ajudas"
-              type="checkbox"
-              :value="opcao"
-            >
-            <span>{{ opcao }}</span>
-          </label>
-
-        </div>
-      </div>
-
-      <div class="campo mensagem">
-        <label for="mensagem">Mensagem (Opcional)</label>
-
-        <textarea
-          id="mensagem"
-          v-model="formulario.mensagem"
-          placeholder="Conte um pouco sobre você e por que quer ser voluntário..."
-        ></textarea>
-      </div>
-
-      <button type="submit" class="botao-enviar">
-        Enviar Cadastro
-      </button>
-
-    </form>
-
-    <section class="mensagem-final">
-      <p>
-        Obrigada por querer fazer parte dessa rede de apoio. Juntas somos mais fortes!
-      </p>
-    </section>
-  </main>
-  <footer>
-    <AppFooter />
-  </footer>
-</template>
-
 <script setup>
-import AppHeader from '@/components/layout/AppHeader.vue';
-import AppFooter from '@/components/layout/AppFooter.vue';
 import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
+
+const router = useRouter()
 
 const opcoesAjuda = [
   'Apoio Emocional',
@@ -146,23 +21,256 @@ const formulario = reactive({
   telefone: '',
   cidade: '',
   estado: '',
+  senha: '',
+  confirmarSenha: '',
   ajudas: [],
   mensagem: ''
 })
 
-function enviarCadastro() {
-  alert('Cadastro enviado com sucesso!')
-  formulario.nome = ''
-  formulario.email = ''
-  formulario.telefone = ''
-  formulario.cidade = ''
-  formulario.estado = ''
-  formulario.ajudas = []
-  formulario.mensagem = ''
+const enviarCadastro = () => {
+
+  if (
+    !formulario.nome ||
+    !formulario.email ||
+    !formulario.telefone ||
+    !formulario.cidade ||
+    !formulario.estado ||
+    !formulario.senha ||
+    !formulario.confirmarSenha
+  ) {
+    alert('Preencha todos os campos obrigatórios.')
+    return
+  }
+
+  if (formulario.senha !== formulario.confirmarSenha) {
+    alert('As senhas não são iguais.')
+    return
+  }
+
+  if (formulario.ajudas.length === 0) {
+    alert('Selecione pelo menos um tipo de ajuda.')
+    return
+  }
+
+  const voluntaria = {
+    nome: formulario.nome,
+    email: formulario.email,
+    telefone: formulario.telefone,
+    cidade: formulario.cidade,
+    estado: formulario.estado,
+    senha: formulario.senha,
+    ajudas: formulario.ajudas,
+    mensagem: formulario.mensagem
+  }
+
+  localStorage.setItem(
+  'voluntaria',
+  JSON.stringify(voluntaria)
+)
+
+localStorage.setItem(
+  'usuarioLogado',
+  'true'
+)
+
+localStorage.setItem(
+  'tipoUsuario',
+  'voluntaria'
+)
+
+alert('Cadastro de voluntária realizado com sucesso!')
+
+router.push('/perfil-voluntaria')
 }
 </script>
 
+<template>
+
+  <header>
+    <AppHeader />
+  </header>
+
+  <main class="pagina-voluntario">
+
+    <section class="cabecalho-voluntario">
+      <h1>Cadastro de Voluntária</h1>
+
+      <p>
+        Faça parte da nossa rede de apoio e ajude a transformar vidas
+      </p>
+    </section>
+
+    <form
+      class="formulario-voluntario"
+      @submit.prevent="enviarCadastro"
+    >
+
+      <h2>Informações Pessoais</h2>
+
+      <div class="campo campo-grande">
+        <label for="nome">Nome Completo</label>
+
+        <input
+          id="nome"
+          v-model="formulario.nome"
+          type="text"
+          placeholder="Seu nome completo"
+          required
+        >
+      </div>
+
+      <div class="linha-campos">
+
+        <div class="campo">
+          <label for="email">E-mail</label>
+
+          <input
+            id="email"
+            v-model="formulario.email"
+            type="email"
+            placeholder="seu@gmail.com"
+            required
+          >
+        </div>
+
+        <div class="campo">
+          <label for="telefone">Telefone</label>
+
+          <input
+            id="telefone"
+            v-model="formulario.telefone"
+            type="tel"
+            placeholder="(00) 00000-0000"
+            required
+          >
+        </div>
+
+      </div>
+
+      <div class="linha-campos">
+
+        <div class="campo">
+          <label for="cidade">Cidade</label>
+
+          <input
+            id="cidade"
+            v-model="formulario.cidade"
+            type="text"
+            placeholder="Sua cidade"
+            required
+          >
+        </div>
+
+        <div class="campo">
+          <label for="estado">Estado</label>
+
+          <input
+            id="estado"
+            v-model="formulario.estado"
+            type="text"
+            placeholder="Seu estado"
+            required
+          >
+        </div>
+
+      </div>
+
+      <div class="linha-campos">
+
+        <div class="campo">
+          <label for="senha">Senha</label>
+
+          <input
+            id="senha"
+            v-model="formulario.senha"
+            type="password"
+            placeholder="Digite sua senha"
+            required
+          >
+        </div>
+
+        <div class="campo">
+          <label for="confirmarSenha">Confirmar Senha</label>
+
+          <input
+            id="confirmarSenha"
+            v-model="formulario.confirmarSenha"
+            type="password"
+            placeholder="Confirme sua senha"
+            required
+          >
+        </div>
+
+      </div>
+
+      <div class="campo-ajuda">
+
+        <label>Tipo de Ajuda que Posso Oferecer</label>
+
+        <div class="opcoes-ajuda">
+
+          <label
+            v-for="opcao in opcoesAjuda"
+            :key="opcao"
+            class="opcao-ajuda"
+          >
+
+            <input
+              v-model="formulario.ajudas"
+              type="checkbox"
+              :value="opcao"
+            >
+
+            <span>{{ opcao }}</span>
+
+          </label>
+
+        </div>
+
+      </div>
+
+      <div class="campo mensagem">
+
+        <label for="mensagem">
+          Mensagem (Opcional)
+        </label>
+
+        <textarea
+          id="mensagem"
+          v-model="formulario.mensagem"
+          placeholder="Conte um pouco sobre você e por que quer ser voluntária..."
+        ></textarea>
+
+      </div>
+
+      <button
+        type="submit"
+        class="botao-enviar"
+      >
+        Criar Cadastro
+      </button>
+
+    </form>
+
+    <section class="mensagem-final">
+
+      <p>
+        Obrigada por querer fazer parte dessa rede de apoio.
+        Juntas somos mais fortes!
+      </p>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <AppFooter />
+  </footer>
+
+</template>
+
 <style scoped>
+
 * {
   box-sizing: border-box;
 }
@@ -204,7 +312,6 @@ function enviarCadastro() {
 .formulario-voluntario h2 {
   margin: 0 0 25px;
   font-size: 19px;
-  font-weight: 600;
 }
 
 .campo {
@@ -241,11 +348,6 @@ function enviarCadastro() {
   height: 105px;
   padding: 13px;
   resize: none;
-}
-
-.campo input::placeholder,
-.campo textarea::placeholder {
-  color: #8c8580;
 }
 
 .campo input:focus,
@@ -288,12 +390,7 @@ function enviarCadastro() {
 .opcao-ajuda input {
   width: 15px;
   height: 15px;
-  margin: 0;
   accent-color: #4a0011;
-}
-
-.opcao-ajuda span {
-  font-size: 14px;
 }
 
 .mensagem {
@@ -308,7 +405,7 @@ function enviarCadastro() {
   border: none;
   border-radius: 11px;
   background: #4a0011;
-  color: #ffffff;
+  color: white;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 14px;
   cursor: pointer;
@@ -329,7 +426,6 @@ function enviarCadastro() {
   border-radius: 20px;
   background: #feb9cd;
   text-align: center;
-  box-shadow: 0 6px 18px rgba(74, 0, 17, 0.15);
 }
 
 .mensagem-final p {
@@ -338,13 +434,16 @@ function enviarCadastro() {
 }
 
 @media (max-width: 750px) {
+
   .formulario-voluntario,
   .mensagem-final {
     width: 90%;
   }
+
 }
 
 @media (max-width: 600px) {
+
   .linha-campos {
     flex-direction: column;
   }
@@ -360,5 +459,7 @@ function enviarCadastro() {
   .botao-enviar {
     width: 100%;
   }
+
 }
+
 </style>

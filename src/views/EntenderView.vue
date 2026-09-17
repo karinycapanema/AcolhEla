@@ -199,8 +199,8 @@ import AppFooter from '@/components/layout/AppFooter.vue';
       </p>
 
       <div class="botoes-ajuda">
-        <a href="tel:180">Ligar 180</a>
-        <a href="#">Buscar apoio</a>
+        <a href="tel:180" class="button-ajuda">Ligar 180</a>
+        <RouterLink to="/denuncia" class="button-ajuda">Buscar apoio</RouterLink>
       </div>
     </section>
 
@@ -504,7 +504,7 @@ a {
   gap: 20px;
 }
 
-.botoes-ajuda a {
+.button-ajuda {
   padding: 13px 30px;
   border-radius: 25px;
   color: #4a0011;
@@ -539,35 +539,394 @@ h3 {
 }
 
 
-@media (max-width: 900px) {
-  body {
-    min-width: 0;
+@media (max-width: 1100px) {
+
+  .introducao,
+  .tipos,
+  .lei,
+  .direitos {
+    width: 90%;
   }
 
+  .introducao {
+    padding: 45px 60px;
+  }
+
+  .alertas {
+    width: 82%;
+    padding: 40px 45px;
+  }
+
+  .ajuda {
+    width: 85%;
+  }
+
+  .tipos-conteudo {
+    padding: 30px 40px;
+  }
+
+  .tipo {
+    gap: 25px;
+  }
+
+  .tipo-texto p,
+  .exemplos p {
+    font-size: 17px;
+  }
+
+  .direitos-grid {
+    gap: 18px;
+  }
+
+}
+
+
+/*TABLET*/
+
+@media (max-width: 900px) {
 
   .menu {
+    gap: 20px;
     flex-wrap: wrap;
     justify-content: center;
   }
 
+  .introducao {
+    width: 90%;
+    margin: 35px auto;
+    padding: 40px 35px;
+  }
+
+  .introducao h1 {
+    font-size: 29px;
+  }
+
+  .introducao p {
+    font-size: 18px;
+  }
+
+
+  .tipos {
+    width: 90%;
+  }
+
+  .tipos-conteudo {
+    padding: 25px 30px;
+  }
+
   .tipo {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 20px;
+    min-height: 140px;
+  }
+
+  .tipo-texto p,
+  .exemplos p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .tipo-texto h3,
+  .exemplos strong {
+    font-size: 18px;
+  }
+
+  .numero {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+
+
+  .alertas {
+    width: 90%;
+    padding: 40px 30px;
+  }
+
+  .alertas-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .alerta {
+    min-height: 80px;
+    padding: 16px 18px;
+    font-size: 16px;
+  }
+
+
+  .lei {
+    width: 90%;
+    padding: 40px 30px;
+  }
+
+  .lei > p {
+    font-size: 19px;
+  }
+
+  .lei-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lei-card {
+    padding: 25px;
+  }
+
+  .lei-card h3 {
+    font-size: 23px;
+  }
+
+  .lei-card p {
+    font-size: 17px;
+  }
+
+
+  .direitos {
+    width: 90%;
+  }
+
+  .direitos-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .direito {
+    min-height: 170px;
+    padding: 25px;
+  }
+
+  .direito h3 {
+    font-size: 21px;
+  }
+
+  .direito p {
+    font-size: 17px;
+  }
+
+
+  .ajuda {
+    width: 90%;
+    padding: 40px 30px;
+  }
+
+}
+
+
+/*CELULAR*/
+
+@media (max-width: 600px) {
+
+
+  .introducao,
+  .tipos,
+  .alertas,
+  .lei,
+  .direitos,
+  .ajuda {
+    width: calc(100% - 30px);
+  }
+
+  .tipos h2,
+  .alertas h2,
+  .lei h2,
+  .direitos h2,
+  .ajuda h2 {
+    font-size: 26px;
+    margin-bottom: 25px;
+  }
+
+  .introducao {
+    margin: 25px auto 40px;
+    padding: 30px 20px;
+    border-radius: 20px;
+  }
+
+  .introducao h1 {
+    font-size: 25px;
+    line-height: 1.25;
+    margin-bottom: 18px;
+  }
+
+  .introducao p {
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .tipos {
+    margin-bottom: 40px;
+  }
+
+  .tipos-conteudo {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .tipo {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+    gap: 12px;
+    padding: 22px 5px;
     text-align: center;
   }
 
-  .tipo-texto,
-  .exemplos {
-    text-align: center;
+  .tipo:not(:last-child) {
+    border-bottom: 1px solid rgba(74, 0, 17, 0.18);
   }
 
   .tipo:not(:last-child)::after {
     display: none;
   }
 
-  .alertas-grid,
-  .lei-grid,
+  .tipo-texto {
+    text-align: center;
+    order: 2;
+  }
+
+  .numero {
+    order: 1;
+
+    width: 45px;
+    height: 45px;
+
+    font-size: 17px;
+
+    flex-shrink: 0;
+  }
+
+  .exemplos {
+    order: 3;
+    text-align: center;
+
+    width: 100%;
+    padding: 12px 15px;
+
+    border-radius: 12px;
+    background: #feb9cd;
+  }
+
+  .tipo-texto h3,
+  .exemplos strong {
+    font-size: 18px;
+  }
+
+  .tipo-texto p,
+  .exemplos p {
+    margin: 7px 0 0;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+
+  .alertas {
+    margin-bottom: 40px;
+    padding: 30px 20px;
+    border-radius: 20px;
+  }
+
+  .texto-secao {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+
+  .alertas-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .alerta {
+    min-height: auto;
+    padding: 15px 16px;
+    font-size: 15px;
+    line-height: 1.45;
+    border-radius: 13px;
+  }
+
+  .lei {
+    margin-bottom: 40px;
+    padding: 30px 20px;
+    border-radius: 20px;
+  }
+
+  .lei > p {
+    font-size: 16px;
+    line-height: 1.55;
+    margin-bottom: 25px;
+  }
+
+  .lei-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .lei-card {
+    padding: 22px;
+    border-radius: 15px;
+  }
+
+  .lei-card h3 {
+    font-size: 21px;
+    margin-bottom: 10px;
+  }
+
+  .lei-card p {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+
+  .direitos {
+    margin-bottom: 40px;
+  }
+
   .direitos-grid {
     grid-template-columns: 1fr;
+    gap: 15px;
   }
+
+  .direito {
+    min-height: auto;
+    padding: 22px;
+    border-radius: 15px;
+  }
+
+  .direito h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .direito p {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+  .ajuda {
+    margin-bottom: 40px;
+    padding: 30px 20px;
+    border-radius: 20px;
+  }
+
+  .ajuda h2 {
+    font-size: 25px;
+  }
+
+  .ajuda p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 25px;
+  }
+
+  .botoes-ajuda {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .button-ajuda {
+    width: 100%;
+    padding: 13px 20px;
+    font-size: 15px;
+  }
+
 }
+
+
 </style>

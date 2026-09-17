@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import AppButton from '@/components/ui/AppButton.vue'
+import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
 
 const router = useRouter()
 
@@ -10,6 +12,7 @@ const senha = ref('')
 const erro = ref('')
 
 const fazerLogin = () => {
+
   erro.value = ''
 
   if (!email.value || !senha.value) {
@@ -23,32 +26,66 @@ const fazerLogin = () => {
     erro.value = 'Digite um e-mail válido.'
     return
   }
+  // LOGIN DA VOLUNTÁRIA
+
+  const voluntariaSalva = localStorage.getItem('voluntaria')
+
+  if (voluntariaSalva) {
+
+    const voluntaria = JSON.parse(voluntariaSalva)
+
+    if (
+      email.value === voluntaria.email &&
+      senha.value === voluntaria.senha
+    ) {
+
+      localStorage.setItem('usuarioLogado', 'true')
+      localStorage.setItem('tipoUsuario', 'voluntaria')
+
+      router.push('/perfil-voluntaria')
+
+      return
+    }
+  }
+
+  // LOGIN DA VÍTIMA
 
   const usuarioSalvo = localStorage.getItem('usuario')
 
-  if (!usuarioSalvo) {
-    erro.value = 'Nenhuma conta cadastrada. Crie uma conta primeiro.'
-    return
+  if (usuarioSalvo) {
+
+    const usuario = JSON.parse(usuarioSalvo)
+
+    if (
+      email.value === usuario.email &&
+      senha.value === usuario.senha
+    ) {
+
+      localStorage.setItem('usuarioLogado', 'true')
+      localStorage.setItem('tipoUsuario', 'vitima')
+
+
+
+      localStorage.setItem(
+        'vitima',
+        JSON.stringify(usuario)
+      )
+
+      router.push('/perfil-vitima')
+
+      return
+    }
   }
 
-  const usuario = JSON.parse(usuarioSalvo)
+  // LOGIN INVÁLIDO
 
-  if (
-    email.value !== usuario.email ||
-    senha.value !== usuario.senha
-  ) {
-    erro.value = 'E-mail ou senha incorretos.'
-    return
-  }
-
-  localStorage.setItem('usuarioLogado', 'true')
-
-  alert(`Bem-vinda, ${usuario.nome}!`)
-
-  router.push('/')
+  erro.value = 'E-mail ou senha incorretos.'
 }
 </script>
 <template>
+  <header>
+    <AppHeader/>
+  </header>
   <div class="login-container">
     <div class="login-box">
 
@@ -100,11 +137,14 @@ const fazerLogin = () => {
 
     </div>
   </div>
+  <footer>
+    <AppFooter/>
+  </footer>
 </template>
 <style scoped>
 
 .login-container {
-  min-height: 100vh;
+  margin: 50px 0  ;
   display: flex;
   justify-content: center;
   align-items: center;
