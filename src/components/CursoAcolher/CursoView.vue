@@ -4,17 +4,15 @@ import AppHeader from '../layout/AppHeader.vue'
 import AppFooter from '../layout/AppFooter.vue'
 
 
-const tela = ref('inicio')            // 'inicio' | 'curso' | 'final'
-const aula = ref(0)                   // índice do módulo atual
-const nome = ref('')                  // nome digitado para o certificado
-const videoAssistido = ref(false)     // libera o questionário quando true
-const respostas = ref([])             // respostas do usuário em cada pergunta
+const tela = ref('inicio')
+const aula = ref(0)          
+const nome = ref('')
+const respostas = ref([])
 
 const aulas = [
   {
     titulo: 'Entendendo a violência',
     resumo: 'Aprenda a reconhecer os diferentes tipos de violência e como eles podem aparecer no dia a dia.',
-    video: '/public/videos/felipeVideo.mp4',
     dica: 'A violência não acontece somente de forma física. Comportamentos psicológicos, morais, sexuais e patrimoniais também podem causar danos.',
     conteudo: [
       {
@@ -28,7 +26,7 @@ const aulas = [
     ],
     perguntas: [
       {
-        pergunta: 'Uma pessoa constantemente humilha outra, ameaça deixá-la e tenta controlar suas amizades. De acordo com o vídeo, esse comportamento pode ser considerado:',
+        pergunta: 'Uma pessoa constantemente humilha outra, ameaça deixá-la e tenta controlar suas amizades. De acordo com conteúdo apresentado anteriormente, esse comportamento pode ser considerado:',
         opcoes: ['Violência psicológica', 'Apenas uma discussão comum', 'Uma demonstração de carinho'],
         correta: 0,
         explicacao: 'Humilhações, ameaças e controle podem caracterizar violência psicológica.'
@@ -44,7 +42,6 @@ const aulas = [
   {
     titulo: 'Reconhecendo situações de risco',
     resumo: 'Aprenda a identificar comportamentos que podem indicar uma situação de risco ou abuso.',
-    video: '/videos/reconhecendo-situacoes-de-risco.mp4',
     dica: 'A responsabilidade pela violência nunca é da vítima.',
     conteudo: [
       {
@@ -58,7 +55,7 @@ const aulas = [
     ],
     perguntas: [
       {
-        pergunta: 'Uma pessoa exige a senha das redes sociais da parceira e fica irritada quando ela conversa com amigos. Segundo o vídeo, esse comportamento pode indicar:',
+        pergunta: 'Uma pessoa exige a senha das redes sociais da parceira e fica irritada quando ela conversa com amigos. Segundo o assunto, esse comportamento pode indicar:',
         opcoes: ['Controle excessivo', 'Comunicação saudável', 'Respeito à privacidade'],
         correta: 0,
         explicacao: 'Exigir senhas e controlar amizades são exemplos de comportamentos de controle.'
@@ -74,7 +71,6 @@ const aulas = [
   {
     titulo: 'Meus direitos',
     resumo: 'Conheça informações básicas sobre direitos e mecanismos de proteção.',
-    video: '/videos/meus-direitos.mp4',
     dica: 'Conhecer seus direitos permite buscar orientação e proteção com mais informação.',
     conteudo: [
       {
@@ -88,7 +84,7 @@ const aulas = [
     ],
     perguntas: [
       {
-        pergunta: 'Segundo o vídeo, qual é um dos objetivos da Lei Maria da Penha?',
+        pergunta: 'Segundo o assunto, qual é um dos objetivos da Lei Maria da Penha?',
         opcoes: ['Prevenir e combater a violência doméstica e familiar contra a mulher.', 'Regular o uso das redes sociais.', 'Criar regras para relacionamentos.'],
         correta: 0,
         explicacao: 'A Lei Maria da Penha possui mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.'
@@ -104,7 +100,6 @@ const aulas = [
   {
     titulo: 'Autodefesa e segurança',
     resumo: 'Aprenda princípios de prevenção e planejamento para situações de risco.',
-    video: '/videos/autodefesa.mp4',
     dica: 'Autodefesa também envolve prevenção, percepção de riscos e planejamento. Em situações perigosas, priorize sua segurança.',
     conteudo: [
       {
@@ -118,7 +113,7 @@ const aulas = [
     ],
     perguntas: [
       {
-        pergunta: 'Uma pessoa percebe que está em uma situação de risco. Qual atitude está de acordo com o conteúdo do vídeo?',
+        pergunta: 'Uma pessoa percebe que está em uma situação de risco. Qual atitude deve ser tomada!?',
         opcoes: ['Planejar formas seguras de buscar ajuda.', 'Se colocar deliberadamente em maior perigo.', 'Ignorar todos os sinais de risco.'],
         correta: 0,
         explicacao: 'Planejar formas seguras de buscar ajuda pode fazer parte de um plano de segurança.'
@@ -134,7 +129,6 @@ const aulas = [
   {
     titulo: 'Rede de apoio',
     resumo: 'Entenda como pessoas e serviços podem ajudar em situações de violência.',
-    video: '/videos/rede-apoio.mp4',
     dica: 'Buscar ajuda não é sinal de fraqueza. Uma rede de apoio pode ajudar a encontrar caminhos de proteção.',
     conteudo: [
       {
@@ -148,7 +142,7 @@ const aulas = [
     ],
     perguntas: [
       {
-        pergunta: 'De acordo com o vídeo, quem pode fazer parte de uma rede de apoio?',
+        pergunta: 'De acordo com o assunto, quem pode fazer parte de uma rede de apoio?',
         opcoes: ['Somente familiares.', 'Pessoas de confiança, como amigos, familiares ou profissionais.', 'Somente pessoas que já passaram pela mesma situação.'],
         correta: 1,
         explicacao: 'Uma rede de apoio pode envolver diferentes pessoas de confiança.'
@@ -169,7 +163,6 @@ respostas.value = aulas.map(a => a.perguntas.map(() => null))
 const progresso = computed(() => ((aula.value + 1) / aulas.length) * 100)
 
 const podeContinuar = computed(() => {
-  if (!videoAssistido.value) return false
   return respostas.value[aula.value].every(
     (resposta, index) => resposta === aulas[aula.value].perguntas[index].correta
   )
@@ -183,7 +176,6 @@ const totalPerguntas = computed(() =>
 function iniciar() {
   tela.value = 'curso'
   aula.value = 0
-  videoAssistido.value = false
   window.scrollTo(0, 0)
 }
 
@@ -196,7 +188,6 @@ function proxima() {
 
   if (aula.value < aulas.length - 1) {
     aula.value++
-    videoAssistido.value = false
     window.scrollTo(0, 0)
   } else {
     tela.value = 'final'
@@ -237,8 +228,7 @@ function imprimir() {
       <section class="sobre">
         <h2>Sobre o curso</h2>
         <p>
-          Ao longo dos módulos, você assistirá a vídeos
-          educativos e responderá atividades relacionadas
+          Ao longo dos módulos, você responderá atividades relacionadas
           diretamente ao conteúdo apresentado.
         </p>
         <div class="info">
@@ -276,10 +266,6 @@ function imprimir() {
 
       <section class="final-inicio">
         <h2>Vamos começar?</h2>
-        <p>
-          Assista aos vídeos e responda às atividades
-          para avançar no curso.
-        </p>
         <button @click="iniciar">Começar agora</button>
       </section>
     </div>
@@ -300,28 +286,9 @@ function imprimir() {
         <p class="introducao">{{ aulas[aula].resumo }}</p>
 
        
-        <section class="video-area">
-          <h2>Assista ao vídeo</h2>
-
-    
-          <video
-            :key="aula"
-            controls
-            class="video"
-            :src="aulas[aula].video"
-            @ended="videoAssistido = true"
-          >
-            Seu navegador não suporta vídeos.
-          </video>
-
-          <p v-if="!videoAssistido">
-            Assista ao vídeo para liberar o questionário.
-          </p>
-          <p v-else class="video-concluido">✓ Vídeo concluído!</p>
-        </section>
-
+        
   
-        <section v-if="videoAssistido" class="conteudo-video">
+        <section class="conteudo-modulo">
           <div
             v-for="(parte, index) in aulas[aula].conteudo"
             :key="index"
@@ -342,7 +309,7 @@ function imprimir() {
             <h2>Questionário</h2>
             <p class="instrucao">
               Responda às perguntas com base no conteúdo
-              apresentado no vídeo.
+              apresentado anteriormente.
             </p>
 
             <div
@@ -416,7 +383,7 @@ function imprimir() {
   background: #fffaf8;
   color: #3d3033;
   font-family: Georgia, 'Times New Roman', Times, serif;
-  zoom: 1.25;
+  zoom: 1.66;
 }
 h1 {
   font-weight: 400;
@@ -603,28 +570,6 @@ button:hover {
   font-size: 17px;
 }
 
-/* VÍDEO */
-.video-area {
-  margin: 35px 0;
-}
-.video-area h2 {
-  color: #620017;
-}
-.video {
-  width: 100%;
-  max-height: 450px;
-  border-radius: 10px;
-  background: #000;
-}
-.video-area p {
-  font-size: 14px;
-  color: #66595b;
-}
-.video-concluido {
-  color: #477052 !important;
-  font-weight: bold;
-}
-
 /* CONTEÚDO */
 .parte {
   margin-bottom: 30px;
@@ -649,39 +594,68 @@ button:hover {
 /* QUESTIONÁRIO */
 .atividade {
   margin-top: 45px;
+  padding: 35px 40px;
+  background: #fbe8d3;
+  border-radius: 20px;
+}
+.atividade h2 {
+  color: #4A0011;
+  text-align: center;
 }
 .instrucao {
-  color: #66595b;
+  color: #4A0011;
+  text-align: center;
+  margin-bottom: 30px;
 }
 .pergunta {
   margin: 30px 0;
 }
 .pergunta h3 {
-  font-size: 19px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #4A0011;
+  margin-bottom: 10px;
 }
 .opcao {
   display: block;
   width: 100%;
-  margin: 8px 0;
+  margin: 10px 0;
+  padding: 14px 20px;
   text-align: left;
-  background: white;
-  color: #3d3033;
-  border: 1px solid #e1d5d8;
+  background: #FEB9CD;
+  color: #4A0011;
+  border: 1px solid #f0d9bd;
+  border-radius: 17px;
+  font-size: 16px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+.opcao:hover {
+  background: #fce6c9;
 }
 .opcao.correta {
   background: #e5f1e7;
   border-color: #8eb69a;
+  color: #355c3f;
 }
 .opcao.incorreta {
   background: #f8e2e5;
   border-color: #d49aa4;
+  color: #7a2532;
 }
 .resultado {
   font-size: 14px;
   color: #66595b;
+  margin-top: 6px;
+  padding-left: 20px;
 }
 .proxima {
-  margin-top: 20px;
+  display: block;
+  margin: 30px auto 0;
+  width: 100%;
+  max-width: 320px;
+  border-radius: 999px;
+  background: #4A0011;
+  text-align: center;
 }
 .proxima:disabled {
   opacity: .4;
@@ -768,4 +742,4 @@ button:hover {
     width: 90%;
   }
 }
-</style>
+</style>  
