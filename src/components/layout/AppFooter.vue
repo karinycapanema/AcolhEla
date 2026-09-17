@@ -56,7 +56,7 @@
           AcolhEla
         </a>
 
-        <p class="footer-slogan">fff8ee
+        <p class="footer-slogan">
           Toda mulher tem o<br />
           direito de viver sem medo.
         </p>
