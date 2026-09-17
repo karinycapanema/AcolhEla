@@ -29,6 +29,7 @@ import SobreView from '@/views/SobreView.vue'
 import EntenderView from '@/views/EntenderView.vue'
 
 import PerfilVitimaView from '@/views/PerfilVitimaView.vue'
+import EditarPerfilView from '@/views/EditarPerfilView.vue'
 
 import MensagensView from '@/views/MensagensView.vue'
 
@@ -131,6 +132,11 @@ const router = createRouter({
       component: PerfilVoluntariaView
     },
 
+    {
+      path: '/editar-perfil',
+      name: 'editar-perfil',
+      component: EditarPerfilView
+    },
     {
       path: '/violencia',
       name: 'EntenderView',

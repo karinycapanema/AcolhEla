@@ -217,10 +217,7 @@ const apagarConta = () => {
       Você ainda não realizou nenhuma denúncia.
     </p>
 
-    <button
-      class="botao-primeira-denuncia"
-      @click="irParaDenuncia"
-    >
+    <button class="botao-primeira-denuncia" @click="irParaDenuncia">
       Realizar minha primeira denúncia
     </button>
 

@@ -66,7 +66,7 @@ onMounted(() => {
 })
 
 const editarPerfil = () => {
-  alert('Área de edição do perfil.')
+  router.push('/editar-perfil')
 }
 
 const mensagens = () => {

@@ -144,7 +144,7 @@ const fazerLogin = () => {
 <style scoped>
 
 .login-container {
-  min-height: 100vh;
+  margin: 50px 0  ;
   display: flex;
   justify-content: center;
   align-items: center;
