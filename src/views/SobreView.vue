@@ -1,7 +1,10 @@
 <template>
-  <div>
-    <AppHeader />
+   <header>
+      <AppHeader />
+    </header>
 
+  <div>
+   
     <main class="container">
 
 
@@ -163,11 +166,17 @@
       </section>
     </main>
 
-    <AppFooter />
+    <footer>
+      <AppFooter />
+    </footer>
   </div>
 </template>
 
 <script setup>
+
+import AppHeader from '@/components/layout/AppHeader.vue';
+import AppFooter from '@/components/layout/AppFooter.vue';
+
 const equipe = [
   { nome: 'Júlia Calegarim', foto: '/img/equipe/calega.png' },
   { nome: 'Julia Bittencourt', foto: '/img/equipe/bitten.png' },

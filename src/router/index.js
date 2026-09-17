@@ -1,13 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import VoluntarioView from '../views/VoluntarioView.vue'
-import Violencia from '@/components/EntenderViolencia/Violencia.vue'
 import HomeView from '../views/HomeView.vue'
 import CadastroUsuarioView from '@/views/CadastroUsuarioView.vue'
 import LoginView from '@/views/LoginView.vue'
 import DenunciaView from '@/views/DenunciaView.vue'
 import DenunciaSucesso from '@/components/Denuncia/DenunciaSucesso.vue'
 import DenunciaRevisao from '@/components/Denuncia/DenunciaRevisao.vue'
-import SobreView from '@/components/SobreNos/SobreView.vue'
+import SobreView from '@/views/SobreView.vue'
 import EntenderView from '@/views/EntenderView.vue'
 
 const router = createRouter({
