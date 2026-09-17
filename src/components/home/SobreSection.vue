@@ -15,7 +15,7 @@
         </p>
 
         <RouterLink
-          to="/quem-somos"
+          to="/sobre"
           class="btn-sobre"
         >
           Saiba mais sobre nós!

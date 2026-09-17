@@ -249,6 +249,11 @@ router.push('/perfil-voluntaria')
       >
         Criar Cadastro
       </button>
+      
+      <div class="login"><p class="login">
+      já tem uma conta?
+      <RouterLink to="/login" class="login-link">Login</RouterLink>
+    </p></div>
 
     </form>
 
@@ -275,12 +280,27 @@ router.push('/perfil-voluntaria')
   box-sizing: border-box;
 }
 
-.pagina-voluntario {
-  width: 100%;
+.login {
+  margin-top: 16px;
+  text-align: center;
+  color: #52252b;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+                                                                                                                                              
+.login a {
+  color: #e9a7b3;
+  text-decoration: none;
+  font-size: 1.1rem;                                              
+}
+
+
+.pagina-voluntario {                    
+  width: 100%;                                                                              
   min-height: 100vh;
-  padding: 50px 0 60px;
+  padding: 50px 0 60px;                                                         
   background: #ffffff;
-  color: #4a0011;
+  color: #4a0011;                                         
 }
 
 .cabecalho-voluntario {

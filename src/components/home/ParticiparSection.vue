@@ -9,7 +9,7 @@
     <div class="participar-cards">
 
 
-      <RouterLink to="/acolher" class="participar-card">
+      <RouterLink to="/cadastro-acolher" class="participar-card">
 
         <img
           src="/img/acolher.png"

@@ -25,7 +25,7 @@
         </div>
 
         <RouterLink
-          to="/cadastro-usuario"
+          to="/cadastro"
           class="btn-cadastro"
         >
           Se cadastre e busque apoio!
