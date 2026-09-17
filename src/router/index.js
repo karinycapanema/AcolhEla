@@ -1,9 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import VoluntarioView from '../views/VoluntarioView.vue'
-
-import PerfilVoluntariaView from '@/views/PerfilVoluntariaView.vue'
-
 import HomeView from '../views/HomeView.vue'
 
 import CadastroUsuarioView from '@/views/CadastroUsuarioView.vue'
@@ -15,17 +12,7 @@ import DenunciaView from '@/views/DenunciaView.vue'
 import DenunciaSucesso from '@/components/Denuncia/DenunciaSucesso.vue'
 
 import DenunciaRevisao from '@/components/Denuncia/DenunciaRevisao.vue'
-
-import CursoView from '@/components/CursoAcolher/CursoView.vue'
-
-import MapaView from '@/components/MapaAcolhimento/MapaView.vue'
-
-import ComoAcolherView from '@/views/ComoAcolherView.vue'
-
-import CapacitacaoView from '@/views/CapacitacaoView.vue'
-
 import SobreView from '@/views/SobreView.vue'
-
 import EntenderView from '@/views/EntenderView.vue'
 
 import PerfilVitimaView from '@/views/PerfilVitimaView.vue'
@@ -82,42 +69,6 @@ const router = createRouter({
       path: '/perfil-vitima',
       name: 'perfil-vitima',
       component: PerfilVitimaView
-    },
-
-    {
-      path: '/mensagens',
-      name: 'mensagens',
-      component: MensagensView
-    },
-
-    {
-      path: '/curso',
-      name: 'Curso',
-      component: CursoView
-    },
-
-    {
-      path: '/mapa',
-      name: 'Mapa-acolhimento.vue',
-      component: MapaView
-    },
-
-    {
-      path: '/como-acolher',
-      name: 'como-acolher',
-      component: ComoAcolherView
-    },
-
-    {
-      path: '/capacitar',
-      name: 'capacitacao',
-      component: CapacitacaoView
-    },
-
-    {
-      path: '/sobre',
-      name: 'sobre',
-      component: SobreView
     },
 
     {
