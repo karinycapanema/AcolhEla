@@ -1,7 +1,7 @@
 <template>
   <div>
     <AppHeader />
-
+      
     <main class="container">
 
 
@@ -168,6 +168,8 @@
 </template>
 
 <script setup>
+import AppHeader from '../layout/AppHeader.vue'
+import AppFooter from '../layout/AppFooter.vue'
 const equipe = [
   { nome: 'Júlia Calegarim', foto: '/img/equipe/calega.png' },
   { nome: 'Julia Bittencourt', foto: '/img/equipe/bitten.png' },
@@ -308,6 +310,7 @@ main {
   font-size: 19px;
   margin-bottom: 10px;
   font-weight: 700;
+  color: #6f1729;
 }
 
 .card p {
