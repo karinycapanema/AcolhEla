@@ -80,6 +80,25 @@ const sair = () => {
 
   router.push('/login')
 }
+
+const apagarConta = () => {
+  const confirmar = confirm(
+    'Tem certeza que deseja apagar sua conta? Essa ação não poderá ser desfeita.'
+  )
+
+  if (!confirmar) {
+    return
+  }
+
+  localStorage.removeItem('usuario')
+  localStorage.removeItem('voluntaria')
+  localStorage.removeItem('usuarioLogado')
+  localStorage.removeItem('tipoUsuario')
+
+  alert('Sua conta foi apagada com sucesso!')
+
+  router.push('/')
+}
 </script>
 
 <template>
@@ -92,19 +111,14 @@ const sair = () => {
 
     <h1 class="conta-titulo">Minha Conta</h1>
 
-    <section
-      v-if="voluntaria"
-      class="conta-perfil"
-    >
+    <section v-if="voluntaria" class="conta-perfil">
 
-      <!-- FOTO -->
       <div class="conta-foto">
         <span>
           {{ voluntaria.nome.charAt(0).toUpperCase() }}
         </span>
       </div>
 
-      <!-- INFORMAÇÕES -->
       <div class="conta-info">
 
         <h2 class="conta-nome">
@@ -113,11 +127,7 @@ const sair = () => {
 
         <div class="conta-tags">
 
-            <span
-                v-for="ajuda in voluntaria.ajudas"
-                :key="ajuda"
-                class="conta-tag"
-            >
+            <span v-for="ajuda in voluntaria.ajudas" :key="ajuda" class="conta-tag">
                 {{ ajuda }}
             </span>
 
@@ -125,23 +135,16 @@ const sair = () => {
 
         <div class="conta-botoes">
 
-          <button
-            class="conta-botao"
-            @click="editarPerfil"
-          >
+          <button class="conta-botao" @click="editarPerfil">
             Editar Perfil
           </button>
 
-          <button
-            class="conta-botao"
-            @click="mensagens"
-          >
+          <button class="conta-botao" @click="mensagens">
             Mensagens
           </button>
 
         </div>
-
-        </div>
+      </div>
 
     </section>
 
@@ -151,49 +154,24 @@ const sair = () => {
 
     <section class="conta-cursos">
 
-  <div
-    v-for="(certificado, index) in certificados"
-    :key="index"
-    class="conta-curso"
-  >
+  <div v-for="(certificado, index) in certificados" :key="index" class="conta-curso">
 
-    <label
-      v-if="!certificado"
-      class="certificado-upload"
-    >
+    <label v-if="!certificado" class="certificado-upload">
 
-      <font-awesome-icon
-        :icon="iconeUpload"
-        class="certificado-icone"
-      />
+      <font-awesome-icon :icon="iconeUpload" class="certificado-icone"/>
 
       <span>Anexar certificado</span>
 
-      <input
-        type="file"
-        accept="image/*"
-        @change="selecionarCertificado($event, index)"
-      >
+      <input type="file" accept="image/*" @change="selecionarCertificado($event, index)">
 
     </label>
 
 
-    <div
-      v-else
-      class="certificado-preview"
-    >
+    <div v-else class="certificado-preview">
 
-      <img
-        :src="certificado.imagem"
-        :alt="certificado.nome"
-      >
+      <img :src="certificado.imagem" :alt="certificado.nome">
 
-      <button
-        type="button"
-        class="certificado-remover"
-        @click="removerCertificado(index)"
-        title="Remover certificado"
-      >
+      <button type="button" class="certificado-remover" @click="removerCertificado(index)" title="Remover certificado">
         <font-awesome-icon :icon="iconeExcluir" />
       </button>
 
@@ -203,12 +181,17 @@ const sair = () => {
 
 </section>
 
-   <div class="button">
-     <AppButton @click="sair">
-        Sair da conta
-    </AppButton>
-   </div>
+    <div class="sair-apagar">
 
+      <AppButton @click="sair">
+        Sair da conta
+      </AppButton>
+
+       <AppButton @click="apagarConta">
+        Apagar conta
+      </AppButton>
+
+    </div>
   </main>
 
   <footer>
@@ -227,7 +210,7 @@ const sair = () => {
   font-family: Georgia, "Times New Roman", serif;
 }
 
-/*TÍTULO*/
+/*titulo*/
 
 .conta-titulo {
   margin: 0 0 28px;
@@ -237,7 +220,7 @@ const sair = () => {
   color: #5b0018;
 }
 
-/*PERFIL*/
+/*perfil*/
 
 .conta-perfil {
   width: 66%;
@@ -250,7 +233,7 @@ const sair = () => {
   box-sizing: border-box;
 }
 
-/*FOTO*/
+/*foto*/
 
 .conta-foto {
   width: 245px;
@@ -270,7 +253,7 @@ const sair = () => {
   color: #ffffff;
 }
 
-/*INFORMAÇÕES*/
+/*informações*/
 
 .conta-info {
   width: 80%;
@@ -289,7 +272,7 @@ const sair = () => {
   color: #5b0018;
 }
 
-/*TAGS*/
+/*tags*/
 
 .conta-tags {
   display: flex;
@@ -312,7 +295,7 @@ const sair = () => {
   box-sizing: border-box;
 }
 
-/* BOTÕES */
+/*botões*/
 
 .conta-botoes {
     margin: 20px;
@@ -337,7 +320,7 @@ const sair = () => {
   background: #800023;
 }
 
-/*CURSOS*/
+/*cursos*/
 
 .conta-cursos-titulo {
   margin: 25px 0 20px;
@@ -346,8 +329,6 @@ const sair = () => {
   font-weight: bold;
   color: #5b0018;
 }
-
-/*CAIXA DOS CURSOS*/
 
 .conta-cursos {
   width: 66%;
@@ -359,8 +340,6 @@ const sair = () => {
   box-sizing: border-box;
 }
 
-/* CARDS */
-
 .conta-curso {
   width: 300px;
   height: 150px;
@@ -368,9 +347,6 @@ const sair = () => {
   border-radius: 22px;
   overflow: hidden;
 }
-
-
-/* UPLOAD CERTIFICADO*/
 
 .certificado-upload {
   width: 100%;
@@ -402,9 +378,6 @@ const sair = () => {
   height: 45px;
 }
 
-
-/*PRÉVIA DO CERTIFICADO*/
-
 .certificado-preview {
   width: 100%;
   height: 100%;
@@ -420,7 +393,7 @@ const sair = () => {
 }
 
 
-/*BOTÃO REMOVER*/
+/*remover*/
 
 .certificado-remover {
   position: absolute;
@@ -443,17 +416,17 @@ const sair = () => {
   background-color: #800023;
 }
 
-/*SAIR*/
+/*sair e apagar*/
 
-.button{
-    display: flex;
-    justify-content: center;
-    margin-top: 3vw;
+.sair-apagar{
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 35px;
 }
 
 
 .conta-perfil, .conta-cursos{
-     box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
+  box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
 }
 
 @media (max-width: 750px) {

@@ -2,16 +2,17 @@
 import { reactive } from 'vue'
 import AppButton from '../ui/AppButton.vue'
 import UploadArquivos from './UploadArquivos.vue'
+import { useRouter } from 'vue-router'
 
-
+const router = useRouter()
   const formulario = reactive({
-    relato: '',
-    situacoes: [],
-    data: '',
-    local: '',
-    anonima: false,
-    nome: '',
-    contato: ''
+  relato: '',
+  situacoes: [],
+  data: '',
+  local: '',
+  anonima: false,
+  nome: '',
+  contato: ''
   })
     
   const erros = reactive({
@@ -31,7 +32,29 @@ import UploadArquivos from './UploadArquivos.vue'
 
  function enviarDenuncia() {
 
-  // Limpa os erros anteriores
+  const usuarioLogado = localStorage.getItem('usuarioLogado')
+  const tipoUsuario = localStorage.getItem('tipoUsuario')
+
+  if (
+    usuarioLogado !== 'true' ||
+    tipoUsuario !== 'vitima'
+  ) {
+
+    alert(
+      'Para enviar uma denúncia, você precisa ter uma conta de vítima.'
+    )
+
+    router.push({
+      path: '/cadastro',
+      query: {
+        tipo: 'vitima',
+        redirect: '/denuncia'
+      }
+    })
+
+    return
+  }
+
   erros.relato = ''
   erros.situacoes = ''
   erros.data = ''
@@ -39,42 +62,35 @@ import UploadArquivos from './UploadArquivos.vue'
 
   let formularioValido = true
 
-  // Validação do relato
   if (!formulario.relato.trim()) {
     erros.relato = 'Este campo é obrigatório.'
     formularioValido = false
   }
 
-  // Validação das situações
   if (!formulario.situacoes || formulario.situacoes.length === 0) {
     erros.situacoes = 'Selecione pelo menos uma opção.'
     formularioValido = false
   }
 
-  // Validação da data
   if (!formulario.data) {
     erros.data = 'Informe a data do ocorrido.'
     formularioValido = false
   }
 
-  // Validação do local
   if (!formulario.local.trim()) {
     erros.local = 'Informe o local do ocorrido.'
     formularioValido = false
   }
 
-  // Se houver algum erro, não envia
   if (!formularioValido) {
     return
   }
 
-  // Salva os dados
   localStorage.setItem(
     'denuncia',
     JSON.stringify(formulario)
   )
 
-  // Vai para a revisão
   window.location.href = '/revisar-denuncia'
 }
 
@@ -100,20 +116,11 @@ import UploadArquivos from './UploadArquivos.vue'
 
     <div class="arquivos">
 
-      <UploadArquivos
-        titulo="Adicionar fotos:"
-        tipo="foto"
-      />
+      <UploadArquivos titulo="Adicionar fotos:" tipo="foto"/>
 
-      <UploadArquivos
-        titulo="Adicionar prints:"
-        tipo="print"
-      />
+      <UploadArquivos titulo="Adicionar prints:" tipo="print"/>
 
-      <UploadArquivos
-        titulo="Adicionar áudios:"
-        tipo="audio"
-      />
+      <UploadArquivos titulo="Adicionar áudios:" tipo="audio"/>
 
     </div>
 

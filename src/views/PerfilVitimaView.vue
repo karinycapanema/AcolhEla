@@ -1,32 +1,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import AppButton from '@/components/ui/AppButton.vue'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
+
+const iconeExcluir = faTrash
 
 const router = useRouter()
-
 const vitima = ref(null)
+const denuncias = ref([])
 
-/* Denúncias da vítima */
-const denuncias = ref([
-  {
-    nome: 'Nome da denúncia',
-    data: '00/00/0000'
-  },
-  {
-    nome: 'Nome da denúncia',
-    data: '00/00/0000'
-  },
-  {
-    nome: 'Nome da denúncia',
-    data: '00/00/0000'
-  }
-])
-
-/* Contatos recentes */
 const contatos = ref([
   { nome: 'Fulana' },
   { nome: 'Fulana' },
@@ -51,13 +36,20 @@ onMounted(() => {
   const dados = localStorage.getItem('vitima')
 
   if (dados) {
-    vitima.value = JSON.parse(dados)
-  } else {
-    /* Dados temporários caso ainda não existam no localStorage */
-    vitima.value = {
-      nome: 'Fulana'
-    }
-  }
+     vitima.value = JSON.parse(dados)
+
+      const denunciasSalvas = JSON.parse(
+        localStorage.getItem('denuncias')
+      ) || []
+
+   if (vitima.value) {
+
+        denuncias.value = denunciasSalvas.filter(
+          denuncia =>
+            denuncia.emailVitima === vitima.value.email
+        )
+      }
+  } 
 })
 
 const editarPerfil = () => {
@@ -68,6 +60,10 @@ const mensagens = () => {
   router.push('/mensagens')
 }
 
+const irParaDenuncia = () => {
+  router.push('/denuncia')
+}
+
 const abrirDenuncia = (denuncia) => {
   alert(`Abrindo: ${denuncia.nome}`)
 }
@@ -76,12 +72,80 @@ const abrirContato = (contato) => {
   alert(`Abrindo conversa com ${contato.nome}`)
 }
 
+const apagarDenuncia = (id) => {
+  const confirmar = confirm(
+    'Tem certeza que deseja apagar esta denúncia?'
+  )
+
+  if (!confirmar) {
+    return
+  }
+
+  const denunciasSalvas = localStorage.getItem('denuncias')
+
+  if (!denunciasSalvas) {
+    return
+  }
+
+  const todasDenuncias = JSON.parse(denunciasSalvas)
+
+  const novasDenuncias = todasDenuncias.filter(
+    denuncia => denuncia.id !== id
+  )
+
+  localStorage.setItem(
+    'denuncias',
+    JSON.stringify(novasDenuncias)
+  )
+
+  denuncias.value = novasDenuncias.filter(
+    denuncia => denuncia.emailVitima === vitima.value.email
+  )
+}
+
 const sair = () => {
 
   localStorage.removeItem('usuarioLogado')
   localStorage.removeItem('tipoUsuario')
 
   router.push('/login')
+}
+
+const apagarConta = () => {
+  const confirmar = confirm(
+    'Tem certeza que deseja apagar sua conta? Todas as suas denúncias também serão apagadas. Essa ação não poderá ser desfeita.'
+  )
+
+  if (!confirmar) {
+    return
+  }
+  const vitimaSalva = localStorage.getItem('vitima')
+
+  if (vitimaSalva) {
+    const vitima = JSON.parse(vitimaSalva)
+    const denunciasSalvas = localStorage.getItem('denuncias')
+
+    if (denunciasSalvas) {
+      const denuncias = JSON.parse(denunciasSalvas)
+
+      const novasDenuncias = denuncias.filter(
+        denuncia => denuncia.emailVitima !== vitima.email
+      )
+
+      localStorage.setItem(
+        'denuncias',
+        JSON.stringify(novasDenuncias)
+      )
+    }
+  }
+  localStorage.removeItem('usuario')
+  localStorage.removeItem('vitima')
+  localStorage.removeItem('usuarioLogado')
+  localStorage.removeItem('tipoUsuario')
+
+  alert('Sua conta e suas denúncias foram apagadas com sucesso!')
+
+  router.push('/')
 }
 </script>
 
@@ -93,15 +157,13 @@ const sair = () => {
 
   <main class="perfil-page">
 
-    <!-- TÍTULO -->
+    <!-- titulo -->
     <h1 class="perfil-titulo">
       Minha Conta
     </h1>
 
 
-    <!-- =========================
-         PERFIL
-    ========================== -->
+    <!-- perfil -->
 
     <section class="perfil-card">
 
@@ -112,23 +174,16 @@ const sair = () => {
         </h2>
 
         <p class="perfil-descricao">
-          Aqui é um espaço seguro para você buscar ajuda,
-          denunciar e ser ouvida!
+          Aqui é um espaço seguro para você buscar ajuda, denunciar e ser ouvida!
         </p>
 
         <div class="perfil-botoes">
 
-          <button
-            class="perfil-botao"
-            @click="editarPerfil"
-          >
+          <button class="perfil-botao" @click="editarPerfil">
             Editar Perfil
           </button>
 
-          <button
-            class="perfil-botao"
-            @click="mensagens"
-          >
+          <button class="perfil-botao" @click="mensagens">
             Mensagens
           </button>
 
@@ -139,9 +194,7 @@ const sair = () => {
     </section>
 
 
-    <!-- =========================
-         DENÚNCIAS
-    ========================== -->
+    <!-- denuncias -->
 
     <h2 class="secao-titulo">
       Denúncias realizadas
@@ -149,29 +202,62 @@ const sair = () => {
 
     <section class="denuncias-card">
 
-      <div
-        v-for="(denuncia, index) in denuncias"
-        :key="index"
-        class="denuncia-item"
-        @click="abrirDenuncia(denuncia)"
-      >
+  <!-- nao existirem -->
 
-        <strong>
-          {{ denuncia.nome }}
-        </strong>
+  <div
+    v-if="denuncias.length === 0"
+    class="nenhuma-denuncia"
+  >
 
-        <span>
-          Realizada em {{ denuncia.data }}
-        </span>
+    <h3>
+      Nenhuma denúncia realizada
+    </h3>
 
-      </div>
+    <p>
+      Você ainda não realizou nenhuma denúncia.
+    </p>
 
-    </section>
+    <button
+      class="botao-primeira-denuncia"
+      @click="irParaDenuncia"
+    >
+      Realizar minha primeira denúncia
+    </button>
+
+  </div>
+
+  <!-- exixtirem -->
+
+  <div
+    v-else
+    v-for="(denuncia, index) in denuncias ":key="denuncia.id || index" class="denuncia-item" @click="abrirDenuncia(denuncia)">
 
 
-    <!-- =========================
-         CONTATOS
-    ========================== -->
+    <div class="menor">
+    <strong>
+      Denúncia {{ index + 1 }}
+    </strong>
+
+    <span>
+      Realizada em: {{ denuncia.data }}
+    </span>
+
+    <small>
+     Tipo de situação: {{ denuncia.situacoes.join(', ') }}
+    </small>
+    </div>
+
+    <div class="apagar">
+      <button class="botao-excluir-denuncia" @click="apagarDenuncia(denuncia.id)" title="Apagar denúncia">
+      <font-awesome-icon :icon="iconeExcluir" />
+    </button>
+
+    </div>
+
+  </div>
+
+  </section>
+    <!-- contato -->
 
     <h2 class="secao-titulo contatos-titulo">
       Contatos recentes
@@ -180,11 +266,7 @@ const sair = () => {
     <section class="contatos-card">
 
       <div
-        v-for="(contato, index) in contatos"
-        :key="index"
-        class="contato"
-        @click="abrirContato(contato)"
-      >
+        v-for="(contato, index) in contatos" :key="index" class="contato" @click="abrirContato(contato)">
 
         <div class="contato-foto">
           <span>
@@ -203,14 +285,17 @@ const sair = () => {
 
     <!--SAIR-->
 
-    <div class="sair-container">
+    <div class="sair-apagar">
 
       <AppButton @click="sair">
         Sair da conta
       </AppButton>
 
-    </div>
+       <AppButton @click="apagarConta">
+        Apagar conta
+      </AppButton>
 
+    </div>
   </main>
 
   <footer>
@@ -232,9 +317,6 @@ const sair = () => {
   box-sizing: border-box;
 }
 
-
-/*TÍTULO*/
-
 .perfil-titulo {
   margin: 0 0 28px;
   text-align: center;
@@ -242,10 +324,6 @@ const sair = () => {
   font-weight: bold;
   color: #5b0018;
 }
-
-
-/*CARD DO PERFIL*/
-
 .perfil-card {
   width: 66%;
   min-height: 163px;
@@ -260,7 +338,7 @@ const sair = () => {
 }
 
 
-/*INFORMAÇÕES*/
+/*informações*/
 
 .perfil-info {
   width: 100%;
@@ -280,7 +358,7 @@ const sair = () => {
   color: #5b0018;
 }
 
-/* BOTÕES*/
+/*botões*/
 
 .perfil-botoes {
   display: flex;
@@ -305,8 +383,6 @@ const sair = () => {
 }
 
 
-/*TÍTULOS DAS SEÇÕES*/
-
 .secao-titulo {
   margin: 25px 0 20px;
   text-align: center;
@@ -316,14 +392,14 @@ const sair = () => {
 }
 
 
-/*DENÚNCIAS*/
+/*denuncia*/
 
 .denuncias-card {
   width: 66%;
   margin: 0 auto;
   padding: 38px 25px;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: 25px;
   background: #fff0dc;
   border-radius: 22px;
@@ -336,8 +412,7 @@ const sair = () => {
   min-height: 49px;
   padding: 5px 23px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   background: #f7b0c8;
   border-radius: 25px;
   box-sizing: border-box;
@@ -351,17 +426,95 @@ const sair = () => {
 }
 
 .denuncia-item strong {
-  font-size: 1.7rem;
+  font-size: 1.8rem;
   color: #5b0018;
 }
 
 .denuncia-item span {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #5b0018;
 }
 
+.denuncia-item small {
+  margin: 4px 0;
+  color: #65071d;
+  font-size: 1.4rem;
+}
 
-/*CONTATOS*/
+.botao-excluir-denuncia {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f7b0c8;
+  color: #63071d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.apagar{
+  display: flex;
+  align-items: center;
+}
+
+.botao-excluir-denuncia:hover {
+  background-color: #63071d;
+  color: white;
+}
+
+.botao-excluir-denuncia svg {
+  width: 18px;
+  height: 18px;
+}
+
+.menor{
+  display: flex;
+  flex-direction: column;
+}
+
+.nenhuma-denuncia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  text-align: center;
+  background: #f7b0c8;
+  border-radius: 25px;
+}
+
+.nenhuma-denuncia h3 {
+  margin: 0 0 8px;
+  color: #65071d;
+  font-size: 1.6rem;
+}
+
+.nenhuma-denuncia p {
+  margin: 0 0 20px;
+  color: #65071d;
+  font-size: 1.1rem;
+}
+
+.botao-primeira-denuncia {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 20px;
+  background-color: #65001b;
+  color: white;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.botao-primeira-denuncia:hover {
+  background-color: #800023;
+}
+
+/*contato*/
 
 .contatos-titulo {
   margin-top: 25px;
@@ -370,43 +523,31 @@ const sair = () => {
 .contatos-card {
   width: 66%;
   min-height: 113px;
-
   margin: 0 auto;
   padding: 18px 30px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   background: #fff0dc;
   border-radius: 22px;
-
   box-sizing: border-box;
-
   box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
 }
-
-
-/*CONTATO*/
 
 .contato {
   display: flex;
   flex-direction: column;
   align-items: center;
-
   cursor: pointer;
 }
 
 .contato-foto {
   width: 65px;
   height: 65px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 50%;
-
   background: #d9d9d9;
 }
 
@@ -417,19 +558,16 @@ const sair = () => {
 
 .contato p {
   margin: 6px 0 0;
-
   font-size: 0.8rem;
-
   color: #5b0018;
 }
 
 
-/*SAIR*/
+/*sair*/
 
-.sair-container {
+.sair-apagar{
   display: flex;
-  justify-content: center;
-
+  justify-content: space-evenly;
   margin-top: 35px;
 }
 
