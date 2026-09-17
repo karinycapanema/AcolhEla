@@ -238,8 +238,7 @@
         <RouterLink
           to="/capacitar"
           @click="fecharMenu"
-        >
-          Quero me capacitar para acolher
+        > Quero me capacitar para acolher
         </RouterLink>
 
         <RouterLink
