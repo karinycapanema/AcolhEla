@@ -84,7 +84,6 @@
               </p>
             </div>
           </article>
-
           <article class="card-linha">
             <span class="icone"><img src="/img/alvo.png" alt="alvo"></span>
             <div>
