@@ -28,27 +28,27 @@ const router = createRouter({
     },
     {
       path: '/cadastro',
-      name: 'CadastroUsuarioView.vue',
+      name: 'CadastroUsuarioView',
       component: CadastroUsuarioView,
     },
     {
       path: '/login',
-      name: 'LoginView.vue',
+      name: 'LoginView',
       component: LoginView,
     },
     {
       path: '/denuncia',
-      name: 'denunciaView.vue',
+      name: 'denunciaView',
       component: DenunciaView,
     },
     {
       path: '/revisar-denuncia',
-      name: 'denuncia-revisao.vue',
+      name: 'denuncia-revisao',
       component: DenunciaRevisao,
     },
     {
       path: '/denuncia-enviada',
-      name: 'denuncia-sucesso.vue',
+      name: 'denuncia-sucesso',
       component: DenunciaSucesso,
     },
     {
@@ -58,7 +58,7 @@ const router = createRouter({
     },
     {
       path: '/mapa',
-      name: 'Mapa-acolhimento.vue',
+      name: 'Mapa-acolhimento',
       component: MapaView,
     },
     {
