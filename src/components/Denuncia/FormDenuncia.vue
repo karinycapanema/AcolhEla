@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 import AppButton from '../ui/AppButton.vue'
 import UploadArquivos from './UploadArquivos.vue'
 import { useRouter } from 'vue-router'
@@ -29,6 +29,14 @@ const router = useRouter()
     Object.assign(formulario, JSON.parse(dadosSalvos))
   }
 
+watch(
+  formulario,
+  (novosDados) => {
+    localStorage.setItem('denuncia', JSON.stringify(novosDados))
+  },
+  { deep: true }
+)
+
 
  function enviarDenuncia() {
 
@@ -45,12 +53,12 @@ const router = useRouter()
     )
 
     router.push({
-      path: '/cadastro',
-      query: {
-        tipo: 'vitima',
-        redirect: '/denuncia'
-      }
-    })
+    path: '/cadastro',
+    query: {
+    tipo: 'vitima',
+    redirect: '/denuncia'
+  }
+})
 
     return
   }

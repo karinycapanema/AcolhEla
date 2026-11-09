@@ -70,7 +70,7 @@ const editarPerfil = () => {
 }
 
 const mensagens = () => {
-  alert('Área de mensagens.')
+  router.push('/mensagens')
 }
 
 const sair = () => {
@@ -78,7 +78,7 @@ const sair = () => {
   localStorage.removeItem('usuarioLogado')
   localStorage.removeItem('tipoUsuario')
 
-  router.push('/login')
+  router.push('/')
 }
 
 const apagarConta = () => {
