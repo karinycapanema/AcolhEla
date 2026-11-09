@@ -1,13 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 import AppButton from '@/components/ui/AppButton.vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
-
-const route = useRoute()
 const router = useRouter()
-
-const cadastroVitima = route.query.tipo === 'vitima'
+const route = useRoute()
 
 const nome = ref('')
 const email = ref('')
@@ -16,19 +13,12 @@ const senha = ref('')
 const confirmarSenha = ref('')
 const erroSenha = ref('')
 
-const limparFormulario = () => {
-  nome.value = ''
-  email.value = ''
-  telefone.value = ''
-  senha.value = ''
-  confirmarSenha.value = ''
-  erroSenha.value = ''
-}
+
 
 const enviarCadastro = () => {
   if (
-    !nome.value ||
-    !email.value ||
+    !nome.value.trim() ||
+    !email.value.trim() ||
     !telefone.value ||
     !senha.value ||
     !confirmarSenha.value
@@ -43,9 +33,12 @@ const enviarCadastro = () => {
     return
   }
 
-   const telefoneNumeros = telefone.value.replace(/\D/g, '')
+  const telefoneNumeros = telefone.value.replace(/\D/g, '')
 
-  if (telefoneNumeros.length !== 10 && telefoneNumeros.length !== 11) {
+  if (
+    telefoneNumeros.length !== 10 &&
+    telefoneNumeros.length !== 11
+  ) {
     alert('Digite um telefone válido!')
     return
   }
@@ -54,42 +47,29 @@ const enviarCadastro = () => {
     erroSenha.value = 'As senhas não são iguais!'
     return
   }
+
   erroSenha.value = ''
 
   const usuario = {
-  nome: nome.value,
-  email: email.value,
-  telefone: telefone.value,
-  senha: senha.value
+    nome: nome.value,
+    email: email.value,
+    telefone: telefone.value,
+    senha: senha.value
+  }
+
+  localStorage.setItem('usuario', JSON.stringify(usuario))
+  localStorage.setItem('vitima', JSON.stringify(usuario))
+
+  localStorage.setItem('usuarioLogado', 'true')
+  localStorage.setItem('tipoUsuario', 'vitima')
+
+  alert('Cadastro de vítima realizado com sucesso!')
+
+if (route.query.redirect) {
+  router.push(route.query.redirect)
+} else {
+  router.push('/perfil-vitima')
 }
-
-localStorage.setItem('usuario', JSON.stringify(usuario))
-
-if (cadastroVitima) {
-
-  localStorage.setItem(
-    'vitima',
-    JSON.stringify(usuario)
-  )
-
-  localStorage.setItem(
-    'usuarioLogado',
-    'true'
-  )
-
-  localStorage.setItem(
-    'tipoUsuario',
-    'vitima'
-  )
-
-  router.push('/denuncia')
-
-  return
-}
-
-alert('Cadastro realizado com sucesso!')
-
-limparFormulario()
 }
 
 const mostrarSenha = ref(false)
@@ -184,7 +164,8 @@ const formatarTelefone = () => {
 
     <p class="login">
       já tem uma conta?
-      <RouterLink to="/login" class="login-link">Login</RouterLink>
+     <RouterLink 
+     :to="route.query.redirect ? { path: '/login', query: { redirect: route.query.redirect } } : '/login'" class="login-link">Login</RouterLink>
     </p>
   </form>
 </template>

@@ -1,11 +1,12 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter, RouterLink } from 'vue-router'
+import { useRouter, useRoute, RouterLink } from 'vue-router'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 
 const router = useRouter()
+const route = useRoute()
 
 const email = ref('')
 const senha = ref('')
@@ -64,16 +65,19 @@ const fazerLogin = () => {
       localStorage.setItem('usuarioLogado', 'true')
       localStorage.setItem('tipoUsuario', 'vitima')
 
-
-
       localStorage.setItem(
         'vitima',
         JSON.stringify(usuario)
       )
 
-      router.push('/perfil-vitima')
+    if (route.query.redirect) {
+      router.push(route.query.redirect)
+    } else {
+  router.push('/perfil-vitima')
+    }
 
-      return
+  return
+
     }
   }
 
@@ -130,9 +134,9 @@ const fazerLogin = () => {
       </form>
 
       <p class="cadastro">Ainda não tem uma conta?
-        <RouterLink to="/cadastro">
-          Criar conta
-        </RouterLink>
+      <RouterLink
+        :to="route.query.redirect ? { path: '/cadastro', query: { redirect: route.query.redirect } } : '/cadastro'"> Criar conta
+      </RouterLink>
       </p>
 
     </div>

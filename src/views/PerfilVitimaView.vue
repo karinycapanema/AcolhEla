@@ -108,7 +108,7 @@ const sair = () => {
   localStorage.removeItem('usuarioLogado')
   localStorage.removeItem('tipoUsuario')
 
-  router.push('/login')
+  router.push('/')
 }
 
 const apagarConta = () => {
