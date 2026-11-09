@@ -84,34 +84,73 @@
 
     </section>
 
+  <!-- =========================
+     ACOLHEDORA
+========================== -->
 
-    <!-- =========================
-         ACOLHEDORA
-    ========================== -->
+<section
+  v-if="tipoUsuario === 'voluntaria'"
+  class="mensagens-container"
+>
 
-    <section
-      v-if="tipoUsuario === 'voluntaria'"
-      class="mensagens-container"
+  <h2>
+    Suas conversas
+  </h2>
+
+  <div
+    v-if="conversasVoluntaria.length > 0"
+    class="lista-conversas"
+  >
+
+    <button
+      v-for="conversa in conversasVoluntaria"
+      :key="conversa.id"
+      type="button"
+      class="conversa-card"
+      @click="abrirConversa(conversa)"
     >
 
-      <h2>
-        Suas conversas
-      </h2>
+      <div class="conversa-info">
 
+        <strong>
+          {{ conversa.nomeVitima }}
+        </strong>
 
-      <div class="mensagens-vazio">
-
-        <h3>
-          Nenhuma conversa ainda
-        </h3>
-
-        <p>
-          Quando uma vítima iniciar uma conversa com você, ela aparecerá aqui.
-        </p>
+        <span>
+          {{ conversa.mensagens.length > 0
+            ? conversa.mensagens[conversa.mensagens.length - 1].texto
+            : 'Iniciar conversa'
+          }}
+        </span>
 
       </div>
 
-    </section>
+      <FontAwesomeIcon
+        :icon="['fas', 'chevron-right']"
+        class="icone-seta"
+      />
+
+    </button>
+
+  </div>
+
+  <div
+    v-else
+    class="mensagens-vazio"
+  >
+
+    <h3>
+      Nenhuma conversa ainda
+    </h3>
+
+    <p>
+      Quando uma vítima iniciar uma conversa com você,
+      ela aparecerá aqui.
+    </p>
+
+  </div>
+
+</section>
 
 
     <!-- =========================
@@ -138,13 +177,16 @@
 
         <div>
 
-          <h2>
-            {{ conversaSelecionada.nome }}
-          </h2>
+         <h2>
+  {{ tipoUsuario === 'vitima'
+    ? conversaSelecionada.nomeVoluntaria
+    : conversaSelecionada.nomeVitima
+  }}
+</h2>
 
-          <span>
-            Acolhedora
-          </span>
+<span>
+  {{ tipoUsuario === 'vitima' ? 'Acolhedora' : 'Vítima' }}
+</span>
 
         </div>
 
@@ -227,174 +269,209 @@
 </template>
 
 
+
 <script setup>
-
 import { ref, onMounted } from 'vue'
-
 import { useRouter } from 'vue-router'
 
 import AppHeader from '@/components/layout/AppHeader.vue'
-
 import AppFooter from '@/components/layout/AppFooter.vue'
-
 
 const router = useRouter()
 
-
-/* =========================
-   USUÁRIO
-========================= */
-
+// Tipo de usuário conectado
 const tipoUsuario = ref(
   localStorage.getItem('tipoUsuario')
 )
 
-
-/* =========================
-   ACOLHEDORAS
-========================= */
-
+// Dados das pessoas
 const acolhedoras = ref([])
+const conversasVoluntaria = ref([])
 
-
-/* =========================
-   CONVERSA
-========================= */
-
+// Conversa aberta
 const conversaSelecionada = ref(null)
-
 const mensagens = ref([])
-
 const novaMensagem = ref('')
 
+// Chave onde todas as conversas ficam salvas
+const CHAVE_CONVERSAS = 'conversas'
 
-/* =========================
-   CARREGAR DADOS
-========================= */
+// Carregar conversas salvas
+function carregarConversas() {
+  try {
+    return JSON.parse(
+      localStorage.getItem(CHAVE_CONVERSAS) || '[]'
+    )
+  } catch (erro) {
+    console.error('Erro ao carregar conversas:', erro)
+    return []
+  }
+}
 
+// Salvar conversas
+function salvarConversas(conversas) {
+  localStorage.setItem(
+    CHAVE_CONVERSAS,
+    JSON.stringify(conversas)
+  )
+}
+
+// Carregar dados da página
 onMounted(() => {
-
-  const logado =
-    localStorage.getItem('usuarioLogado')
-
-  const tipo =
-    localStorage.getItem('tipoUsuario')
-
+  const logado = localStorage.getItem('usuarioLogado')
+  const tipo = localStorage.getItem('tipoUsuario')
 
   if (
     logado !== 'true' ||
-    (
-      tipo !== 'vitima' &&
-      tipo !== 'voluntaria'
-    )
+    (tipo !== 'vitima' && tipo !== 'voluntaria')
   ) {
-
     router.push('/login')
-
     return
-
   }
 
+  tipoUsuario.value = tipo
 
-  /*
-    Por enquanto estamos usando
-    o cadastro salvo no localStorage
-    para montar a estrutura.
+  const voluntariaSalva = localStorage.getItem('voluntaria')
+  const vitimaSalva = localStorage.getItem('vitima')
 
-    Depois vamos substituir isso
-    pelo banco de dados.
-  */
+  const todasConversas = carregarConversas()
 
-  const voluntariaSalva =
-    localStorage.getItem('voluntaria')
+  // Se for vítima, mostra as voluntárias disponíveis
+  if (tipo === 'vitima') {
+    if (voluntariaSalva) {
+      const voluntaria = JSON.parse(voluntariaSalva)
 
+      acolhedoras.value = [{
+        nome: voluntaria.nome,
+        email: voluntaria.email
+      }]
+    }
+  }
 
-  if (voluntariaSalva) {
-
-    try {
-
-      const voluntaria =
-        JSON.parse(voluntariaSalva)
-
-
-      acolhedoras.value = [
-        {
-          nome: voluntaria.nome,
-          email: voluntaria.email
-        }
-      ]
-
-    } catch (erro) {
-
-      console.error(
-        'Erro ao carregar acolhedora:',
-        erro
-      )
-
+  // Se for voluntária, mostra as conversas recebidas
+  if (tipo === 'voluntaria') {
+    if (!voluntariaSalva) {
+      return
     }
 
-  }
+    const voluntaria = JSON.parse(voluntariaSalva)
 
+    conversasVoluntaria.value = todasConversas.filter(
+      conversa =>
+        conversa.emailVoluntaria === voluntaria.email
+    )
+  }
 })
 
+// Abrir conversa
+function abrirConversa(pessoa) {
+  const voluntariaSalva = localStorage.getItem('voluntaria')
+  const vitimaSalva = localStorage.getItem('vitima')
 
-/* =========================
-   ABRIR CONVERSA
-========================= */
+  const voluntaria = voluntariaSalva
+    ? JSON.parse(voluntariaSalva)
+    : null
 
-function abrirConversa(acolhedora) {
+  const vitima = vitimaSalva
+    ? JSON.parse(vitimaSalva)
+    : null
 
-  conversaSelecionada.value = acolhedora
+  let emailVoluntaria
+  let emailVitima
+  let nomeVoluntaria
+  let nomeVitima
 
-  mensagens.value = []
+  if (tipoUsuario.value === 'vitima') {
+    if (!voluntaria || !vitima) return
 
-}
+    emailVoluntaria = voluntaria.email
+    emailVitima = vitima.email
 
+    nomeVoluntaria = voluntaria.nome
+    nomeVitima = vitima.nome
+  } else {
+    emailVoluntaria = pessoa.emailVoluntaria
+    emailVitima = pessoa.emailVitima
 
-/* =========================
-   FECHAR CONVERSA
-========================= */
-
-function fecharConversa() {
-
-  conversaSelecionada.value = null
-
-  mensagens.value = []
-
-}
-
-
-/* =========================
-   ENVIAR MENSAGEM
-========================= */
-
-function enviarMensagem() {
-
-  const texto =
-    novaMensagem.value.trim()
-
-
-  if (!texto) {
-
-    return
-
+    nomeVoluntaria = pessoa.nomeVoluntaria
+    nomeVitima = pessoa.nomeVitima
   }
 
+  const id = `${emailVitima}_${emailVoluntaria}`
 
-  mensagens.value.push({
+  const todasConversas = carregarConversas()
 
-    remetente: tipoUsuario.value,
+  let conversa = todasConversas.find(
+    item => item.id === id
+  )
 
-    texto: texto
+  // Cria uma conversa caso ainda não exista
+  if (!conversa) {
+    conversa = {
+      id,
+      emailVitima,
+      emailVoluntaria,
+      nomeVitima,
+      nomeVoluntaria,
+      mensagens: []
+    }
 
-  })
+    todasConversas.push(conversa)
+    salvarConversas(todasConversas)
+  }
 
-
-  novaMensagem.value = ''
-
+  conversaSelecionada.value = conversa
+  mensagens.value = [...conversa.mensagens]
 }
 
+// Fechar conversa
+function fecharConversa() {
+  conversaSelecionada.value = null
+  mensagens.value = []
+}
+
+// Enviar mensagem
+function enviarMensagem() {
+  const texto = novaMensagem.value.trim()
+
+  if (!texto || !conversaSelecionada.value) {
+    return
+  }
+
+  const nova = {
+    remetente: tipoUsuario.value,
+    texto,
+    data: new Date().toISOString()
+  }
+
+  const todasConversas = carregarConversas()
+
+  const indice = todasConversas.findIndex(
+    conversa => conversa.id === conversaSelecionada.value.id
+  )
+
+  if (indice === -1) return
+
+  todasConversas[indice].mensagens.push(nova)
+
+  salvarConversas(todasConversas)
+
+  conversaSelecionada.value = todasConversas[indice]
+
+  mensagens.value = [...todasConversas[indice].mensagens]
+
+  // Atualiza a lista da voluntária
+  if (tipoUsuario.value === 'voluntaria') {
+    conversasVoluntaria.value = todasConversas.filter(
+      conversa =>
+        conversa.emailVoluntaria === conversaSelecionada.value.emailVoluntaria
+    )
+  }
+
+  novaMensagem.value = ''
+}
 </script>
+
 
 
 <style scoped>

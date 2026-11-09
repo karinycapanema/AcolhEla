@@ -70,7 +70,7 @@ const editarPerfil = () => {
 }
 
 const mensagens = () => {
-  alert('Área de mensagens.')
+  router.push('/mensagens')
 }
 
 const sair = () => {
