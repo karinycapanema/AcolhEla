@@ -4,6 +4,7 @@ import { useRouter, useRoute, RouterLink } from 'vue-router'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
+import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
@@ -12,8 +13,7 @@ const email = ref('')
 const senha = ref('')
 const erro = ref('')
 
-const fazerLogin = () => {
-
+const fazerLogin = async () => {
   erro.value = ''
 
   if (!email.value || !senha.value) {
@@ -27,63 +27,56 @@ const fazerLogin = () => {
     erro.value = 'Digite um e-mail válido.'
     return
   }
-  // LOGIN DA VOLUNTÁRIA
+
 
   const voluntariaSalva = localStorage.getItem('voluntaria')
 
   if (voluntariaSalva) {
-
     const voluntaria = JSON.parse(voluntariaSalva)
 
     if (
       email.value === voluntaria.email &&
       senha.value === voluntaria.senha
     ) {
-
       localStorage.setItem('usuarioLogado', 'true')
       localStorage.setItem('tipoUsuario', 'voluntaria')
 
       router.push('/perfil-voluntaria')
-
       return
     }
   }
 
-  // LOGIN DA VÍTIMA
+  try {
+    const resposta = await axios.get('http://localhost:3000/vitimas', {
+      params: {
+        email: email.value
+      }
+    })
 
-  const usuarioSalvo = localStorage.getItem('usuario')
+    const usuario = resposta.data.find(
+      vitima => vitima.senha === senha.value
+    )
 
-  if (usuarioSalvo) {
+    if (!usuario) {
+      erro.value = 'E-mail ou senha incorretos.'
+      return
+    }
 
-    const usuario = JSON.parse(usuarioSalvo)
-
-    if (
-      email.value === usuario.email &&
-      senha.value === usuario.senha
-    ) {
-
-      localStorage.setItem('usuarioLogado', 'true')
-      localStorage.setItem('tipoUsuario', 'vitima')
-
-      localStorage.setItem(
-        'vitima',
-        JSON.stringify(usuario)
-      )
+    localStorage.setItem('usuario', JSON.stringify(usuario))
+    localStorage.setItem('vitima', JSON.stringify(usuario))
+    localStorage.setItem('usuarioLogado', 'true')
+    localStorage.setItem('tipoUsuario', 'vitima')
 
     if (route.query.redirect) {
       router.push(route.query.redirect)
     } else {
-  router.push('/perfil-vitima')
+      router.push('/perfil-vitima')
     }
 
-  return
-
-    }
+  } catch (erroApi) {
+    console.error('Erro ao realizar login:', erroApi)
+    erro.value = 'Não foi possível conectar ao servidor. Tente novamente.'
   }
-
-  // LOGIN INVÁLIDO
-
-  erro.value = 'E-mail ou senha incorretos.'
 }
 </script>
 <template>

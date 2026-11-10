@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import axios from 'axios'
 import AppButton from '@/components/ui/AppButton.vue'
 import { useRouter, useRoute } from 'vue-router'
 
@@ -15,61 +16,39 @@ const erroSenha = ref('')
 
 
 
-const enviarCadastro = () => {
-  if (
-    !nome.value.trim() ||
-    !email.value.trim() ||
-    !telefone.value ||
-    !senha.value ||
-    !confirmarSenha.value
-  ) {
-    return
-  }
-
-  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-  if (!emailValido.test(email.value)) {
-    alert('Digite um e-mail válido!')
-    return
-  }
-
-  const telefoneNumeros = telefone.value.replace(/\D/g, '')
-
-  if (
-    telefoneNumeros.length !== 10 &&
-    telefoneNumeros.length !== 11
-  ) {
-    alert('Digite um telefone válido!')
+const enviarCadastro = async () => {
+  if (!nome.value || !email.value || !telefone.value || !senha.value || !confirmarSenha.value) {
+    alert('Preencha todos os campos.')
     return
   }
 
   if (senha.value !== confirmarSenha.value) {
-    erroSenha.value = 'As senhas não são iguais!'
+    alert('As senhas não coincidem.')
     return
   }
 
-  erroSenha.value = ''
+  try {
+    const resposta = await axios.post('http://localhost:3000/vitimas', {
+      nome: nome.value,
+      email: email.value,
+      telefone: telefone.value,
+      senha: senha.value
+    })
 
-  const usuario = {
-    nome: nome.value,
-    email: email.value,
-    telefone: telefone.value,
-    senha: senha.value
+    const usuario = resposta.data
+
+    localStorage.setItem('usuario', JSON.stringify(usuario))
+    localStorage.setItem('vitima', JSON.stringify(usuario))
+    localStorage.setItem('usuarioLogado', 'true')
+    localStorage.setItem('tipoUsuario', 'vitima')
+
+    const destino = route.query.redirect || '/perfil-vitima'
+    router.push(destino)
+
+  } catch (erro) {
+    console.error('Erro ao cadastrar:', erro)
+    alert('Não foi possível realizar o cadastro. Tente novamente.')
   }
-
-  localStorage.setItem('usuario', JSON.stringify(usuario))
-  localStorage.setItem('vitima', JSON.stringify(usuario))
-
-  localStorage.setItem('usuarioLogado', 'true')
-  localStorage.setItem('tipoUsuario', 'vitima')
-
-  alert('Cadastro de vítima realizado com sucesso!')
-
-if (route.query.redirect) {
-  router.push(route.query.redirect)
-} else {
-  router.push('/perfil-vitima')
-}
 }
 
 const mostrarSenha = ref(false)
