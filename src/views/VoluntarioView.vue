@@ -27,14 +27,14 @@ const formulario = reactive({
   mensagem: ''
 })
 
-const enviarCadastro = () => {
 
+const enviarCadastro = async () => {
   if (
-    !formulario.nome ||
-    !formulario.email ||
-    !formulario.telefone ||
-    !formulario.cidade ||
-    !formulario.estado ||
+    !formulario.nome.trim() ||
+    !formulario.email.trim() ||
+    !formulario.telefone.trim() ||
+    !formulario.cidade.trim() ||
+    !formulario.estado.trim() ||
     !formulario.senha ||
     !formulario.confirmarSenha
   ) {
@@ -63,25 +63,38 @@ const enviarCadastro = () => {
     mensagem: formulario.mensagem
   }
 
-  localStorage.setItem(
-  'voluntaria',
-  JSON.stringify(voluntaria)
-)
+  try {
+    const resposta = await fetch('http://localhost:3000/voluntarias', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(voluntaria)
+    })
 
-localStorage.setItem(
-  'usuarioLogado',
-  'true'
-)
+    if (!resposta.ok) {
+      throw new Error('Erro ao cadastrar voluntária.')
+    }
 
-localStorage.setItem(
-  'tipoUsuario',
-  'voluntaria'
-)
+    const voluntariaCadastrada = await resposta.json()
 
-alert('Cadastro de voluntária realizado com sucesso!')
+    localStorage.setItem(
+      'voluntaria',
+      JSON.stringify(voluntariaCadastrada)
+    )
 
-router.push('/perfil-voluntaria')
+    localStorage.setItem('usuarioLogado', 'true')
+    localStorage.setItem('tipoUsuario', 'voluntaria')
+
+    alert('Cadastro de voluntária realizado com sucesso!')
+
+    router.push('/perfil-voluntaria')
+  } catch (erro) {
+    console.error(erro)
+    alert('Não foi possível realizar o cadastro. Verifique se a API está funcionando.')
+  }
 }
+
 </script>
 
 <template>

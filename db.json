@@ -1,0 +1,19 @@
+{
+  "voluntarias": [
+    {
+      "nome": "kariny",
+      "email": "capanemakariny@gmail.com",
+      "telefone": "(47) 99966-5040",
+      "cidade": "joinville",
+      "estado": "Santa Catarina",
+      "senha": "senha123",
+      "ajudas": [
+        "Apoio Emocional",
+        "Abrigo Temporário",
+        "Orientação Jurídica"
+      ],
+      "mensagem": "",
+      "id": 1
+    }
+  ]
+}

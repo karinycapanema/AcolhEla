@@ -45,25 +45,54 @@ function removerCertificado(index) {
   certificados.value[index] = null
 }
 
-onMounted(() => {
 
+onMounted(async () => {
   const logado = localStorage.getItem('usuarioLogado')
   const tipoUsuario = localStorage.getItem('tipoUsuario')
 
-  if (
-    logado !== 'true' ||
-    tipoUsuario !== 'voluntaria'
-  ) {
+  if (logado !== 'true' || tipoUsuario !== 'voluntaria') {
     router.push('/login')
     return
   }
 
   const dados = localStorage.getItem('voluntaria')
 
-  if (dados) {
-    voluntaria.value = JSON.parse(dados)
+  if (!dados) {
+    router.push('/login')
+    return
+  }
+
+  const voluntariaSalva = JSON.parse(dados)
+
+  if (!voluntariaSalva.id) {
+    alert('Não foi possível identificar sua conta.')
+    router.push('/login')
+    return
+  }
+
+  try {
+    const resposta = await fetch(
+      `http://localhost:3000/voluntarias/${voluntariaSalva.id}`
+    )
+
+    if (!resposta.ok) {
+      throw new Error('Erro ao buscar perfil.')
+    }
+
+    const dadosAtualizados = await resposta.json()
+
+    voluntaria.value = dadosAtualizados
+
+    localStorage.setItem(
+      'voluntaria',
+      JSON.stringify(dadosAtualizados)
+    )
+  } catch (erro) {
+    console.error(erro)
+    alert('Não foi possível carregar seu perfil.')
   }
 })
+
 
 const editarPerfil = () => {
   router.push('/editar-perfil')
@@ -81,7 +110,8 @@ const sair = () => {
   router.push('/')
 }
 
-const apagarConta = () => {
+
+const apagarConta = async () => {
   const confirmar = confirm(
     'Tem certeza que deseja apagar sua conta? Essa ação não poderá ser desfeita.'
   )
@@ -90,15 +120,44 @@ const apagarConta = () => {
     return
   }
 
-  localStorage.removeItem('usuario')
-  localStorage.removeItem('voluntaria')
-  localStorage.removeItem('usuarioLogado')
-  localStorage.removeItem('tipoUsuario')
+  if (!voluntaria.value?.id) {
+    alert('Não foi possível identificar sua conta.')
+    return
+  }
 
-  alert('Sua conta foi apagada com sucesso!')
+  try {
+    const resposta = await fetch(
+      `http://localhost:3000/voluntarias/${voluntaria.value.id}`,
+      {
+        method: 'DELETE'
+      }
+    )
 
-  router.push('/')
+    if (!resposta.ok) {
+      throw new Error('Erro ao excluir conta.')
+    }
+
+    const usuarioGenerico = JSON.parse(
+      localStorage.getItem('usuario') || 'null'
+    )
+
+    if (usuarioGenerico?.email === voluntaria.value.email) {
+      localStorage.removeItem('usuario')
+    }
+
+    localStorage.removeItem('voluntaria')
+    localStorage.removeItem('usuarioLogado')
+    localStorage.removeItem('tipoUsuario')
+
+    alert('Sua conta foi apagada com sucesso!')
+
+    router.push('/')
+  } catch (erro) {
+    console.error(erro)
+    alert('Não foi possível apagar sua conta.')
+  }
 }
+
 </script>
 
 <template>

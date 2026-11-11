@@ -12,8 +12,8 @@ const email = ref('')
 const senha = ref('')
 const erro = ref('')
 
-const fazerLogin = () => {
 
+const fazerLogin = async () => {
   erro.value = ''
 
   if (!email.value || !senha.value) {
@@ -27,41 +27,52 @@ const fazerLogin = () => {
     erro.value = 'Digite um e-mail válido.'
     return
   }
-  // LOGIN DA VOLUNTÁRIA
 
-  const voluntariaSalva = localStorage.getItem('voluntaria')
+  let erroApi = false
 
-  if (voluntariaSalva) {
+  //voluntaria
+    try {
+    const resposta = await fetch(
+      `http://localhost:3000/voluntarias?email=${encodeURIComponent(email.value)}`
+    )
 
-    const voluntaria = JSON.parse(voluntariaSalva)
+    if (!resposta.ok) {
+      throw new Error('Erro ao consultar voluntárias.')
+    }
 
-    if (
-      email.value === voluntaria.email &&
-      senha.value === voluntaria.senha
-    ) {
+    const voluntarias = await resposta.json()
+
+    const voluntaria = voluntarias.find(
+      item => item.senha === senha.value
+    )
+
+    if (voluntaria) {
+      localStorage.setItem(
+        'voluntaria',
+        JSON.stringify(voluntaria)
+      )
 
       localStorage.setItem('usuarioLogado', 'true')
       localStorage.setItem('tipoUsuario', 'voluntaria')
 
       router.push('/perfil-voluntaria')
-
       return
     }
+  } catch (erro) {
+    console.error(erro)
+    erroApi = true
   }
 
-  // LOGIN DA VÍTIMA
-
+  //vitima
   const usuarioSalvo = localStorage.getItem('usuario')
 
   if (usuarioSalvo) {
-
     const usuario = JSON.parse(usuarioSalvo)
 
     if (
       email.value === usuario.email &&
       senha.value === usuario.senha
     ) {
-
       localStorage.setItem('usuarioLogado', 'true')
       localStorage.setItem('tipoUsuario', 'vitima')
 
@@ -70,21 +81,23 @@ const fazerLogin = () => {
         JSON.stringify(usuario)
       )
 
-    if (route.query.redirect) {
-      router.push(route.query.redirect)
-    } else {
-  router.push('/perfil-vitima')
-    }
+      if (route.query.redirect) {
+        router.push(route.query.redirect)
+      } else {
+        router.push('/perfil-vitima')
+      }
 
-  return
-
+      return
     }
   }
 
-  // LOGIN INVÁLIDO
-
-  erro.value = 'E-mail ou senha incorretos.'
+  if (erroApi) {
+    erro.value = 'Não foi possível conectar à API. Tente novamente.'
+  } else {
+    erro.value = 'E-mail ou senha incorretos.'
+  }
 }
+
 </script>
 <template>
   <header>
