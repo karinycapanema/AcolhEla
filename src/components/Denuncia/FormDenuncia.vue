@@ -99,7 +99,7 @@ watch(
     JSON.stringify(formulario)
   )
 
-  window.location.href = '/revisar-denuncia'
+  router.push('/revisar-denuncia')
 }
 
 </script>
