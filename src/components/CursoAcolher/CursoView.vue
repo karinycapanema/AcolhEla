@@ -1,198 +1,152 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import AppHeader from '../layout/AppHeader.vue'
 import AppFooter from '../layout/AppFooter.vue'
 
+/* ---------- USUÁRIO LOGADO ----------
+   Lê do localStorage, na chave "usuario", algo como { "id": 7, "tipo": "admin" }.
+   Só quem tem tipo "admin" vê o botão de gerenciar módulos.
+   Se o login de vocês guarda de outro jeito, ajuste só esta função. */
+function getUsuario() {
+  try {
+    const u = JSON.parse(localStorage.getItem('usuario'))
+    return u && u.id ? u : null
+  } catch {
+    return null
+  }
+}
+const usuario = getUsuario()
+const ehAdmin = usuario?.tipo === 'admin'
 
+// telas: 'inicio' | 'curso' | 'final' | 'admin' | 'form'
 const tela = ref('inicio')
-const aula = ref(0)          
+const aula = ref(0)
 const nome = ref('')
-const respostas = ref([])
+const respostas = ref([]) // uma resposta por módulo (null = ainda não respondeu)
 
-const aulas = [
+/* ---------- DADOS ----------
+   Começam com os módulos abaixo. Depois que o admin cadastra, edita ou exclui,
+   tudo fica salvo no navegador (localStorage). */
+const modulosIniciais = [
   {
+    id: 1,
     titulo: 'Entendendo a violência',
     resumo: 'Aprenda a reconhecer os diferentes tipos de violência e como eles podem aparecer no dia a dia.',
+    texto: 'Violência é qualquer ação ou comportamento que cause dano, sofrimento, medo, constrangimento ou prejuízo a outra pessoa.\nA violência pode ser física, psicológica, sexual, moral ou patrimonial. Uma situação pode envolver mais de um tipo.',
     dica: 'A violência não acontece somente de forma física. Comportamentos psicológicos, morais, sexuais e patrimoniais também podem causar danos.',
-    conteudo: [
-      {
-        titulo: 'O que é violência?',
-        texto: 'Violência é qualquer ação ou comportamento que cause dano, sofrimento, medo, constrangimento ou prejuízo a outra pessoa.'
-      },
-      {
-        titulo: 'Tipos de violência',
-        texto: 'A violência pode ser física, psicológica, sexual, moral ou patrimonial. Uma situação pode envolver mais de um tipo.'
-      }
-    ],
-    perguntas: [
-      {
-        pergunta: 'Uma pessoa constantemente humilha outra, ameaça deixá-la e tenta controlar suas amizades. De acordo com conteúdo apresentado anteriormente, esse comportamento pode ser considerado:',
-        opcoes: ['Violência psicológica', 'Apenas uma discussão comum', 'Uma demonstração de carinho'],
-        correta: 0,
-        explicacao: 'Humilhações, ameaças e controle podem caracterizar violência psicológica.'
-      },
-      {
-        pergunta: 'De acordo com o conteúdo apresentado, qual afirmação está correta?',
-        opcoes: ['Somente agressões físicas são violência.', 'Existem diferentes formas de violência.', 'Violência acontece somente dentro de casa.'],
-        correta: 1,
-        explicacao: 'A violência pode ocorrer de diferentes formas e em diferentes contextos.'
-      }
-    ]
+    pergunta: 'Uma pessoa constantemente humilha outra, ameaça deixá-la e tenta controlar suas amizades. Esse comportamento pode ser considerado:',
+    opcao1: 'Violência psicológica',
+    opcao2: 'Apenas uma discussão comum',
+    opcao3: 'Uma demonstração de carinho',
+    correta: 0,
+    explicacao: 'Humilhações, ameaças e controle podem caracterizar violência psicológica.'
   },
   {
+    id: 2,
     titulo: 'Reconhecendo situações de risco',
     resumo: 'Aprenda a identificar comportamentos que podem indicar uma situação de risco ou abuso.',
+    texto: 'Ameaças, perseguição, isolamento, controle excessivo e invasão de privacidade podem indicar uma situação de risco.\nControlar amizades, roupas, redes sociais, localização ou exigir senhas pode representar uma tentativa de controlar outra pessoa.',
     dica: 'A responsabilidade pela violência nunca é da vítima.',
-    conteudo: [
-      {
-        titulo: 'Sinais de alerta',
-        texto: 'Ameaças, perseguição, isolamento, controle excessivo e invasão de privacidade podem indicar uma situação de risco.'
-      },
-      {
-        titulo: 'Controle também importa',
-        texto: 'Controlar amizades, roupas, redes sociais, localização ou exigir senhas pode representar uma tentativa de controlar outra pessoa.'
-      }
-    ],
-    perguntas: [
-      {
-        pergunta: 'Uma pessoa exige a senha das redes sociais da parceira e fica irritada quando ela conversa com amigos. Segundo o assunto, esse comportamento pode indicar:',
-        opcoes: ['Controle excessivo', 'Comunicação saudável', 'Respeito à privacidade'],
-        correta: 0,
-        explicacao: 'Exigir senhas e controlar amizades são exemplos de comportamentos de controle.'
-      },
-      {
-        pergunta: 'Qual das situações apresentadas representa um sinal de alerta?',
-        opcoes: ['Respeitar os limites da outra pessoa.', 'Perseguir alguém após ela pedir para ser deixada em paz.', 'Conversar sobre problemas de maneira respeitosa.'],
-        correta: 1,
-        explicacao: 'A perseguição pode representar uma situação de risco.'
-      }
-    ]
+    pergunta: 'Uma pessoa exige a senha das redes sociais da parceira e fica irritada quando ela conversa com amigos. Esse comportamento pode indicar:',
+    opcao1: 'Controle excessivo',
+    opcao2: 'Comunicação saudável',
+    opcao3: 'Respeito à privacidade',
+    correta: 0,
+    explicacao: 'Exigir senhas e controlar amizades são exemplos de comportamentos de controle.'
   },
   {
+    id: 3,
     titulo: 'Meus direitos',
     resumo: 'Conheça informações básicas sobre direitos e mecanismos de proteção.',
+    texto: 'A Lei Maria da Penha estabelece mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.\nExistem mecanismos legais destinados à proteção de mulheres em situação de violência.',
     dica: 'Conhecer seus direitos permite buscar orientação e proteção com mais informação.',
-    conteudo: [
-      {
-        titulo: 'Lei Maria da Penha',
-        texto: 'A Lei Maria da Penha estabelece mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.'
-      },
-      {
-        titulo: 'Medidas de proteção',
-        texto: 'Existem mecanismos legais destinados à proteção de mulheres em situação de violência.'
-      }
-    ],
-    perguntas: [
-      {
-        pergunta: 'Segundo o assunto, qual é um dos objetivos da Lei Maria da Penha?',
-        opcoes: ['Prevenir e combater a violência doméstica e familiar contra a mulher.', 'Regular o uso das redes sociais.', 'Criar regras para relacionamentos.'],
-        correta: 0,
-        explicacao: 'A Lei Maria da Penha possui mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.'
-      },
-      {
-        pergunta: 'Por que conhecer os próprios direitos pode ser importante em uma situação de violência?',
-        opcoes: ['Porque permite conhecer possibilidades de proteção e apoio.', 'Porque elimina automaticamente todos os problemas.', 'Porque impede a busca por ajuda.'],
-        correta: 0,
-        explicacao: 'Conhecer os direitos ajuda a compreender possibilidades de proteção e orientação.'
-      }
-    ]
+    pergunta: 'Qual é um dos objetivos da Lei Maria da Penha?',
+    opcao1: 'Prevenir e combater a violência doméstica e familiar contra a mulher.',
+    opcao2: 'Regular o uso das redes sociais.',
+    opcao3: 'Criar regras para relacionamentos.',
+    correta: 0,
+    explicacao: 'A Lei Maria da Penha possui mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.'
   },
   {
+    id: 4,
     titulo: 'Autodefesa e segurança',
     resumo: 'Aprenda princípios de prevenção e planejamento para situações de risco.',
+    texto: 'Reconhecer situações de risco e pensar previamente em formas seguras de buscar ajuda pode fazer parte de um plano de segurança.\nUm plano pode envolver pessoas de confiança, lugares seguros, contatos importantes e estratégias para buscar ajuda.',
     dica: 'Autodefesa também envolve prevenção, percepção de riscos e planejamento. Em situações perigosas, priorize sua segurança.',
-    conteudo: [
-      {
-        titulo: 'Prevenção',
-        texto: 'Reconhecer situações de risco e pensar previamente em formas seguras de buscar ajuda pode fazer parte de um plano de segurança.'
-      },
-      {
-        titulo: 'Plano de segurança',
-        texto: 'Um plano pode envolver pessoas de confiança, lugares seguros, contatos importantes e estratégias para buscar ajuda.'
-      }
-    ],
-    perguntas: [
-      {
-        pergunta: 'Uma pessoa percebe que está em uma situação de risco. Qual atitude deve ser tomada!?',
-        opcoes: ['Planejar formas seguras de buscar ajuda.', 'Se colocar deliberadamente em maior perigo.', 'Ignorar todos os sinais de risco.'],
-        correta: 0,
-        explicacao: 'Planejar formas seguras de buscar ajuda pode fazer parte de um plano de segurança.'
-      },
-      {
-        pergunta: 'Qual elemento pode fazer parte de um plano de segurança?',
-        opcoes: ['Pessoas de confiança e lugares seguros.', 'Isolamento completo.', 'Compartilhar senhas com qualquer pessoa.'],
-        correta: 0,
-        explicacao: 'Pessoas de confiança e lugares seguros podem fazer parte de um planejamento de segurança.'
-      }
-    ]
+    pergunta: 'Qual elemento pode fazer parte de um plano de segurança?',
+    opcao1: 'Pessoas de confiança e lugares seguros.',
+    opcao2: 'Isolamento completo.',
+    opcao3: 'Compartilhar senhas com qualquer pessoa.',
+    correta: 0,
+    explicacao: 'Pessoas de confiança e lugares seguros podem fazer parte de um planejamento de segurança.'
   },
   {
+    id: 5,
     titulo: 'Rede de apoio',
     resumo: 'Entenda como pessoas e serviços podem ajudar em situações de violência.',
+    texto: 'Uma rede de apoio pode ser formada por familiares, amigos, professores, profissionais e outras pessoas de confiança.\nConversar com alguém de confiança e procurar serviços especializados pode ser um caminho para obter orientação e apoio.',
     dica: 'Buscar ajuda não é sinal de fraqueza. Uma rede de apoio pode ajudar a encontrar caminhos de proteção.',
-    conteudo: [
-      {
-        titulo: 'O que é uma rede de apoio?',
-        texto: 'Pode ser formada por familiares, amigos, professores, profissionais e outras pessoas de confiança.'
-      },
-      {
-        titulo: 'Buscar ajuda',
-        texto: 'Conversar com alguém de confiança e procurar serviços especializados pode ser um caminho para obter orientação e apoio.'
-      }
-    ],
-    perguntas: [
-      {
-        pergunta: 'De acordo com o assunto, quem pode fazer parte de uma rede de apoio?',
-        opcoes: ['Somente familiares.', 'Pessoas de confiança, como amigos, familiares ou profissionais.', 'Somente pessoas que já passaram pela mesma situação.'],
-        correta: 1,
-        explicacao: 'Uma rede de apoio pode envolver diferentes pessoas de confiança.'
-      },
-      {
-        pergunta: 'Qual atitude está de acordo com o conteúdo apresentado?',
-        opcoes: ['Buscar uma pessoa de confiança quando precisar de apoio.', 'Se isolar completamente.', 'Ignorar uma situação que causa medo.'],
-        correta: 0,
-        explicacao: 'Buscar uma pessoa de confiança pode ser um primeiro passo para encontrar apoio.'
-      }
-    ]
+    pergunta: 'Quem pode fazer parte de uma rede de apoio?',
+    opcao1: 'Somente familiares.',
+    opcao2: 'Pessoas de confiança, como amigos, familiares ou profissionais.',
+    opcao3: 'Somente pessoas que já passaram pela mesma situação.',
+    correta: 1,
+    explicacao: 'Uma rede de apoio pode envolver diferentes pessoas de confiança.'
   }
 ]
 
-respostas.value = aulas.map(a => a.perguntas.map(() => null))
+const CHAVE = 'acolhela_modulos'
 
+function lerSalvos() {
+  try {
+    const salvo = localStorage.getItem(CHAVE)
+    return salvo ? JSON.parse(salvo) : modulosIniciais
+  } catch {
+    return modulosIniciais
+  }
+}
 
-const progresso = computed(() => ((aula.value + 1) / aulas.length) * 100)
+const modulos = ref(lerSalvos())
 
-const podeContinuar = computed(() => {
-  return respostas.value[aula.value].every(
-    (resposta, index) => resposta === aulas[aula.value].perguntas[index].correta
-  )
-})
+function guardar() {
+  localStorage.setItem(CHAVE, JSON.stringify(modulos.value))
+}
 
-const totalPerguntas = computed(() =>
-  aulas.reduce((total, a) => total + a.perguntas.length, 0)
+// junta as 3 opções numa lista, que é o formato que a tela do curso usa
+const aulas = computed(() =>
+  modulos.value.map((m) => ({ ...m, opcoes: [m.opcao1, m.opcao2, m.opcao3] }))
 )
 
+/* ---------- NAVEGAÇÃO DO CURSO ---------- */
+const progresso = computed(() =>
+  aulas.value.length ? ((aula.value + 1) / aulas.value.length) * 100 : 0
+)
+
+const podeContinuar = computed(() => {
+  const atual = aulas.value[aula.value]
+  return atual && respostas.value[aula.value] === atual.correta
+})
 
 function iniciar() {
+  respostas.value = aulas.value.map(() => null)
   tela.value = 'curso'
   aula.value = 0
   window.scrollTo(0, 0)
 }
 
-function responder(pergunta, opcao) {
-  respostas.value[aula.value][pergunta] = opcao
+function responder(opcao) {
+  respostas.value[aula.value] = opcao
 }
 
 function proxima() {
   if (!podeContinuar.value) return
 
-  if (aula.value < aulas.length - 1) {
+  if (aula.value < aulas.value.length - 1) {
     aula.value++
-    window.scrollTo(0, 0)
   } else {
     tela.value = 'final'
-    window.scrollTo(0, 0)
   }
+  window.scrollTo(0, 0)
 }
 
 function imprimir() {
@@ -202,15 +156,68 @@ function imprimir() {
   }
   window.print()
 }
+
+/* ---------- ADMIN: CADASTRAR / EDITAR / EXCLUIR ---------- */
+const moduloVazio = () => ({
+  id: null,
+  titulo: '',
+  resumo: '',
+  texto: '',
+  dica: '',
+  pergunta: '',
+  opcao1: '',
+  opcao2: '',
+  opcao3: '',
+  correta: 0,
+  explicacao: ''
+})
+const moduloForm = reactive(moduloVazio())
+const erroForm = ref('')
+
+function novoModulo() {
+  Object.assign(moduloForm, moduloVazio())
+  erroForm.value = ''
+  tela.value = 'form'
+}
+
+function editarModulo(modulo) {
+  Object.assign(moduloForm, modulo)
+  erroForm.value = ''
+  tela.value = 'form'
+}
+
+function salvarModulo() {
+  const campos = ['titulo', 'resumo', 'texto', 'dica', 'pergunta', 'opcao1', 'opcao2', 'opcao3', 'explicacao']
+  if (campos.some((c) => !String(moduloForm[c]).trim())) {
+    erroForm.value = 'Preencha todos os campos.'
+    return
+  }
+
+  if (moduloForm.id) {
+    // EDITAR
+    modulos.value = modulos.value.map((m) =>
+      m.id === moduloForm.id ? { ...moduloForm } : m
+    )
+  } else {
+    // CADASTRAR
+    modulos.value = [...modulos.value, { ...moduloForm, id: Date.now() }]
+  }
+
+  guardar()
+  tela.value = 'admin'
+}
+
+function excluirModulo(modulo) {
+  if (!confirm(`Excluir o módulo "${modulo.titulo}"?`)) return
+  modulos.value = modulos.value.filter((m) => m.id !== modulo.id)
+  guardar()
+}
 </script>
 
-
- <template>
-
+<template>
   <AppHeader />
 
   <div class="curso">
-
     <!-- INÍCIO -->
     <div v-if="tela === 'inicio'">
       <section class="inicio">
@@ -221,7 +228,8 @@ function imprimir() {
             Aprenda sobre violência, direitos, autodefesa,
             segurança e rede de apoio.
           </p>
-          <button @click="iniciar">Começar curso</button>
+          <button v-if="aulas.length" @click="iniciar">Começar curso</button>
+          <button v-if="ehAdmin" class="secundario" @click="tela = 'admin'">Gerenciar módulos</button>
         </div>
       </section>
 
@@ -237,7 +245,7 @@ function imprimir() {
             <span>Módulos</span>
           </div>
           <div>
-            <strong>{{ totalPerguntas }}</strong>
+            <strong>{{ aulas.length }}</strong>
             <span>Perguntas</span>
           </div>
           <div>
@@ -250,11 +258,7 @@ function imprimir() {
       <section class="aulas">
         <h2>Conteúdo do curso</h2>
         <div class="lista-aulas">
-          <div
-            v-for="(aulaItem, index) in aulas"
-            :key="index"
-            class="card-aula"
-          >
+          <div v-for="(aulaItem, index) in aulas" :key="aulaItem.id" class="card-aula">
             <span>0{{ index + 1 }}</span>
             <div>
               <h3>{{ aulaItem.titulo }}</h3>
@@ -264,7 +268,7 @@ function imprimir() {
         </div>
       </section>
 
-      <section class="final-inicio">
+      <section v-if="aulas.length" class="final-inicio">
         <h2>Vamos começar?</h2>
         <button @click="iniciar">Começar agora</button>
       </section>
@@ -285,75 +289,56 @@ function imprimir() {
         <h1>{{ aulas[aula].titulo }}</h1>
         <p class="introducao">{{ aulas[aula].resumo }}</p>
 
-       
-        
-  
         <section class="conteudo-modulo">
-          <div
-            v-for="(parte, index) in aulas[aula].conteudo"
-            :key="index"
-            class="parte"
-          >
-            <h2>{{ parte.titulo }}</h2>
-            <p>{{ parte.texto }}</p>
+          <div class="parte">
+            <p class="texto-modulo">{{ aulas[aula].texto }}</p>
           </div>
-
 
           <div class="importante">
             <h3>Importante</h3>
             <p>{{ aulas[aula].dica }}</p>
           </div>
 
-
           <div class="atividade">
             <h2>Questionário</h2>
             <p class="instrucao">
-              Responda às perguntas com base no conteúdo
-              apresentado anteriormente.
+              Responda à pergunta com base no conteúdo apresentado anteriormente.
             </p>
 
-            <div
-              v-for="(pergunta, index) in aulas[aula].perguntas"
-              :key="index"
-              class="pergunta"
-            >
-              <h3>{{ index + 1 }}. {{ pergunta.pergunta }}</h3>
+            <div class="pergunta">
+              <h3>{{ aulas[aula].pergunta }}</h3>
 
               <button
-                v-for="(opcao, i) in pergunta.opcoes"
+                v-for="(opcao, i) in aulas[aula].opcoes"
                 :key="i"
                 class="opcao"
                 :class="{
-                  correta: respostas[aula][index] === i && i === pergunta.correta,
-                  incorreta: respostas[aula][index] === i && i !== pergunta.correta
+                  correta: respostas[aula] === i && i === aulas[aula].correta,
+                  incorreta: respostas[aula] === i && i !== aulas[aula].correta
                 }"
-                @click="responder(index, i)"
+                @click="responder(i)"
               >
                 {{ opcao }}
               </button>
 
-              <p v-if="respostas[aula][index] !== null" class="resultado">
+              <p v-if="respostas[aula] !== null" class="resultado">
                 {{
-                  respostas[aula][index] === pergunta.correta
-                    ? '✓ ' + pergunta.explicacao
+                  respostas[aula] === aulas[aula].correta
+                    ? '✓ ' + aulas[aula].explicacao
                     : '✕ Tente novamente!'
                 }}
               </p>
             </div>
           </div>
 
-  
-          <button
-            class="proxima"
-            :disabled="!podeContinuar"
-            @click="proxima"
-          >
+          <button class="proxima" :disabled="!podeContinuar" @click="proxima">
             {{ aula === aulas.length - 1 ? 'Concluir curso' : 'Próximo módulo →' }}
           </button>
         </section>
       </main>
     </div>
 
+    <!-- FINAL -->
     <div v-if="tela === 'final'" class="conclusao">
       <div class="icone">✓</div>
       <h1>Curso concluído!</h1>
@@ -367,12 +352,61 @@ function imprimir() {
       </div>
     </div>
 
+    <!-- ADMIN: LISTA -->
+    <div v-if="tela === 'admin' && ehAdmin" class="admin">
+      <div class="topo-aula">
+        <button class="voltar" @click="tela = 'inicio'">← Voltar</button>
+        <button @click="novoModulo">+ Novo módulo</button>
+      </div>
+
+      <h1>Gerenciar módulos</h1>
+
+      <div v-for="m in modulos" :key="m.id" class="linha-admin">
+        <h3>{{ m.titulo }}</h3>
+        <div class="botoes-admin">
+          <button class="secundario" @click="editarModulo(m)">Editar</button>
+          <button class="perigo" @click="excluirModulo(m)">Excluir</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN: FORMULÁRIO -->
+    <div v-if="tela === 'form' && ehAdmin" class="admin">
+      <div class="topo-aula">
+        <button class="voltar" @click="tela = 'admin'">← Cancelar</button>
+      </div>
+
+      <h1>{{ moduloForm.id ? 'Editar módulo' : 'Novo módulo' }}</h1>
+
+      <form class="form-modulo" @submit.prevent="salvarModulo">
+        <label>Título <input v-model="moduloForm.titulo" type="text" /></label>
+        <label>Resumo <textarea v-model="moduloForm.resumo" rows="2"></textarea></label>
+        <label>Texto do módulo <textarea v-model="moduloForm.texto" rows="5"></textarea></label>
+        <label>Dica (caixa "Importante") <textarea v-model="moduloForm.dica" rows="2"></textarea></label>
+
+        <label>Pergunta <textarea v-model="moduloForm.pergunta" rows="2"></textarea></label>
+        <label>Opção 1 <input v-model="moduloForm.opcao1" type="text" /></label>
+        <label>Opção 2 <input v-model="moduloForm.opcao2" type="text" /></label>
+        <label>Opção 3 <input v-model="moduloForm.opcao3" type="text" /></label>
+        <label>
+          Qual é a opção correta?
+          <select v-model.number="moduloForm.correta">
+            <option :value="0">Opção 1</option>
+            <option :value="1">Opção 2</option>
+            <option :value="2">Opção 3</option>
+          </select>
+        </label>
+        <label>Explicação da resposta <textarea v-model="moduloForm.explicacao" rows="2"></textarea></label>
+
+        <p v-if="erroForm" class="erro-form">{{ erroForm }}</p>
+
+        <button type="submit">Salvar módulo</button>
+      </form>
+    </div>
   </div>
 
-    <AppFooter />
-    
+  <AppFooter />
 </template>
-
 
 <style scoped>
 * {
@@ -407,7 +441,6 @@ button:hover {
   border: none;
 }
 
-/* INÍCIO */
 .inicio {
   max-width: 1000px;
   margin: auto;
@@ -434,7 +467,6 @@ button:hover {
   margin-top: 20px;
 }
 
-/* SOBRE */
 .sobre {
   max-width: 850px;
   margin: auto;
@@ -465,7 +497,6 @@ button:hover {
   color: #8e2842;
 }
 
-/* AULAS */
 .aulas {
   max-width: 850px;
   margin: auto;
@@ -506,7 +537,6 @@ button:hover {
   color: #4A0011;
 }
 
-/* FINAL DA PÁGINA */
 .final-inicio {
   max-width: 600px;
   margin: 50px auto 80px;
@@ -524,7 +554,6 @@ button:hover {
   margin: 9px 0 9px 0;
 }
 
-/* CURSO */
 .pagina-aula {
   min-height: 100vh;
   padding-bottom: 70px;
@@ -570,7 +599,6 @@ button:hover {
   font-size: 17px;
 }
 
-/* CONTEÚDO */
 .parte {
   margin-bottom: 30px;
 }
@@ -591,7 +619,6 @@ button:hover {
   color: #620017;
 }
 
-/* QUESTIONÁRIO */
 .atividade {
   margin-top: 45px;
   padding: 35px 40px;
@@ -662,7 +689,6 @@ button:hover {
   cursor: not-allowed;
 }
 
-/* CONCLUSÃO */
 .conclusao {
   max-width: 700px;
   margin: auto;
@@ -742,4 +768,98 @@ button:hover {
     width: 90%;
   }
 }
-</style>  
+
+
+.texto-modulo {
+  white-space: pre-line; /* respeita a quebra de linha digitada no texto */
+  font-size: 16px;
+}
+
+button.secundario {
+  background: #F5D0D0;
+  color: #4A0011;
+}
+
+button.perigo {
+  background: #B81833;
+}
+
+.inicio-texto button + button {
+  margin-left: 12px;
+}
+
+.admin {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px 30px 70px;
+}
+
+.admin > h1 {
+  font-size: 40px;
+  color: #620017;
+}
+
+.linha-admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 12px;
+  padding: 16px 20px;
+  background: #FEB9CD;
+  border: 1px solid #e2728e;
+  border-radius: 10px;
+}
+
+.linha-admin h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #4A0011;
+}
+
+.botoes-admin {
+  display: flex;
+  gap: 8px;
+}
+
+.botoes-admin button {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.form-modulo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-modulo label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #4A0011;
+}
+
+.form-modulo input,
+.form-modulo textarea,
+.form-modulo select {
+  padding: 10px 12px;
+  border: 1px solid #d8c7cb;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  background: white;
+}
+
+.form-modulo .erro-form {
+  margin: 0;
+  color: #B81833;
+  font-weight: bold;
+}
+
+.form-modulo button[type='submit'] {
+  align-self: center;
+}
+</style>
