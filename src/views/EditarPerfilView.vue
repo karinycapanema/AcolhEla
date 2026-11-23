@@ -2,6 +2,7 @@
 import AppFooter from '@/components/layout/AppFooter.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -111,26 +112,34 @@ const salvarPerfil = async () => {
     ajudas: ajudas.value
   }
 
-  if (tipoUsuario.value === 'vitima') {
-    localStorage.setItem(
-      'vitima',
-      JSON.stringify(dadosAtualizados)
-    )
+  try {
+    if (tipoUsuario.value === 'vitima') {
+      const dadosAntigos = JSON.parse(
+        localStorage.getItem('vitima')
+      )
 
-    localStorage.setItem(
-      'usuario',
-      JSON.stringify(dadosAtualizados)
-    )
-  }
+      if (!dadosAntigos || !dadosAntigos.id) {
+        alert('Não foi possível identificar sua conta.')
+        return
+      }
 
-  if (tipoUsuario.value === 'voluntaria') {
-    const dadosAntigos = JSON.parse(
-      localStorage.getItem('voluntaria')
-    ) || {}
+      const resposta = await axios.put(
+        `http://localhost:3000/vitimas/${dadosAntigos.id}`,
+        {
+          ...dadosAntigos,
+          ...dadosAtualizados
+        }
+      )
 
-    const voluntariaAtualizada = {
-      ...dadosAntigos,
-      ...dadosAtualizados
+      localStorage.setItem(
+        'vitima',
+        JSON.stringify(resposta.data)
+      )
+
+      localStorage.setItem(
+        'usuario',
+        JSON.stringify(resposta.data)
+      )
     }
 
     try {
@@ -167,12 +176,38 @@ const salvarPerfil = async () => {
     }
   }
 
-  alert('Perfil atualizado com sucesso!')
+    if (tipoUsuario.value === 'voluntaria') {
+      const dadosAntigos = JSON.parse(
+        localStorage.getItem('voluntaria')
+      ) || {}
 
-  if (tipoUsuario.value === 'vitima') {
-    router.push('/perfil-vitima')
-  } else {
-    router.push('/perfil-voluntaria')
+      const voluntariaAtualizada = {
+        ...dadosAntigos,
+        ...dadosAtualizados
+      }
+
+      localStorage.setItem(
+        'voluntaria',
+        JSON.stringify(voluntariaAtualizada)
+      )
+
+      localStorage.setItem(
+        'usuario',
+        JSON.stringify(voluntariaAtualizada)
+      )
+    }
+
+    alert('Perfil atualizado com sucesso!')
+
+    if (tipoUsuario.value === 'vitima') {
+      router.push('/perfil-vitima')
+    } else {
+      router.push('/perfil-voluntaria')
+    }
+
+  } catch (erro) {
+    console.error('Erro ao atualizar perfil:', erro)
+    alert('Não foi possível atualizar seu perfil. Tente novamente.')
   }
 }
 

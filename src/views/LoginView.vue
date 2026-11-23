@@ -4,6 +4,7 @@ import { useRouter, useRoute, RouterLink } from 'vue-router'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
+import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
@@ -75,11 +76,26 @@ const fazerLogin = async () => {
     ) {
       localStorage.setItem('usuarioLogado', 'true')
       localStorage.setItem('tipoUsuario', 'vitima')
+  try {
+    const resposta = await axios.get('http://localhost:3000/vitimas', {
+      params: {
+        email: email.value
+      }
+    })
 
-      localStorage.setItem(
-        'vitima',
-        JSON.stringify(usuario)
-      )
+    const usuario = resposta.data.find(
+      vitima => vitima.senha === senha.value
+    )
+
+    if (!usuario) {
+      erro.value = 'E-mail ou senha incorretos.'
+      return
+    }
+
+    localStorage.setItem('usuario', JSON.stringify(usuario))
+    localStorage.setItem('vitima', JSON.stringify(usuario))
+    localStorage.setItem('usuarioLogado', 'true')
+    localStorage.setItem('tipoUsuario', 'vitima')
 
       if (route.query.redirect) {
         router.push(route.query.redirect)
@@ -95,6 +111,16 @@ const fazerLogin = async () => {
     erro.value = 'Não foi possível conectar à API. Tente novamente.'
   } else {
     erro.value = 'E-mail ou senha incorretos.'
+  }
+    if (route.query.redirect) {
+      router.push(route.query.redirect)
+    } else {
+      router.push('/perfil-vitima')
+    }
+
+  } catch (erroApi) {
+    console.error('Erro ao realizar login:', erroApi)
+    erro.value = 'Não foi possível conectar ao servidor. Tente novamente.'
   }
 }
 

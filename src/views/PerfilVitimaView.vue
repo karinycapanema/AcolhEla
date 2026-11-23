@@ -5,6 +5,7 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios'
 
 const iconeExcluir = faTrash
 
@@ -20,36 +21,46 @@ const contatos = ref([
   { nome: 'Fulana' }
 ])
 
-onMounted(() => {
-
+onMounted(async () => {
   const logado = localStorage.getItem('usuarioLogado')
   const tipoUsuario = localStorage.getItem('tipoUsuario')
 
-  if (
-    logado !== 'true' ||
-    tipoUsuario !== 'vitima'
-  ) {
+  if (logado !== 'true' || tipoUsuario !== 'vitima') {
     router.push('/login')
     return
   }
 
   const dados = localStorage.getItem('vitima')
 
-  if (dados) {
-     vitima.value = JSON.parse(dados)
+  if (!dados) {
+    router.push('/login')
+    return
+  }
 
-      const denunciasSalvas = JSON.parse(
-        localStorage.getItem('denuncias')
-      ) || []
+  try {
+    const usuarioSalvo = JSON.parse(dados)
 
-   if (vitima.value) {
+    const resposta = await axios.get(
+      `http://localhost:3000/vitimas/${usuarioSalvo.id}`
+    )
 
-        denuncias.value = denunciasSalvas.filter(
-          denuncia =>
-            denuncia.emailVitima === vitima.value.email
-        )
-      }
-  } 
+    vitima.value = resposta.data
+
+    localStorage.setItem('vitima', JSON.stringify(resposta.data))
+    localStorage.setItem('usuario', JSON.stringify(resposta.data))
+
+    const denunciasSalvas = JSON.parse(
+      localStorage.getItem('denuncias')
+    ) || []
+
+    denuncias.value = denunciasSalvas.filter(
+      denuncia => denuncia.emailVitima === vitima.value.email
+    )
+
+  } catch (erro) {
+    console.error('Erro ao buscar vítima:', erro)
+    alert('Não foi possível carregar os dados do perfil.')
+  }
 })
 
 const editarPerfil = () => {
@@ -111,7 +122,7 @@ const sair = () => {
   router.push('/')
 }
 
-const apagarConta = () => {
+const apagarConta = async () => {
   const confirmar = confirm(
     'Tem certeza que deseja apagar sua conta? Todas as suas denúncias também serão apagadas. Essa ação não poderá ser desfeita.'
   )
@@ -119,17 +130,34 @@ const apagarConta = () => {
   if (!confirmar) {
     return
   }
-  const vitimaSalva = localStorage.getItem('vitima')
 
-  if (vitimaSalva) {
-    const vitima = JSON.parse(vitimaSalva)
+  try {
+    const vitimaSalva = localStorage.getItem('vitima')
+
+    if (!vitimaSalva) {
+      alert('Não foi possível encontrar os dados da sua conta.')
+      return
+    }
+
+    const dadosVitima = JSON.parse(vitimaSalva)
+
+    if (!dadosVitima.id) {
+      alert('Não foi possível identificar sua conta.')
+      return
+    }
+
+    await axios.delete(
+      `http://localhost:3000/vitimas/${dadosVitima.id}`
+    )
+
+
     const denunciasSalvas = localStorage.getItem('denuncias')
 
     if (denunciasSalvas) {
-      const denuncias = JSON.parse(denunciasSalvas)
+      const todasDenuncias = JSON.parse(denunciasSalvas)
 
-      const novasDenuncias = denuncias.filter(
-        denuncia => denuncia.emailVitima !== vitima.email
+      const novasDenuncias = todasDenuncias.filter(
+        denuncia => denuncia.emailVitima !== dadosVitima.email
       )
 
       localStorage.setItem(
@@ -137,15 +165,20 @@ const apagarConta = () => {
         JSON.stringify(novasDenuncias)
       )
     }
+
+    localStorage.removeItem('usuario')
+    localStorage.removeItem('vitima')
+    localStorage.removeItem('usuarioLogado')
+    localStorage.removeItem('tipoUsuario')
+
+    alert('Sua conta foi apagada com sucesso!')
+
+    router.push('/')
+
+  } catch (erro) {
+    console.error('Erro ao excluir conta:', erro)
+    alert('Não foi possível excluir sua conta. Tente novamente.')
   }
-  localStorage.removeItem('usuario')
-  localStorage.removeItem('vitima')
-  localStorage.removeItem('usuarioLogado')
-  localStorage.removeItem('tipoUsuario')
-
-  alert('Sua conta e suas denúncias foram apagadas com sucesso!')
-
-  router.push('/')
 }
 </script>
 
