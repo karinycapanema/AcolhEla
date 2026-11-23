@@ -11,7 +11,8 @@
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "api": "json-server --watch db.json --port 3000"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.3.1",
