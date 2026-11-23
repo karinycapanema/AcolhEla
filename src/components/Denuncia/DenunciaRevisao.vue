@@ -159,26 +159,25 @@ function confirmar() {
 }
 
 .relatorio {
-  width: 700px;
+  width: 66%;
   max-width: 100%;
   padding: 40px;
   border-radius: 20px;
   background-color: #fff0dc;
   color: #65071d;
-  box-shadow: 2px 8px 30px #65071d;
+  box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
 }
 
 .relatorio h1 {
   margin: 0 0 15px;
   text-align: center;
-  font-size: 2.0rem;
+  font-size: 3.5rem;
 }
 
 .descricao {
   margin-bottom: 30px;
   text-align: center;
-  line-height: 1.6;
-  font-size: 1.0rem;
+  font-size: 1.4rem;
 }
 
 .campo-relatorio {
@@ -190,14 +189,13 @@ function confirmar() {
 
 .campo-relatorio h2 {
   margin: 0 0 7px;
-  font-size: 1.2rem;
+  font-size: 2.0rem;
 }
 
 .campo-relatorio p {
   margin: 0;
-  line-height: 1.5;
   word-break: break-word;
-  font-size: 1.0rem;
+  font-size: 1.5rem;
 }
 
 .botoes {
