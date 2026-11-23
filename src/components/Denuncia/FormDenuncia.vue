@@ -102,6 +102,13 @@ watch(
   router.push('/revisar-denuncia')
 }
 
+function limparDadosAnonimos() {
+  if (formulario.anonima) {
+    formulario.nome = ''
+    formulario.contato = ''
+  }
+}
+
 </script>
 
 <template>
@@ -218,8 +225,9 @@ watch(
     <label class="opcao-anonima">
 
       <input
-        v-model="formulario.anonima"
-        type="checkbox"
+       v-model="formulario.anonima"
+       type="checkbox"
+       @change="limparDadosAnonimos"
       >
 
       <span>

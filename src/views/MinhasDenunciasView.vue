@@ -25,6 +25,14 @@ const situacoesDisponiveis = [
 ]
 
 async function carregarDenuncias() {
+  const logado = localStorage.getItem('usuarioLogado')
+  const tipoUsuario = localStorage.getItem('tipoUsuario')
+
+  if (logado !== 'true' || tipoUsuario !== 'vitima') {
+    router.push('/login')
+    return
+  }
+
   const vitimaSalva = localStorage.getItem('vitima')
 
   if (!vitimaSalva) {
@@ -32,12 +40,16 @@ async function carregarDenuncias() {
     return
   }
 
-  const vitima = JSON.parse(vitimaSalva)
-
-  carregando.value = true
-  erro.value = ''
-
   try {
+    const vitima = JSON.parse(vitimaSalva)
+
+    if (!vitima.email) {
+      throw new Error('O e-mail da vítima não foi encontrado.')
+    }
+
+    carregando.value = true
+    erro.value = ''
+
     const resposta = await fetch(
       `${API_URL}?emailVitima=${encodeURIComponent(vitima.email)}`
     )
@@ -47,6 +59,7 @@ async function carregarDenuncias() {
     }
 
     denuncias.value = await resposta.json()
+
   } catch (erroApi) {
     erro.value = erroApi.message
   } finally {
@@ -95,7 +108,9 @@ async function salvarEdicao() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(dados)
+      body: JSON.stringify({
+       ...dados, nome: dados.anonima ? '' : dados.nome, contato: dados.anonima ? '' : dados.contato
+      })
     })
 
     if (!resposta.ok) {

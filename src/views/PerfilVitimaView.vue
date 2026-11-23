@@ -113,41 +113,63 @@ const sair = () => {
   router.push('/')
 }
 
-const apagarConta = () => {
-  const confirmar = confirm(
+const apagarConta = async () => {
+  const confirmar = window.confirm(
     'Tem certeza que deseja apagar sua conta? Todas as suas denúncias também serão apagadas. Essa ação não poderá ser desfeita.'
   )
 
-  if (!confirmar) {
-    return
-  }
-  const vitimaSalva = localStorage.getItem('vitima')
+  if (!confirmar) return
 
-  if (vitimaSalva) {
-    const vitima = JSON.parse(vitimaSalva)
-    const denunciasSalvas = localStorage.getItem('denuncias')
+  try {
+    const vitimaSalva = localStorage.getItem('vitima')
 
-    if (denunciasSalvas) {
-      const denuncias = JSON.parse(denunciasSalvas)
-
-      const novasDenuncias = denuncias.filter(
-        denuncia => denuncia.emailVitima !== vitima.email
-      )
-
-      localStorage.setItem(
-        'denuncias',
-        JSON.stringify(novasDenuncias)
-      )
+    if (!vitimaSalva) {
+      throw new Error('Não foi possível identificar a conta.')
     }
+
+    const dadosVitima = JSON.parse(vitimaSalva)
+
+    if (!dadosVitima.email) {
+      throw new Error('O e-mail da vítima não foi encontrado.')
+    }
+
+    const resposta = await fetch(
+      `${API_URL}?emailVitima=${encodeURIComponent(dadosVitima.email)}`
+    )
+
+    if (!resposta.ok) {
+      throw new Error('Não foi possível buscar suas denúncias.')
+    }
+
+    const denunciasDaVitima = await resposta.json()
+
+
+    for (const denuncia of denunciasDaVitima) {
+      const respostaDelete = await fetch(
+        `${API_URL}/${denuncia.id}`,
+        {
+          method: 'DELETE'
+        }
+      )
+
+      if (!respostaDelete.ok) {
+        throw new Error('Não foi possível excluir todas as denúncias.')
+      }
+    }
+
+    localStorage.removeItem('usuario')
+    localStorage.removeItem('vitima')
+    localStorage.removeItem('usuarioLogado')
+    localStorage.removeItem('tipoUsuario')
+    localStorage.removeItem('denuncia')
+
+    alert('Sua conta e suas denúncias foram apagadas com sucesso!')
+
+    router.push('/')
+  } catch (erro) {
+    console.error('Erro ao apagar conta:', erro)
+    alert(erro.message || 'Não foi possível apagar sua conta. Tente novamente.')
   }
-  localStorage.removeItem('usuario')
-  localStorage.removeItem('vitima')
-  localStorage.removeItem('usuarioLogado')
-  localStorage.removeItem('tipoUsuario')
-
-  alert('Sua conta e suas denúncias foram apagadas com sucesso!')
-
-  router.push('/')
 }
 </script>
 

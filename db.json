@@ -1,20 +1,3 @@
 {
-  "denuncias": [
-    {
-      "emailVitima": "capanemakariny@gmail.com",
-      "relato": "teste 2",
-      "situacoes": [
-        "Assédio",
-        "Ameaça",
-        "Discriminação"
-      ],
-      "data": "2026-11-09",
-      "local": "local teste 2",
-      "anonima": false,
-      "nome": "kariny capanema",
-      "contato": "4799665040",
-      "dataCadastro": "2026-11-23T18:00:48.768Z",
-      "id": 2
-    }
-  ]
+  "denuncias": []
 }
