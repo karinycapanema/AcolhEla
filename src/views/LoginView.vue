@@ -4,6 +4,7 @@ import { useRouter, useRoute, RouterLink } from 'vue-router'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
+import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
@@ -12,8 +13,8 @@ const email = ref('')
 const senha = ref('')
 const erro = ref('')
 
-const fazerLogin = () => {
 
+const fazerLogin = async () => {
   erro.value = ''
 
   if (!email.value || !senha.value) {
@@ -27,64 +28,102 @@ const fazerLogin = () => {
     erro.value = 'Digite um e-mail válido.'
     return
   }
-  // LOGIN DA VOLUNTÁRIA
 
-  const voluntariaSalva = localStorage.getItem('voluntaria')
+  let erroApi = false
 
-  if (voluntariaSalva) {
+  //voluntaria
+    try {
+    const resposta = await fetch(
+      `http://localhost:3000/voluntarias?email=${encodeURIComponent(email.value)}`
+    )
 
-    const voluntaria = JSON.parse(voluntariaSalva)
+    if (!resposta.ok) {
+      throw new Error('Erro ao consultar voluntárias.')
+    }
 
-    if (
-      email.value === voluntaria.email &&
-      senha.value === voluntaria.senha
-    ) {
+    const voluntarias = await resposta.json()
+
+    const voluntaria = voluntarias.find(
+      item => item.senha === senha.value
+    )
+
+    if (voluntaria) {
+      localStorage.setItem(
+        'voluntaria',
+        JSON.stringify(voluntaria)
+      )
 
       localStorage.setItem('usuarioLogado', 'true')
       localStorage.setItem('tipoUsuario', 'voluntaria')
 
       router.push('/perfil-voluntaria')
-
       return
     }
+  } catch (erro) {
+    console.error(erro)
+    erroApi = true
   }
 
-  // LOGIN DA VÍTIMA
-
+  //vitima
   const usuarioSalvo = localStorage.getItem('usuario')
 
   if (usuarioSalvo) {
-
     const usuario = JSON.parse(usuarioSalvo)
 
     if (
       email.value === usuario.email &&
       senha.value === usuario.senha
     ) {
-
       localStorage.setItem('usuarioLogado', 'true')
       localStorage.setItem('tipoUsuario', 'vitima')
+  try {
+    const resposta = await axios.get('http://localhost:3000/vitimas', {
+      params: {
+        email: email.value
+      }
+    })
 
-      localStorage.setItem(
-        'vitima',
-        JSON.stringify(usuario)
-      )
+    const usuario = resposta.data.find(
+      vitima => vitima.senha === senha.value
+    )
 
-    if (route.query.redirect) {
-      router.push(route.query.redirect)
-    } else {
-  router.push('/perfil-vitima')
+    if (!usuario) {
+      erro.value = 'E-mail ou senha incorretos.'
+      return
     }
 
-  return
+    localStorage.setItem('usuario', JSON.stringify(usuario))
+    localStorage.setItem('vitima', JSON.stringify(usuario))
+    localStorage.setItem('usuarioLogado', 'true')
+    localStorage.setItem('tipoUsuario', 'vitima')
 
+      if (route.query.redirect) {
+        router.push(route.query.redirect)
+      } else {
+        router.push('/perfil-vitima')
+      }
+
+      return
     }
   }
 
-  // LOGIN INVÁLIDO
+  if (erroApi) {
+    erro.value = 'Não foi possível conectar à API. Tente novamente.'
+  } else {
+    erro.value = 'E-mail ou senha incorretos.'
+  }
+    if (route.query.redirect) {
+      router.push(route.query.redirect)
+    } else {
+      router.push('/perfil-vitima')
+    }
 
-  erro.value = 'E-mail ou senha incorretos.'
+  } catch (erroApi) {
+    console.error('Erro ao realizar login:', erroApi)
+    erro.value = 'Não foi possível conectar ao servidor. Tente novamente.'
+  }
 }
+
 </script>
 <template>
   <header>
