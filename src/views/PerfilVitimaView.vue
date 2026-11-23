@@ -13,6 +13,8 @@ const router = useRouter()
 const vitima = ref(null)
 const denuncias = ref([])
 
+const API_URL = 'http://localhost:3000/denuncias'
+
 const contatos = ref([
   { nome: 'Fulana' },
   { nome: 'Fulana' },
@@ -32,6 +34,23 @@ onMounted(async () => {
 
   const dados = localStorage.getItem('vitima')
 
+  if (!dados) return
+
+  vitima.value = JSON.parse(dados)
+
+  try {
+    const resposta = await fetch(
+      `${API_URL}?emailVitima=${encodeURIComponent(vitima.value.email)}`
+    )
+
+    if (!resposta.ok) {
+      throw new Error('Não foi possível carregar as denúncias.')
+    }
+
+    denuncias.value = await resposta.json()
+
+  } catch (erro) {
+    console.error('Erro ao buscar denúncias:', erro)
   if (!dados) {
     router.push('/login')
     return
@@ -75,43 +94,42 @@ const irParaDenuncia = () => {
   router.push('/denuncia')
 }
 
-const abrirDenuncia = (denuncia) => {
-  alert(`Abrindo: ${denuncia.nome}`)
+const irParaMinhasDenuncias = () => {
+  router.push('/minhas-denuncias')
+}
+
+const abrirDenuncia = () => {
+  router.push('/minhas-denuncias')
 }
 
 const abrirContato = (contato) => {
   alert(`Abrindo conversa com ${contato.nome}`)
 }
 
-const apagarDenuncia = (id) => {
-  const confirmar = confirm(
+const apagarDenuncia = async (id) => {
+  const confirmar = window.confirm(
     'Tem certeza que deseja apagar esta denúncia?'
   )
 
-  if (!confirmar) {
-    return
+  if (!confirmar) return
+
+  try {
+    const resposta = await fetch(`${API_URL}/${id}`, {
+      method: 'DELETE'
+    })
+
+    if (!resposta.ok) {
+      throw new Error('Não foi possível apagar a denúncia.')
+    }
+
+    denuncias.value = denuncias.value.filter(
+      denuncia => denuncia.id !== id
+    )
+
+  } catch (erro) {
+    console.error('Erro ao apagar denúncia:', erro)
+    alert('Não foi possível apagar a denúncia. Tente novamente.')
   }
-
-  const denunciasSalvas = localStorage.getItem('denuncias')
-
-  if (!denunciasSalvas) {
-    return
-  }
-
-  const todasDenuncias = JSON.parse(denunciasSalvas)
-
-  const novasDenuncias = todasDenuncias.filter(
-    denuncia => denuncia.id !== id
-  )
-
-  localStorage.setItem(
-    'denuncias',
-    JSON.stringify(novasDenuncias)
-  )
-
-  denuncias.value = novasDenuncias.filter(
-    denuncia => denuncia.emailVitima === vitima.value.email
-  )
 }
 
 const sair = () => {
@@ -160,10 +178,24 @@ const apagarConta = async () => {
         denuncia => denuncia.emailVitima !== dadosVitima.email
       )
 
-      localStorage.setItem(
-        'denuncias',
-        JSON.stringify(novasDenuncias)
+    if (!resposta.ok) {
+      throw new Error('Não foi possível buscar suas denúncias.')
+    }
+
+    const denunciasDaVitima = await resposta.json()
+
+
+    for (const denuncia of denunciasDaVitima) {
+      const respostaDelete = await fetch(
+        `${API_URL}/${denuncia.id}`,
+        {
+          method: 'DELETE'
+        }
       )
+
+      if (!respostaDelete.ok) {
+        throw new Error('Não foi possível excluir todas as denúncias.')
+      }
     }
 
     localStorage.removeItem('usuario')
@@ -212,13 +244,13 @@ const apagarConta = async () => {
 
         <div class="perfil-botoes">
 
-          <button class="perfil-botao" @click="editarPerfil">
-            Editar Perfil
-          </button>
+         <button class="perfil-botao" @click="editarPerfil">
+          Editar Perfil
+         </button>
 
-          <button class="perfil-botao" @click="mensagens">
-            Mensagens
-          </button>
+         <button class="perfil-botao" @click="mensagens">
+          Mensagens
+         </button>
 
         </div>
 
@@ -278,7 +310,8 @@ const apagarConta = async () => {
     </div>
 
     <div class="apagar">
-      <button class="botao-excluir-denuncia" @click="apagarDenuncia(denuncia.id)" title="Apagar denúncia">
+      <button class="botao-excluir-denuncia"
+        @click.stop="apagarDenuncia(denuncia.id)" title="Apagar denúncia">
       <font-awesome-icon :icon="iconeExcluir" />
     </button>
 
@@ -286,7 +319,14 @@ const apagarConta = async () => {
 
   </div>
 
+    <div v-if="denuncias.length > 0" class="minhas-denuncias-area">
+      <AppButton @click="irParaMinhasDenuncias">
+        Ver todas as denúncias
+      </AppButton>
+    </div>
+
   </section>
+
     <!-- contato -->
 
     <h2 class="secao-titulo contatos-titulo">
@@ -427,7 +467,7 @@ const apagarConta = async () => {
 .denuncias-card {
   width: 66%;
   margin: 0 auto;
-  padding: 38px 25px;
+  padding: 18px 25px 18px 25px;
   display: flex;
   flex-direction: column-reverse;
   gap: 25px;
@@ -527,21 +567,9 @@ const apagarConta = async () => {
   font-size: 1.1rem;
 }
 
-.botao-primeira-denuncia {
-  padding: 12px 25px;
-  border: none;
-  border-radius: 20px;
-  background-color: #65001b;
-  color: white;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.botao-primeira-denuncia:hover {
-  background-color: #800023;
+.minhas-denuncias-area {
+  display: flex;
+  justify-content: center;
 }
 
 /*contato*/
