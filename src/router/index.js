@@ -16,6 +16,7 @@ import PerfilVitimaView from '@/views/PerfilVitimaView.vue'
 import EditarPerfilView from '@/views/EditarPerfilView.vue'
 import PerfilVoluntariaView from '@/views/PerfilVoluntariaView.vue'
 import MensagensView from '@/views/MensagensView.vue'
+import MinhasDenunciasView from '@/views/MinhasDenunciasView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,11 @@ const router = createRouter({
       path: '/denuncia-enviada',
       name: 'denuncia-sucesso',
       component: DenunciaSucesso,
+    },
+    {
+      path: '/minhas-denuncias',
+      name: 'minhas-denuncias',
+      component: MinhasDenunciasView
     },
     {
       path: '/curso',

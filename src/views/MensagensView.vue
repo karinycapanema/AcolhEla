@@ -7,6 +7,12 @@
 
   <main class="mensagens-page">
 
+    <button class="botao-voltar" @click="voltarAoPerfil">
+      <i class="fas fa-arrow-left"></i>
+      Voltar ao perfil
+    </button>
+
+
     <h1 class="mensagens-titulo">
       Mensagens
     </h1>
@@ -15,6 +21,12 @@
     <p class="mensagens-subtitulo">
       Converse com uma acolhedora de forma segura e discreta.
     </p>
+
+    <p v-if="carregando" class="mensagens-aviso">Carregando mensagens...</p>
+
+    <p v-if="erro" class="mensagens-erro">{{ erro }}</p>
+
+    <p v-if="sucesso" class="mensagens-sucesso">{{ sucesso }}</p>
 
 
     <!-- =========================
@@ -25,7 +37,6 @@
       v-if="tipoUsuario === 'vitima'"
       class="mensagens-container"
     >
-
       <h2>
         Acolhedoras disponíveis
       </h2>
@@ -177,16 +188,26 @@
 
         <div>
 
-         <h2>
-  {{ tipoUsuario === 'vitima'
-    ? conversaSelecionada.nomeVoluntaria
-    : conversaSelecionada.nomeVitima
-  }}
-</h2>
+        <h2>
+          {{ tipoUsuario === 'vitima'
+            ? conversaSelecionada.nomeVoluntaria
+            : conversaSelecionada.nomeVitima
+          }}
 
-<span>
-  {{ tipoUsuario === 'vitima' ? 'Acolhedora' : 'Vítima' }}
-</span>
+          <span>
+          {{ tipoUsuario === 'vitima' ? 'Acolhedora' : 'Vítima' }}
+        </span>
+        </h2>
+
+        
+
+        <button
+            type="button"
+            class="excluir-conversa-btn"
+            @click="excluirConversa"
+          >
+            Excluir conversa
+        </button>
 
         </div>
 
@@ -268,8 +289,6 @@
 
 </template>
 
-
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -279,45 +298,40 @@ import AppFooter from '@/components/layout/AppFooter.vue'
 
 const router = useRouter()
 
-// Tipo de usuário conectado
-const tipoUsuario = ref(
-  localStorage.getItem('tipoUsuario')
-)
+const API_URL = 'http://localhost:3000/conversas'
 
-// Dados das pessoas
+const tipoUsuario = ref(localStorage.getItem('tipoUsuario'))
+
 const acolhedoras = ref([])
 const conversasVoluntaria = ref([])
 
-// Conversa aberta
 const conversaSelecionada = ref(null)
 const mensagens = ref([])
 const novaMensagem = ref('')
 
-// Chave onde todas as conversas ficam salvas
-const CHAVE_CONVERSAS = 'conversas'
+const carregando = ref(false)
+const erro = ref('')
+const sucesso = ref('')
 
-// Carregar conversas salvas
-function carregarConversas() {
+
+async function carregarConversas() {
   try {
-    return JSON.parse(
-      localStorage.getItem(CHAVE_CONVERSAS) || '[]'
-    )
-  } catch (erro) {
-    console.error('Erro ao carregar conversas:', erro)
+    const resposta = await fetch(API_URL)
+
+    if (!resposta.ok) {
+      throw new Error('Não foi possível carregar as conversas.')
+    }
+
+    return await resposta.json()
+  } catch (erroApi) {
+    console.error('Erro ao carregar conversas:', erroApi)
+    erro.value = erroApi.message
     return []
   }
 }
 
-// Salvar conversas
-function salvarConversas(conversas) {
-  localStorage.setItem(
-    CHAVE_CONVERSAS,
-    JSON.stringify(conversas)
-  )
-}
 
-// Carregar dados da página
-onMounted(() => {
+onMounted(async () => {
   const logado = localStorage.getItem('usuarioLogado')
   const tipo = localStorage.getItem('tipoUsuario')
 
@@ -331,46 +345,57 @@ onMounted(() => {
 
   tipoUsuario.value = tipo
 
-  const voluntariaSalva = localStorage.getItem('voluntaria')
-  const vitimaSalva = localStorage.getItem('vitima')
+  carregando.value = true
+  erro.value = ''
 
-  const todasConversas = carregarConversas()
+  try {
+    if (tipo === 'vitima') {
+      const respostaVoluntarias = await fetch(
+        'http://localhost:3000/voluntarias'
+      )
 
-  // Se for vítima, mostra as voluntárias disponíveis
-  if (tipo === 'vitima') {
-    if (voluntariaSalva) {
+      if (!respostaVoluntarias.ok) {
+        throw new Error('Não foi possível carregar as acolhedoras.')
+      }
+
+      acolhedoras.value = await respostaVoluntarias.json()
+
+    } else {
+      const voluntariaSalva = localStorage.getItem('voluntaria')
+
+      if (!voluntariaSalva) {
+        router.push('/login')
+        return
+      }
+
       const voluntaria = JSON.parse(voluntariaSalva)
 
-      acolhedoras.value = [{
-        nome: voluntaria.nome,
-        email: voluntaria.email
-      }]
-    }
-  }
+      const todasConversas = await carregarConversas()
 
-  // Se for voluntária, mostra as conversas recebidas
-  if (tipo === 'voluntaria') {
-    if (!voluntariaSalva) {
-      return
+      conversasVoluntaria.value = todasConversas.filter(
+        conversa =>
+          conversa.emailVoluntaria === voluntaria.email &&
+          conversa.mensagens?.length > 0 &&
+          conversa.mensagens[0].remetente === 'vitima'
+      )
     }
 
-    const voluntaria = JSON.parse(voluntariaSalva)
-
-    conversasVoluntaria.value = todasConversas.filter(
-      conversa =>
-        conversa.emailVoluntaria === voluntaria.email
-    )
+  } catch (erroApi) {
+    console.error('Erro ao carregar mensagens:', erroApi)
+    erro.value = erroApi.message || 'Não foi possível carregar as mensagens.'
+  } finally {
+    carregando.value = false
   }
 })
 
-// Abrir conversa
-function abrirConversa(pessoa) {
-  const voluntariaSalva = localStorage.getItem('voluntaria')
-  const vitimaSalva = localStorage.getItem('vitima')
 
-  const voluntaria = voluntariaSalva
-    ? JSON.parse(voluntariaSalva)
-    : null
+
+async function abrirConversa(pessoa) {
+  erro.value = ''
+  sucesso.value = ''
+
+  const vitimaSalva = localStorage.getItem('vitima')
+  const voluntariaSalva = localStorage.getItem('voluntaria')
 
   const vitima = vitimaSalva
     ? JSON.parse(vitimaSalva)
@@ -382,97 +407,210 @@ function abrirConversa(pessoa) {
   let nomeVitima
 
   if (tipoUsuario.value === 'vitima') {
-    if (!voluntaria || !vitima) return
+    if (!vitima || !pessoa.email) {
+      erro.value = 'Não foi possível identificar os usuários.'
+      return
+    }
+
+    emailVoluntaria = pessoa.email
+    emailVitima = vitima.email
+    nomeVoluntaria = pessoa.nome
+    nomeVitima = vitima.nome
+
+  } else {
+    const voluntaria = voluntariaSalva
+      ? JSON.parse(voluntariaSalva)
+      : null
+
+    if (!voluntaria || !pessoa.emailVitima) {
+      erro.value = 'Não foi possível identificar os usuários.'
+      return
+    }
 
     emailVoluntaria = voluntaria.email
-    emailVitima = vitima.email
-
-    nomeVoluntaria = voluntaria.nome
-    nomeVitima = vitima.nome
-  } else {
-    emailVoluntaria = pessoa.emailVoluntaria
     emailVitima = pessoa.emailVitima
-
-    nomeVoluntaria = pessoa.nomeVoluntaria
+    nomeVoluntaria = voluntaria.nome
     nomeVitima = pessoa.nomeVitima
   }
 
-  const id = `${emailVitima}_${emailVoluntaria}`
+  try {
+    carregando.value = true
 
-  const todasConversas = carregarConversas()
+    const todasConversas = await carregarConversas()
 
-  let conversa = todasConversas.find(
-    item => item.id === id
-  )
+    let conversa = todasConversas.find(
+      item =>
+        item.emailVitima === emailVitima &&
+        item.emailVoluntaria === emailVoluntaria
+    )
 
-  // Cria uma conversa caso ainda não exista
-  if (!conversa) {
-    conversa = {
-      id,
-      emailVitima,
-      emailVoluntaria,
-      nomeVitima,
-      nomeVoluntaria,
-      mensagens: []
+    if (!conversa) {
+      if (tipoUsuario.value === 'voluntaria') {
+        throw new Error('A vítima ainda não iniciou essa conversa.')
+      }
+
+      const novaConversa = {
+        emailVitima,
+        emailVoluntaria,
+        nomeVitima,
+        nomeVoluntaria,
+        mensagens: []
+      }
+
+      const resposta = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(novaConversa)
+      })
+
+      if (!resposta.ok) {
+        throw new Error('Não foi possível criar a conversa.')
+      }
+
+      conversa = await resposta.json()
     }
 
-    todasConversas.push(conversa)
-    salvarConversas(todasConversas)
-  }
+    conversaSelecionada.value = conversa
+    mensagens.value = [...(conversa.mensagens || [])]
 
-  conversaSelecionada.value = conversa
-  mensagens.value = [...conversa.mensagens]
+  } catch (erroApi) {
+    console.error('Erro ao abrir conversa:', erroApi)
+    erro.value = erroApi.message || 'Não foi possível abrir a conversa.'
+  } finally {
+    carregando.value = false
+  }
 }
 
-// Fechar conversa
+
 function fecharConversa() {
   conversaSelecionada.value = null
   mensagens.value = []
+  erro.value = ''
+  sucesso.value = ''
 }
 
-// Enviar mensagem
-function enviarMensagem() {
+
+async function enviarMensagem() {
   const texto = novaMensagem.value.trim()
 
   if (!texto || !conversaSelecionada.value) {
     return
   }
 
-  const nova = {
-    remetente: tipoUsuario.value,
-    texto,
-    data: new Date().toISOString()
+  if (
+  tipoUsuario.value === 'voluntaria' &&
+  (
+    mensagens.value.length === 0 ||
+    mensagens.value[0].remetente !== 'vitima'
+  )
+  ) {
+  erro.value = 'A vítima precisa iniciar a conversa primeiro.'
+  return
   }
 
-  const todasConversas = carregarConversas()
+  erro.value = ''
+  sucesso.value = ''
 
-  const indice = todasConversas.findIndex(
-    conversa => conversa.id === conversaSelecionada.value.id
+  const conversaAtualizada = {
+    ...conversaSelecionada.value,
+    mensagens: [
+      ...conversaSelecionada.value.mensagens,
+      {
+        remetente: tipoUsuario.value,
+        texto,
+        data: new Date().toISOString()
+      }
+    ]
+  }
+
+  try {
+    const resposta = await fetch(
+      `${API_URL}/${conversaSelecionada.value.id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(conversaAtualizada)
+      }
+    )
+
+    if (!resposta.ok) {
+      throw new Error('Não foi possível enviar a mensagem.')
+    }
+
+    const conversaSalva = await resposta.json()
+
+    conversaSelecionada.value = conversaSalva
+    mensagens.value = [...conversaSalva.mensagens]
+    novaMensagem.value = ''
+
+    sucesso.value = 'Mensagem enviada!'
+
+    
+    if (tipoUsuario.value === 'voluntaria') {
+      const indice = conversasVoluntaria.value.findIndex(
+        item => item.id === conversaSalva.id
+      )
+
+      if (indice !== -1) {
+        conversasVoluntaria.value[indice] = conversaSalva
+      }
+    }
+  } catch (erroApi) {
+    console.error('Erro ao enviar mensagem:', erroApi)
+    erro.value = 'Não foi possível enviar a mensagem. Tente novamente.'
+  }
+}
+
+
+async function excluirConversa() {
+  if (!conversaSelecionada.value) return
+
+  const confirmar = window.confirm(
+    'Tem certeza de que deseja excluir esta conversa?'
   )
 
-  if (indice === -1) return
+  if (!confirmar) return
 
-  todasConversas[indice].mensagens.push(nova)
+  erro.value = ''
+  sucesso.value = ''
 
-  salvarConversas(todasConversas)
+  try {
 
-  conversaSelecionada.value = todasConversas[indice]
-
-  mensagens.value = [...todasConversas[indice].mensagens]
-
-  // Atualiza a lista da voluntária
-  if (tipoUsuario.value === 'voluntaria') {
-    conversasVoluntaria.value = todasConversas.filter(
-      conversa =>
-        conversa.emailVoluntaria === conversaSelecionada.value.emailVoluntaria
+    const resposta = await fetch(
+      `${API_URL}/${conversaSelecionada.value.id}`,
+      {
+        method: 'DELETE'
+      }
     )
+
+    if (!resposta.ok) {
+      throw new Error('Não foi possível excluir a conversa.')
+    }
+
+    conversasVoluntaria.value = conversasVoluntaria.value.filter(
+      conversa => conversa.id !== conversaSelecionada.value.id
+    )
+
+    fecharConversa()
+    sucesso.value = 'Conversa excluída com sucesso!'
+  } catch (erroApi) {
+    console.error('Erro ao excluir conversa:', erroApi)
+    erro.value = 'Não foi possível excluir a conversa.'
   }
-
-  novaMensagem.value = ''
 }
+function voltarAoPerfil() {
+  if (tipoUsuario.value === 'vitima') {
+    router.push('/perfil-vitima')
+  } else if (tipoUsuario.value === 'voluntaria') {
+    router.push('/perfil-voluntaria')
+  }
+}
+
 </script>
-
-
 
 <style scoped>
 
@@ -526,6 +664,24 @@ function enviarMensagem() {
 
 }
 
+.botao-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background-color: #63071d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.0rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.botao-voltar:hover {
+  background-color: #850b2a;
+}
 
 /* =========================
    CONTAINER
@@ -749,8 +905,6 @@ function enviarMensagem() {
 
   align-items: center;
 
-  gap: 15px;
-
 }
 
 
@@ -771,6 +925,8 @@ function enviarMensagem() {
   font-size: 18px;
 
   cursor: pointer;
+
+  margin-right: 10px;
 
 }
 
@@ -968,6 +1124,38 @@ function enviarMensagem() {
 
   background-color: #4e0012;
 
+}
+
+.mensagens-aviso {
+  text-align: center;
+  color: #650018;
+  margin: 15px 0;
+}
+
+.mensagens-erro {
+  text-align: center;
+  color: #b00020;
+  margin: 15px 0;
+}
+
+.mensagens-sucesso {
+  text-align: center;
+  color: #26733b;
+  margin: 15px 0;
+}
+
+.excluir-conversa-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background-color: #650018;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.excluir-conversa-btn:hover {
+  background-color: #850024;
 }
 
 
