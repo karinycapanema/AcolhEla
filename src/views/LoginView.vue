@@ -17,39 +17,34 @@ const erro = ref('')
 const fazerLogin = async () => {
   erro.value = ''
 
-  if (!email.value || !senha.value) {
+  if (!email.value.trim() || !senha.value) {
     erro.value = 'Preencha todos os campos.'
     return
   }
 
-  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const emailDigitado = email.value.trim().toLowerCase()
 
-  if (!emailValido.test(email.value)) {
-    erro.value = 'Digite um e-mail válido.'
-    return
-  }
-
-  let erroApi = false
-
-  //voluntaria
-    try {
-    const resposta = await fetch(
-      `http://localhost:3000/voluntarias?email=${encodeURIComponent(email.value)}`
+  try {
+    const respostaVoluntarias = await axios.get(
+      'http://localhost:3000/voluntarias'
     )
 
-    if (!resposta.ok) {
-      throw new Error('Erro ao consultar voluntárias.')
-    }
-
-    const voluntarias = await resposta.json()
-
-    const voluntaria = voluntarias.find(
-      item => item.senha === senha.value
+    const voluntaria = respostaVoluntarias.data.find(
+      item =>
+        item.email?.trim().toLowerCase() === emailDigitado &&
+        item.senha === senha.value
     )
 
     if (voluntaria) {
+      localStorage.removeItem('vitima')
+
       localStorage.setItem(
         'voluntaria',
+        JSON.stringify(voluntaria)
+      )
+
+      localStorage.setItem(
+        'usuario',
         JSON.stringify(voluntaria)
       )
 
@@ -59,64 +54,38 @@ const fazerLogin = async () => {
       router.push('/perfil-voluntaria')
       return
     }
-  } catch (erro) {
-    console.error(erro)
-    erroApi = true
-  }
 
-  //vitima
-  const usuarioSalvo = localStorage.getItem('usuario')
-
-  if (usuarioSalvo) {
-    const usuario = JSON.parse(usuarioSalvo)
-
-    if (
-      email.value === usuario.email &&
-      senha.value === usuario.senha
-    ) {
-      localStorage.setItem('usuarioLogado', 'true')
-      localStorage.setItem('tipoUsuario', 'vitima')
-  try {
-    const resposta = await axios.get('http://localhost:3000/vitimas', {
-      params: {
-        email: email.value
-      }
-    })
-
-    const usuario = resposta.data.find(
-      vitima => vitima.senha === senha.value
+    const respostaVitimas = await axios.get(
+      'http://localhost:3000/vitimas'
     )
 
-    if (!usuario) {
-      erro.value = 'E-mail ou senha incorretos.'
-      return
-    }
+    const vitima = respostaVitimas.data.find(
+      item =>
+        item.email?.trim().toLowerCase() === emailDigitado &&
+        item.senha === senha.value
+    )
 
-    localStorage.setItem('usuario', JSON.stringify(usuario))
-    localStorage.setItem('vitima', JSON.stringify(usuario))
-    localStorage.setItem('usuarioLogado', 'true')
-    localStorage.setItem('tipoUsuario', 'vitima')
+    if (vitima) {
+      localStorage.removeItem('voluntaria')
 
-      if (route.query.redirect) {
-        router.push(route.query.redirect)
-      } else {
-        router.push('/perfil-vitima')
-      }
+      localStorage.setItem(
+        'vitima',
+        JSON.stringify(vitima)
+      )
 
-      return
-    }
-  }
+      localStorage.setItem(
+        'usuario',
+        JSON.stringify(vitima)
+      )
 
-  if (erroApi) {
-    erro.value = 'Não foi possível conectar à API. Tente novamente.'
-  } else {
-    erro.value = 'E-mail ou senha incorretos.'
-  }
-    if (route.query.redirect) {
-      router.push(route.query.redirect)
-    } else {
+      localStorage.setItem('usuarioLogado', 'true')
+      localStorage.setItem('tipoUsuario', 'vitima')
+
       router.push('/perfil-vitima')
+      return
     }
+
+    erro.value = 'E-mail ou senha incorretos.'
 
   } catch (erroApi) {
     console.error('Erro ao realizar login:', erroApi)

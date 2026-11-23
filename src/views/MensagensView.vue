@@ -7,6 +7,12 @@
 
   <main class="mensagens-page">
 
+    <button class="botao-voltar" @click="voltarAoPerfil">
+      <i class="fas fa-arrow-left"></i>
+      Voltar ao perfil
+    </button>
+
+
     <h1 class="mensagens-titulo">
       Mensagens
     </h1>
@@ -31,7 +37,6 @@
       v-if="tipoUsuario === 'vitima'"
       class="mensagens-container"
     >
-
       <h2>
         Acolhedoras disponíveis
       </h2>
@@ -325,6 +330,7 @@ async function carregarConversas() {
   }
 }
 
+
 onMounted(async () => {
   const logado = localStorage.getItem('usuarioLogado')
   const tipo = localStorage.getItem('tipoUsuario')
@@ -339,55 +345,57 @@ onMounted(async () => {
 
   tipoUsuario.value = tipo
 
-  const voluntariaSalva = localStorage.getItem('voluntaria')
-  const vitimaSalva = localStorage.getItem('vitima')
-
   carregando.value = true
   erro.value = ''
 
   try {
-    const todasConversas = await carregarConversas()
+    if (tipo === 'vitima') {
+      const respostaVoluntarias = await fetch(
+        'http://localhost:3000/voluntarias'
+      )
 
- if (tipo === 'vitima') {
-      if (voluntariaSalva) {
-        const voluntaria = JSON.parse(voluntariaSalva)
-
-        acolhedoras.value = [{
-          nome: voluntaria.nome,
-          email: voluntaria.email
-        }]
+      if (!respostaVoluntarias.ok) {
+        throw new Error('Não foi possível carregar as acolhedoras.')
       }
-    }
 
-    if (tipo === 'voluntaria') {
+      acolhedoras.value = await respostaVoluntarias.json()
+
+    } else {
+      const voluntariaSalva = localStorage.getItem('voluntaria')
+
       if (!voluntariaSalva) {
+        router.push('/login')
         return
       }
 
       const voluntaria = JSON.parse(voluntariaSalva)
 
+      const todasConversas = await carregarConversas()
+
       conversasVoluntaria.value = todasConversas.filter(
-        conversa => conversa.emailVoluntaria === voluntaria.email
+        conversa =>
+          conversa.emailVoluntaria === voluntaria.email &&
+          conversa.mensagens?.length > 0 &&
+          conversa.mensagens[0].remetente === 'vitima'
       )
     }
+
   } catch (erroApi) {
-    console.error('Erro ao carregar a página:', erroApi)
-    erro.value = 'Não foi possível carregar as mensagens.'
+    console.error('Erro ao carregar mensagens:', erroApi)
+    erro.value = erroApi.message || 'Não foi possível carregar as mensagens.'
   } finally {
     carregando.value = false
   }
 })
 
+
+
 async function abrirConversa(pessoa) {
   erro.value = ''
   sucesso.value = ''
 
-  const voluntariaSalva = localStorage.getItem('voluntaria')
   const vitimaSalva = localStorage.getItem('vitima')
-
-  const voluntaria = voluntariaSalva
-    ? JSON.parse(voluntariaSalva)
-    : null
+  const voluntariaSalva = localStorage.getItem('voluntaria')
 
   const vitima = vitimaSalva
     ? JSON.parse(vitimaSalva)
@@ -399,19 +407,29 @@ async function abrirConversa(pessoa) {
   let nomeVitima
 
   if (tipoUsuario.value === 'vitima') {
-    if (!voluntaria || !vitima) {
-      erro.value = 'Não foi possível identificar os usuários da conversa.'
+    if (!vitima || !pessoa.email) {
+      erro.value = 'Não foi possível identificar os usuários.'
+      return
+    }
+
+    emailVoluntaria = pessoa.email
+    emailVitima = vitima.email
+    nomeVoluntaria = pessoa.nome
+    nomeVitima = vitima.nome
+
+  } else {
+    const voluntaria = voluntariaSalva
+      ? JSON.parse(voluntariaSalva)
+      : null
+
+    if (!voluntaria || !pessoa.emailVitima) {
+      erro.value = 'Não foi possível identificar os usuários.'
       return
     }
 
     emailVoluntaria = voluntaria.email
-    emailVitima = vitima.email
-    nomeVoluntaria = voluntaria.nome
-    nomeVitima = vitima.nome
-  } else {
-    emailVoluntaria = pessoa.emailVoluntaria
     emailVitima = pessoa.emailVitima
-    nomeVoluntaria = pessoa.nomeVoluntaria
+    nomeVoluntaria = voluntaria.nome
     nomeVitima = pessoa.nomeVitima
   }
 
@@ -427,6 +445,10 @@ async function abrirConversa(pessoa) {
     )
 
     if (!conversa) {
+      if (tipoUsuario.value === 'voluntaria') {
+        throw new Error('A vítima ainda não iniciou essa conversa.')
+      }
+
       const novaConversa = {
         emailVitima,
         emailVoluntaria,
@@ -451,21 +473,11 @@ async function abrirConversa(pessoa) {
     }
 
     conversaSelecionada.value = conversa
-    mensagens.value = [...conversa.mensagens]
+    mensagens.value = [...(conversa.mensagens || [])]
 
-   
-    if (tipoUsuario.value === 'voluntaria') {
-      conversasVoluntaria.value = todasConversas.filter(
-        item => item.emailVoluntaria === emailVoluntaria
-      )
-
-      if (!conversasVoluntaria.value.some(item => item.id === conversa.id)) {
-        conversasVoluntaria.value.push(conversa)
-      }
-    }
   } catch (erroApi) {
     console.error('Erro ao abrir conversa:', erroApi)
-    erro.value = 'Não foi possível abrir a conversa.'
+    erro.value = erroApi.message || 'Não foi possível abrir a conversa.'
   } finally {
     carregando.value = false
   }
@@ -485,6 +497,17 @@ async function enviarMensagem() {
 
   if (!texto || !conversaSelecionada.value) {
     return
+  }
+
+  if (
+  tipoUsuario.value === 'voluntaria' &&
+  (
+    mensagens.value.length === 0 ||
+    mensagens.value[0].remetente !== 'vitima'
+  )
+  ) {
+  erro.value = 'A vítima precisa iniciar a conversa primeiro.'
+  return
   }
 
   erro.value = ''
@@ -579,6 +602,14 @@ async function excluirConversa() {
     erro.value = 'Não foi possível excluir a conversa.'
   }
 }
+function voltarAoPerfil() {
+  if (tipoUsuario.value === 'vitima') {
+    router.push('/perfil-vitima')
+  } else if (tipoUsuario.value === 'voluntaria') {
+    router.push('/perfil-voluntaria')
+  }
+}
+
 </script>
 
 <style scoped>
@@ -633,6 +664,24 @@ async function excluirConversa() {
 
 }
 
+.botao-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background-color: #63071d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.0rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.botao-voltar:hover {
+  background-color: #850b2a;
+}
 
 /* =========================
    CONTAINER

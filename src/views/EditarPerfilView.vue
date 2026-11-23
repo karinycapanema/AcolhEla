@@ -119,8 +119,7 @@ const salvarPerfil = async () => {
       )
 
       if (!dadosAntigos || !dadosAntigos.id) {
-        alert('Não foi possível identificar sua conta.')
-        return
+        throw new Error('Não foi possível identificar sua conta.')
       }
 
       const resposta = await axios.put(
@@ -142,7 +141,15 @@ const salvarPerfil = async () => {
       )
     }
 
-    try {
+    else if (tipoUsuario.value === 'voluntaria') {
+      const dadosAntigos = JSON.parse(
+        localStorage.getItem('voluntaria')
+      )
+
+      if (!dadosAntigos || !dadosAntigos.id) {
+        throw new Error('Não foi possível identificar sua conta.')
+      }
+
       const resposta = await fetch(
         `http://localhost:3000/voluntarias/${dadosAntigos.id}`,
         {
@@ -150,7 +157,10 @@ const salvarPerfil = async () => {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(voluntariaAtualizada)
+          body: JSON.stringify({
+            ...dadosAntigos,
+            ...dadosAtualizados
+          })
         }
       )
 
@@ -169,32 +179,6 @@ const salvarPerfil = async () => {
         'usuario',
         JSON.stringify(dadosSalvos)
       )
-    } catch (erro) {
-      console.error(erro)
-      alert('Não foi possível atualizar seu perfil.')
-      return
-    }
-  }
-
-    if (tipoUsuario.value === 'voluntaria') {
-      const dadosAntigos = JSON.parse(
-        localStorage.getItem('voluntaria')
-      ) || {}
-
-      const voluntariaAtualizada = {
-        ...dadosAntigos,
-        ...dadosAtualizados
-      }
-
-      localStorage.setItem(
-        'voluntaria',
-        JSON.stringify(voluntariaAtualizada)
-      )
-
-      localStorage.setItem(
-        'usuario',
-        JSON.stringify(voluntariaAtualizada)
-      )
     }
 
     alert('Perfil atualizado com sucesso!')
@@ -207,9 +191,10 @@ const salvarPerfil = async () => {
 
   } catch (erro) {
     console.error('Erro ao atualizar perfil:', erro)
-    alert('Não foi possível atualizar seu perfil. Tente novamente.')
+    alert(erro.message || 'Não foi possível atualizar seu perfil. Tente novamente.')
   }
 }
+
 
 const cancelar = () => {
   if (tipoUsuario.value === 'vitima') {
