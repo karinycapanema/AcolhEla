@@ -22,7 +22,10 @@ import {
   faEnvelope,
   faPhone,
   faLock,
-  faUnlock
+  faUnlock,
+  faChevronRight,
+  faArrowLeft,
+  faPaperPlane
 } from '@fortawesome/free-solid-svg-icons'
 
 
@@ -36,9 +39,11 @@ library.add(
   faEnvelope,
   faPhone,
   faLock,
-  faUnlock
+  faUnlock,
+  faChevronRight,
+  faArrowLeft,
+  faPaperPlane
 )
-
 
 const app = createApp(App)
 

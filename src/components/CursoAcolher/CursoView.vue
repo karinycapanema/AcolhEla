@@ -1,534 +1,609 @@
-<script setup>
-import { ref, computed } from 'vue'
-import AppHeader from '../layout/AppHeader.vue'
-import AppFooter from '../layout/AppFooter.vue'
+  <script setup>
+  import { ref, reactive, computed } from 'vue'
+  import AppHeader from '../layout/AppHeader.vue'
+  import AppFooter from '../layout/AppFooter.vue'
+  import AppButton from '../ui/AppButton.vue'
 
 
-const tela = ref('inicio')
-const aula = ref(0)          
-const nome = ref('')
-const respostas = ref([])
-
-const aulas = [
-  {
-    titulo: 'Entendendo a violência',
-    resumo: 'Aprenda a reconhecer os diferentes tipos de violência e como eles podem aparecer no dia a dia.',
-    dica: 'A violência não acontece somente de forma física. Comportamentos psicológicos, morais, sexuais e patrimoniais também podem causar danos.',
-    conteudo: [
-      {
-        titulo: 'O que é violência?',
-        texto: 'Violência é qualquer ação ou comportamento que cause dano, sofrimento, medo, constrangimento ou prejuízo a outra pessoa.'
-      },
-      {
-        titulo: 'Tipos de violência',
-        texto: 'A violência pode ser física, psicológica, sexual, moral ou patrimonial. Uma situação pode envolver mais de um tipo.'
-      }
-    ],
-    perguntas: [
-      {
-        pergunta: 'Uma pessoa constantemente humilha outra, ameaça deixá-la e tenta controlar suas amizades. De acordo com conteúdo apresentado anteriormente, esse comportamento pode ser considerado:',
-        opcoes: ['Violência psicológica', 'Apenas uma discussão comum', 'Uma demonstração de carinho'],
-        correta: 0,
-        explicacao: 'Humilhações, ameaças e controle podem caracterizar violência psicológica.'
-      },
-      {
-        pergunta: 'De acordo com o conteúdo apresentado, qual afirmação está correta?',
-        opcoes: ['Somente agressões físicas são violência.', 'Existem diferentes formas de violência.', 'Violência acontece somente dentro de casa.'],
-        correta: 1,
-        explicacao: 'A violência pode ocorrer de diferentes formas e em diferentes contextos.'
-      }
-    ]
-  },
-  {
-    titulo: 'Reconhecendo situações de risco',
-    resumo: 'Aprenda a identificar comportamentos que podem indicar uma situação de risco ou abuso.',
-    dica: 'A responsabilidade pela violência nunca é da vítima.',
-    conteudo: [
-      {
-        titulo: 'Sinais de alerta',
-        texto: 'Ameaças, perseguição, isolamento, controle excessivo e invasão de privacidade podem indicar uma situação de risco.'
-      },
-      {
-        titulo: 'Controle também importa',
-        texto: 'Controlar amizades, roupas, redes sociais, localização ou exigir senhas pode representar uma tentativa de controlar outra pessoa.'
-      }
-    ],
-    perguntas: [
-      {
-        pergunta: 'Uma pessoa exige a senha das redes sociais da parceira e fica irritada quando ela conversa com amigos. Segundo o assunto, esse comportamento pode indicar:',
-        opcoes: ['Controle excessivo', 'Comunicação saudável', 'Respeito à privacidade'],
-        correta: 0,
-        explicacao: 'Exigir senhas e controlar amizades são exemplos de comportamentos de controle.'
-      },
-      {
-        pergunta: 'Qual das situações apresentadas representa um sinal de alerta?',
-        opcoes: ['Respeitar os limites da outra pessoa.', 'Perseguir alguém após ela pedir para ser deixada em paz.', 'Conversar sobre problemas de maneira respeitosa.'],
-        correta: 1,
-        explicacao: 'A perseguição pode representar uma situação de risco.'
-      }
-    ]
-  },
-  {
-    titulo: 'Meus direitos',
-    resumo: 'Conheça informações básicas sobre direitos e mecanismos de proteção.',
-    dica: 'Conhecer seus direitos permite buscar orientação e proteção com mais informação.',
-    conteudo: [
-      {
-        titulo: 'Lei Maria da Penha',
-        texto: 'A Lei Maria da Penha estabelece mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.'
-      },
-      {
-        titulo: 'Medidas de proteção',
-        texto: 'Existem mecanismos legais destinados à proteção de mulheres em situação de violência.'
-      }
-    ],
-    perguntas: [
-      {
-        pergunta: 'Segundo o assunto, qual é um dos objetivos da Lei Maria da Penha?',
-        opcoes: ['Prevenir e combater a violência doméstica e familiar contra a mulher.', 'Regular o uso das redes sociais.', 'Criar regras para relacionamentos.'],
-        correta: 0,
-        explicacao: 'A Lei Maria da Penha possui mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.'
-      },
-      {
-        pergunta: 'Por que conhecer os próprios direitos pode ser importante em uma situação de violência?',
-        opcoes: ['Porque permite conhecer possibilidades de proteção e apoio.', 'Porque elimina automaticamente todos os problemas.', 'Porque impede a busca por ajuda.'],
-        correta: 0,
-        explicacao: 'Conhecer os direitos ajuda a compreender possibilidades de proteção e orientação.'
-      }
-    ]
-  },
-  {
-    titulo: 'Autodefesa e segurança',
-    resumo: 'Aprenda princípios de prevenção e planejamento para situações de risco.',
-    dica: 'Autodefesa também envolve prevenção, percepção de riscos e planejamento. Em situações perigosas, priorize sua segurança.',
-    conteudo: [
-      {
-        titulo: 'Prevenção',
-        texto: 'Reconhecer situações de risco e pensar previamente em formas seguras de buscar ajuda pode fazer parte de um plano de segurança.'
-      },
-      {
-        titulo: 'Plano de segurança',
-        texto: 'Um plano pode envolver pessoas de confiança, lugares seguros, contatos importantes e estratégias para buscar ajuda.'
-      }
-    ],
-    perguntas: [
-      {
-        pergunta: 'Uma pessoa percebe que está em uma situação de risco. Qual atitude deve ser tomada!?',
-        opcoes: ['Planejar formas seguras de buscar ajuda.', 'Se colocar deliberadamente em maior perigo.', 'Ignorar todos os sinais de risco.'],
-        correta: 0,
-        explicacao: 'Planejar formas seguras de buscar ajuda pode fazer parte de um plano de segurança.'
-      },
-      {
-        pergunta: 'Qual elemento pode fazer parte de um plano de segurança?',
-        opcoes: ['Pessoas de confiança e lugares seguros.', 'Isolamento completo.', 'Compartilhar senhas com qualquer pessoa.'],
-        correta: 0,
-        explicacao: 'Pessoas de confiança e lugares seguros podem fazer parte de um planejamento de segurança.'
-      }
-    ]
-  },
-  {
-    titulo: 'Rede de apoio',
-    resumo: 'Entenda como pessoas e serviços podem ajudar em situações de violência.',
-    dica: 'Buscar ajuda não é sinal de fraqueza. Uma rede de apoio pode ajudar a encontrar caminhos de proteção.',
-    conteudo: [
-      {
-        titulo: 'O que é uma rede de apoio?',
-        texto: 'Pode ser formada por familiares, amigos, professores, profissionais e outras pessoas de confiança.'
-      },
-      {
-        titulo: 'Buscar ajuda',
-        texto: 'Conversar com alguém de confiança e procurar serviços especializados pode ser um caminho para obter orientação e apoio.'
-      }
-    ],
-    perguntas: [
-      {
-        pergunta: 'De acordo com o assunto, quem pode fazer parte de uma rede de apoio?',
-        opcoes: ['Somente familiares.', 'Pessoas de confiança, como amigos, familiares ou profissionais.', 'Somente pessoas que já passaram pela mesma situação.'],
-        correta: 1,
-        explicacao: 'Uma rede de apoio pode envolver diferentes pessoas de confiança.'
-      },
-      {
-        pergunta: 'Qual atitude está de acordo com o conteúdo apresentado?',
-        opcoes: ['Buscar uma pessoa de confiança quando precisar de apoio.', 'Se isolar completamente.', 'Ignorar uma situação que causa medo.'],
-        correta: 0,
-        explicacao: 'Buscar uma pessoa de confiança pode ser um primeiro passo para encontrar apoio.'
-      }
-    ]
+  function getUsuario() {
+    try {
+      const u = JSON.parse(localStorage.getItem('usuario'))
+      return u && u.id ? u : null
+    } catch {
+      return null
+    }
   }
-]
+  const usuario = getUsuario()
+  const ehAdmin = usuario?.tipo === 'admin'
 
-respostas.value = aulas.map(a => a.perguntas.map(() => null))
+  const tela = ref('inicio')
+  const aula = ref(0)
+  const nome = ref('')
+  const respostas = ref([]) // uma resposta por módulo (null = ainda não respondeu)
 
+  
+  const modulosIniciais = [
+    {
+      id: 1,
+      titulo: 'Entendendo a violência',
+      resumo: 'Aprenda a reconhecer os diferentes tipos de violência e como eles podem aparecer no dia a dia.',
+      texto: 'Violência é qualquer ação ou comportamento que cause dano, sofrimento, medo, constrangimento ou prejuízo a outra pessoa.\nA violência pode ser física, psicológica, sexual, moral ou patrimonial. Uma situação pode envolver mais de um tipo.',
+      dica: 'A violência não acontece somente de forma física. Comportamentos psicológicos, morais, sexuais e patrimoniais também podem causar danos.',
+      pergunta: 'Uma pessoa constantemente humilha outra, ameaça deixá-la e tenta controlar suas amizades. Esse comportamento pode ser considerado:',
+      opcao1: 'Violência psicológica',
+      opcao2: 'Apenas uma discussão comum',
+      opcao3: 'Uma demonstração de carinho',
+      correta: 0,
+      explicacao: 'Humilhações, ameaças e controle podem caracterizar violência psicológica.'
+    },
+    {
+      id: 2,
+      titulo: 'Reconhecendo situações de risco',
+      resumo: 'Aprenda a identificar comportamentos que podem indicar uma situação de risco ou abuso.',
+      texto: 'Ameaças, perseguição, isolamento, controle excessivo e invasão de privacidade podem indicar uma situação de risco.\nControlar amizades, roupas, redes sociais, localização ou exigir senhas pode representar uma tentativa de controlar outra pessoa.',
+      dica: 'A responsabilidade pela violência nunca é da vítima.',
+      pergunta: 'Uma pessoa exige a senha das redes sociais da parceira e fica irritada quando ela conversa com amigos. Esse comportamento pode indicar:',
+      opcao1: 'Controle excessivo',
+      opcao2: 'Comunicação saudável',
+      opcao3: 'Respeito à privacidade',
+      correta: 0,
+      explicacao: 'Exigir senhas e controlar amizades são exemplos de comportamentos de controle.'
+    },
+    {
+      id: 3,
+      titulo: 'Meus direitos',
+      resumo: 'Conheça informações básicas sobre direitos e mecanismos de proteção.',
+      texto: 'A Lei Maria da Penha estabelece mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.\nExistem mecanismos legais destinados à proteção de mulheres em situação de violência.',
+      dica: 'Conhecer seus direitos permite buscar orientação e proteção com mais informação.',
+      pergunta: 'Qual é um dos objetivos da Lei Maria da Penha?',
+      opcao1: 'Prevenir e combater a violência doméstica e familiar contra a mulher.',
+      opcao2: 'Regular o uso das redes sociais.',
+      opcao3: 'Criar regras para relacionamentos.',
+      correta: 0,
+      explicacao: 'A Lei Maria da Penha possui mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.'
+    },
+    {
+      id: 4,
+      titulo: 'Autodefesa e segurança',
+      resumo: 'Aprenda princípios de prevenção e planejamento para situações de risco.',
+      texto: 'Reconhecer situações de risco e pensar previamente em formas seguras de buscar ajuda pode fazer parte de um plano de segurança.\nUm plano pode envolver pessoas de confiança, lugares seguros, contatos importantes e estratégias para buscar ajuda.',
+      dica: 'Autodefesa também envolve prevenção, percepção de riscos e planejamento. Em situações perigosas, priorize sua segurança.',
+      pergunta: 'Qual elemento pode fazer parte de um plano de segurança?',
+      opcao1: 'Pessoas de confiança e lugares seguros.',
+      opcao2: 'Isolamento completo.',
+      opcao3: 'Compartilhar senhas com qualquer pessoa.',
+      correta: 0,
+      explicacao: 'Pessoas de confiança e lugares seguros podem fazer parte de um planejamento de segurança.'
+    },
+    {
+      id: 5,
+      titulo: 'Rede de apoio',
+      resumo: 'Entenda como pessoas e serviços podem ajudar em situações de violência.',
+      texto: 'Uma rede de apoio pode ser formada por familiares, amigos, professores, profissionais e outras pessoas de confiança.\nConversar com alguém de confiança e procurar serviços especializados pode ser um caminho para obter orientação e apoio.',
+      dica: 'Buscar ajuda não é sinal de fraqueza. Uma rede de apoio pode ajudar a encontrar caminhos de proteção.',
+      pergunta: 'Quem pode fazer parte de uma rede de apoio?',
+      opcao1: 'Somente familiares.',
+      opcao2: 'Pessoas de confiança, como amigos, familiares ou profissionais.',
+      opcao3: 'Somente pessoas que já passaram pela mesma situação.',
+      correta: 1,
+      explicacao: 'Uma rede de apoio pode envolver diferentes pessoas de confiança.'
+    }
+  ]
 
-const progresso = computed(() => ((aula.value + 1) / aulas.length) * 100)
+  const CHAVE = 'acolhela_modulos'
 
-const podeContinuar = computed(() => {
-  return respostas.value[aula.value].every(
-    (resposta, index) => resposta === aulas[aula.value].perguntas[index].correta
+  function lerSalvos() {
+    try {
+      const salvo = localStorage.getItem(CHAVE)
+      return salvo ? JSON.parse(salvo) : modulosIniciais
+    } catch {
+      return modulosIniciais
+    }
+  }
+
+  const modulos = ref(lerSalvos())
+
+  function guardar() {
+    localStorage.setItem(CHAVE, JSON.stringify(modulos.value))
+  }
+
+  // junta as 3 opções numa lista, que é o formato que a tela do curso usa
+  const aulas = computed(() =>
+    modulos.value.map((m) => ({ ...m, opcoes: [m.opcao1, m.opcao2, m.opcao3] }))
   )
-})
 
-const totalPerguntas = computed(() =>
-  aulas.reduce((total, a) => total + a.perguntas.length, 0)
-)
+  const progresso = computed(() =>
+    aulas.value.length ? ((aula.value + 1) / aulas.value.length) * 100 : 0
+  )
 
+  const podeContinuar = computed(() => {
+    const atual = aulas.value[aula.value]
+    return atual && respostas.value[aula.value] === atual.correta
+  })
 
-function iniciar() {
-  tela.value = 'curso'
-  aula.value = 0
-  window.scrollTo(0, 0)
-}
-
-function responder(pergunta, opcao) {
-  respostas.value[aula.value][pergunta] = opcao
-}
-
-function proxima() {
-  if (!podeContinuar.value) return
-
-  if (aula.value < aulas.length - 1) {
-    aula.value++
-    window.scrollTo(0, 0)
-  } else {
-    tela.value = 'final'
+  function iniciar() {
+    respostas.value = aulas.value.map(() => null)
+    tela.value = 'curso'
+    aula.value = 0
     window.scrollTo(0, 0)
   }
-}
 
-function imprimir() {
-  if (!nome.value.trim()) {
-    alert('Digite seu nome primeiro!')
-    return
+  function responder(opcao) {
+    respostas.value[aula.value] = opcao
   }
-  window.print()
-}
-</script>
 
+  function proxima() {
+    if (!podeContinuar.value) return
 
- <template>
+    if (aula.value < aulas.value.length - 1) {
+      aula.value++
+    } else {
+      tela.value = 'final'
+    }
+    window.scrollTo(0, 0)
+  }
 
-  <AppHeader />
+  function imprimir() {
+    if (!nome.value.trim()) {
+      alert('Digite seu nome primeiro!')
+      return
+    }
+    window.print()
+  }
 
-  <div class="curso">
+  const moduloVazio = () => ({
+    id: null,
+    titulo: '',
+    resumo: '',
+    texto: '',
+    dica: '',
+    pergunta: '',
+    opcao1: '',
+    opcao2: '',
+    opcao3: '',
+    correta: 0,
+    explicacao: ''
+  })
+  const moduloForm = reactive(moduloVazio())
+  const erroForm = ref('')
 
-    <!-- INÍCIO -->
-    <div v-if="tela === 'inicio'">
-      <section class="inicio">
-        <div class="inicio-texto">
-          <h1>Curso AcolhEla</h1>
-          <h2>Informação também é uma forma de proteção.</h2>
-          <p>
-            Aprenda sobre violência, direitos, autodefesa,
-            segurança e rede de apoio.
-          </p>
-          <button @click="iniciar">Começar curso</button>
-        </div>
-      </section>
+  function novoModulo() {
+    Object.assign(moduloForm, moduloVazio())
+    erroForm.value = ''
+    tela.value = 'form'
+  }
 
-      <section class="sobre">
-        <h2>Sobre o curso</h2>
-        <p>
-          Ao longo dos módulos, você responderá atividades relacionadas
-          diretamente ao conteúdo apresentado.
-        </p>
-        <div class="info">
-          <div>
-            <strong>{{ aulas.length }}</strong>
-            <span>Módulos</span>
-          </div>
-          <div>
-            <strong>{{ totalPerguntas }}</strong>
-            <span>Perguntas</span>
-          </div>
-          <div>
-            <strong>100%</strong>
-            <span>Gratuito</span>
-          </div>
-        </div>
-      </section>
+  function editarModulo(modulo) {
+    Object.assign(moduloForm, modulo)
+    erroForm.value = ''
+    tela.value = 'form'
+  }
 
-      <section class="aulas">
-        <h2>Conteúdo do curso</h2>
-        <div class="lista-aulas">
-          <div
-            v-for="(aulaItem, index) in aulas"
-            :key="index"
-            class="card-aula"
-          >
-            <span>0{{ index + 1 }}</span>
-            <div>
-              <h3>{{ aulaItem.titulo }}</h3>
-              <p>{{ aulaItem.resumo }}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+  function salvarModulo() {
+    const campos = ['titulo', 'resumo', 'texto', 'dica', 'pergunta', 'opcao1', 'opcao2', 'opcao3', 'explicacao']
+    if (campos.some((c) => !String(moduloForm[c]).trim())) {
+      erroForm.value = 'Preencha todos os campos.'
+      return
+    }
 
-      <section class="final-inicio">
-        <h2>Vamos começar?</h2>
-        <button @click="iniciar">Começar agora</button>
-      </section>
-    </div>
+    if (moduloForm.id) {
+      modulos.value = modulos.value.map((m) =>
+        m.id === moduloForm.id ? { ...moduloForm } : m
+      )
+    } else {
 
-    <!-- CURSO -->
-    <div v-if="tela === 'curso'" class="pagina-aula">
-      <div class="topo-aula">
-        <button class="voltar" @click="tela = 'inicio'">← Voltar</button>
-        <span>Módulo {{ aula + 1 }} de {{ aulas.length }}</span>
-      </div>
+      modulos.value = [...modulos.value, { ...moduloForm, id: Date.now() }]
+    }
 
-      <div class="progresso">
-        <div :style="{ width: progresso + '%' }"></div>
-      </div>
+    guardar()
+    tela.value = 'admin'
+  }
 
-      <main class="conteudo">
-        <h1>{{ aulas[aula].titulo }}</h1>
-        <p class="introducao">{{ aulas[aula].resumo }}</p>
+  function excluirModulo(modulo) {
+    if (!confirm(`Excluir o módulo "${modulo.titulo}"?`)) return
+    modulos.value = modulos.value.filter((m) => m.id !== modulo.id)
+    guardar()
+  }
+  </script>
 
-       
-        
-  
-        <section class="conteudo-modulo">
-          <div
-            v-for="(parte, index) in aulas[aula].conteudo"
-            :key="index"
-            class="parte"
-          >
-            <h2>{{ parte.titulo }}</h2>
-            <p>{{ parte.texto }}</p>
-          </div>
+  <template>
+    <AppHeader />
 
-
-          <div class="importante">
-            <h3>Importante</h3>
-            <p>{{ aulas[aula].dica }}</p>
-          </div>
-
-
-          <div class="atividade">
-            <h2>Questionário</h2>
-            <p class="instrucao">
-              Responda às perguntas com base no conteúdo
-              apresentado anteriormente.
+    <div class="curso">
+      <!-- INÍCIO -->
+      <div v-if="tela === 'inicio'">
+        <section class="inicio">
+          <div class="inicio-texto">
+            <h1>Curso AcolhEla</h1>
+            <h2>Informação também é uma forma de proteção.</h2>
+            <p>
+              Aprenda sobre violência, direitos, autodefesa,
+              segurança e rede de apoio.
             </p>
+            <div class="comecar">
+            <AppButton v-if="aulas.length" @click="iniciar">Começar agora</AppButton>
+            </div>
+            <button v-if="ehAdmin" class="secundario" @click="tela = 'admin'">Gerenciar módulos</button>
+          </div>
+        </section>
 
-            <div
-              v-for="(pergunta, index) in aulas[aula].perguntas"
-              :key="index"
-              class="pergunta"
-            >
-              <h3>{{ index + 1 }}. {{ pergunta.pergunta }}</h3>
-
-              <button
-                v-for="(opcao, i) in pergunta.opcoes"
-                :key="i"
-                class="opcao"
-                :class="{
-                  correta: respostas[aula][index] === i && i === pergunta.correta,
-                  incorreta: respostas[aula][index] === i && i !== pergunta.correta
-                }"
-                @click="responder(index, i)"
-              >
-                {{ opcao }}
-              </button>
-
-              <p v-if="respostas[aula][index] !== null" class="resultado">
-                {{
-                  respostas[aula][index] === pergunta.correta
-                    ? '✓ ' + pergunta.explicacao
-                    : '✕ Tente novamente!'
-                }}
-              </p>
+        <section class="sobre">
+          <h2>Sobre o curso</h2>
+          <p>
+            Ao longo dos módulos, você responderá atividades relacionadas
+            diretamente ao conteúdo apresentado.
+          </p>
+          <div class="info">
+            <div>
+              <strong>{{ aulas.length }}</strong>
+              <span>Módulos</span>
+            </div>
+            <div>
+              <strong>{{ aulas.length }}</strong>
+              <span>Perguntas</span>
+            </div>
+            <div>
+              <strong>100%</strong>
+              <span>Gratuito</span>
             </div>
           </div>
-
-  
-          <button
-            class="proxima"
-            :disabled="!podeContinuar"
-            @click="proxima"
-          >
-            {{ aula === aulas.length - 1 ? 'Concluir curso' : 'Próximo módulo →' }}
-          </button>
         </section>
-      </main>
-    </div>
 
-    <div v-if="tela === 'final'" class="conclusao">
-      <div class="icone">✓</div>
-      <h1>Curso concluído!</h1>
-      <p>Parabéns! Você chegou ao final do Curso AcolhEla.</p>
+        <section class="aulas">
+          <h2>Conteúdo do curso</h2>
+          <div class="lista-aulas">
+            <div v-for="(aulaItem, index) in aulas" :key="aulaItem.id" class="card-aula">
+              <span>0{{ index + 1 }}</span>
+              <div>
+                <h3>{{ aulaItem.titulo }}</h3>
+                <p>{{ aulaItem.resumo }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <div class="certificado">
-        <h2>Certificado de conclusão</h2>
-        <p>Digite seu nome para gerar o certificado.</p>
-        <input v-model="nome" placeholder="Seu nome">
-        <button @click="imprimir">Gerar certificado</button>
+        <section v-if="aulas.length" class="final-inicio">
+          <h2>Vamos começar?</h2>
+          <div class="comecar">
+          <AppButton @click="iniciar">Começar agora</AppButton>
+          </div>
+        </section>
+      </div>
+
+      <div v-if="tela === 'curso'" class="pagina-aula">
+        <div class="topo-aula">
+          <button class="voltar" @click="tela = 'inicio'">← Voltar</button>
+          <span>Módulo {{ aula + 1 }} de {{ aulas.length }}</span>
+        </div>
+
+        <div class="progresso">
+          <div :style="{ width: progresso + '%' }"></div>
+        </div>
+
+        <main class="conteudo">
+          <h1>{{ aulas[aula].titulo }}</h1>
+          <p class="introducao">{{ aulas[aula].resumo }}</p>
+
+          <section class="conteudo-modulo">
+            <div class="parte">
+              <p class="texto-modulo">{{ aulas[aula].texto }}</p>
+            </div>
+
+            <div class="importante">
+              <h3>Importante</h3>
+              <p>{{ aulas[aula].dica }}</p>
+            </div>
+
+            <div class="atividade">
+              <h2>Questionário</h2>
+              <p class="instrucao">
+                Responda à pergunta com base no conteúdo apresentado anteriormente.
+              </p>
+
+              <div class="pergunta">
+                <h3>{{ aulas[aula].pergunta }}</h3>
+
+                <button
+                  v-for="(opcao, i) in aulas[aula].opcoes"
+                  :key="i"
+                  class="opcao"
+                  :class="{
+                    correta: respostas[aula] === i && i === aulas[aula].correta,
+                    incorreta: respostas[aula] === i && i !== aulas[aula].correta
+                  }"
+                  @click="responder(i)"
+                >
+                  {{ opcao }}
+                </button>
+
+                <p v-if="respostas[aula] !== null" class="resultado">
+                  {{
+                    respostas[aula] === aulas[aula].correta
+                      ? '✓ ' + aulas[aula].explicacao
+                      : '✕ Tente novamente!'
+                  }}
+                </p>
+              </div>
+            </div>
+
+            <button class="proxima" :disabled="!podeContinuar" @click="proxima">
+              {{ aula === aulas.length - 1 ? 'Concluir curso' : 'Próximo módulo →' }}
+            </button>
+          </section>
+        </main>
+      </div>
+
+      <div v-if="tela === 'final'" class="conclusao">
+        <div class="icone">✓</div>
+        <h1>Curso concluído!</h1>
+        <p>Parabéns! Você chegou ao final do Curso AcolhEla.</p>
+
+        <div class="certificado">
+          <h2>Certificado de conclusão</h2>
+          <p>Digite seu nome para gerar o certificado.</p>
+          <input v-model="nome" placeholder="Seu nome">
+          <button @click="imprimir">Gerar certificado</button>
+        </div>
+      </div>
+
+      <div v-if="tela === 'admin' && ehAdmin" class="admin">
+        <div class="topo-aula">
+          <button class="voltar" @click="tela = 'inicio'">← Voltar</button>
+          <button @click="novoModulo">+ Novo módulo</button>
+        </div>
+
+        <h1>Gerenciar módulos</h1>
+
+        <div v-for="m in modulos" :key="m.id" class="linha-admin">
+          <h3>{{ m.titulo }}</h3>
+          <div class="botoes-admin">
+            <button class="secundario" @click="editarModulo(m)">Editar</button>
+            <button class="perigo" @click="excluirModulo(m)">Excluir</button>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="tela === 'form' && ehAdmin" class="admin">
+        <div class="topo-aula">
+          <button class="voltar" @click="tela = 'admin'">← Cancelar</button>
+        </div>
+
+        <h1>{{ moduloForm.id ? 'Editar módulo' : 'Novo módulo' }}</h1>
+
+        <form class="form-modulo" @submit.prevent="salvarModulo">
+          <label>Título <input v-model="moduloForm.titulo" type="text" /></label>
+          <label>Resumo <textarea v-model="moduloForm.resumo" rows="2"></textarea></label>
+          <label>Texto do módulo <textarea v-model="moduloForm.texto" rows="5"></textarea></label>
+          <label>Dica (caixa "Importante") <textarea v-model="moduloForm.dica" rows="2"></textarea></label>
+
+          <label>Pergunta <textarea v-model="moduloForm.pergunta" rows="2"></textarea></label>
+          <label>Opção 1 <input v-model="moduloForm.opcao1" type="text" /></label>
+          <label>Opção 2 <input v-model="moduloForm.opcao2" type="text" /></label>
+          <label>Opção 3 <input v-model="moduloForm.opcao3" type="text" /></label>
+          <label>
+            Qual é a opção correta?
+            <select v-model.number="moduloForm.correta">
+              <option :value="0">Opção 1</option>
+              <option :value="1">Opção 2</option>
+              <option :value="2">Opção 3</option>
+            </select>
+          </label>
+          <label>Explicação da resposta <textarea v-model="moduloForm.explicacao" rows="2"></textarea></label>
+
+          <p v-if="erroForm" class="erro-form">{{ erroForm }}</p>
+
+          <button type="submit">Salvar módulo</button>
+        </form>
       </div>
     </div>
-
-  </div>
 
     <AppFooter />
-    
-</template>
+  </template>
 
-
+  
 <style scoped>
 * {
   box-sizing: border-box;
 }
+
 .curso {
-  min-height: 100vh;
-  background: #fffaf8;
-  color: #3d3033;
+  background: #ffffff;
+  color: #650019;
   font-family: Georgia, 'Times New Roman', Times, serif;
-  zoom: 1.66;
 }
-h1 {
-  font-weight: 400;
-}
+
+h1,
+h2,
+h3,
 p {
   line-height: 1.6;
 }
-button {
-  border: none;
-  border-radius: 16px;
-  padding: 14px 27px;
-  background: #620017;
-  color: white;
-  font-size: 18.75px;
-  cursor: pointer;
-}
-button:hover {
-  opacity: .9;
-  transform: scale(1.04);
-  transition: 0.35s ease;
-  border: none;
+
+h1,
+h2,
+h3 {
+  font-weight: bold;
 }
 
-/* INÍCIO */
-.inicio {
-  max-width: 1000px;
-  margin: auto;
-  padding: 90px 40px;
+p {
+  line-height: 1.6;
 }
+
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  background: #650019;
+  color: #ffffff;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+button.secundario {
+  background: #f7c6d5;
+  color: #650019;
+}
+
+button.perigo {
+  background: #b81833;
+  color: #ffffff;
+}
+
+/* 3. INÍCIO DO CURSO */
+.inicio {
+  width: 66%;
+  margin: auto;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+
 .inicio-texto {
   max-width: 700px;
 }
+
 .inicio h1 {
-  margin: 0 0 15px;
-  font-size: 72.5px;
-  color: #620017;
-  font-weight: bold;
-}
-.inicio h2 {
-  font-size: 40px;
-  color: #620017;
-}
-.inicio p {
-  max-width: 620px;
-  margin-bottom: 30px;
-  font-size: 21px;
-  color: #4A0011;
-  margin-top: 20px;
+  font-size: 3.5rem;
+  color: #650019;
+  display: flex;
+  justify-content: center;
 }
 
-/* SOBRE */
+.inicio h2 {
+  font-size: 2.0rem;
+  color: #650019;
+}
+
+.inicio p {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  color: #650019;
+}
+
+.inicio-texto button + button {
+  margin-left: 12px;
+}
+
 .sobre {
-  max-width: 850px;
-  margin: auto;
-  padding: 50px 30px;
-  text-align: center;
+  width: 66%;
+  margin: 10px auto 20px;
+  padding: 25px 43px;
+  background: #fff0dc;
+  border-radius: 22px;  
+  box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
 }
-.sobre h2, .aulas h2 {
-  font-size: 40px;
-  color: #620017;
+
+.sobre h2,
+.aulas h2 {
+  font-size: 2.5rem;
+  color: #650019;
+  display: flex;
+  justify-content: center;
 }
+
 .sobre > p {
-  max-width: 700px;
-  margin: auto;
-  color: #3A3A3A;
+  color: #650019;
+  display: flex;
+  justify-content: center;
+  font-size: 1.3rem;
 }
+
 .info {
   display: flex;
   justify-content: center;
   gap: 70px;
-  margin-top: 35px;
+  margin-top: 25px;
 }
+
 .info div {
   display: flex;
   flex-direction: column;
 }
+
 .info strong {
-  font-size: 33.75px;
-  color: #8e2842;
+  font-size: 2.6rem;
+  color: #a52d43;
 }
 
-/* AULAS */
-.aulas {
-  max-width: 850px;
-  margin: auto;
-  padding: 50px 30px;
+.info span {
+  color: #650019;
 }
-.aulas h2 {
-  text-align: center;
-  margin-bottom: 30px;
-}
+
+
 .lista-aulas {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 .card-aula {
+  width: 66%;
+  min-height: 163px;
+  margin: 10px auto;
+  padding: 25px 43px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 20px;
-  background: white;
-  border: 1px solid #eadde0;
-  border-radius: 10px;
-  background-color: #FEB9CD;
-  border-color: #e2728e;
+  background: #fff0dc;
+  border-radius: 22px;
+  box-sizing: border-box;
+  box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
+  gap: 25px;
 }
+
 .card-aula > span {
   font-size: 27px;
-  color: #a52d47;
+  color: #a52d43;
 }
+
 .card-aula h3 {
   margin: 0 0 5px;
   font-size: 25px;
-  color: #4A0011;
+  color: #650019;
 }
+
 .card-aula p {
   margin: 0;
-  font-size: 17.5px;
-  color: #4A0011;
+  font-size: 17px;
+  color: #650019;
 }
 
-/* FINAL DA PÁGINA */
 .final-inicio {
-  max-width: 600px;
-  margin: 50px auto 80px;
+  width: 66%;
+  margin: 20px auto;
   padding: 40px;
   text-align: center;
-  background: #f9e7ea;
-  border-radius: 12px;
-  background-color: #FEB9CD;
-}
-.final-inicio h2 {
-  margin-top: 0;
-  color: #620017;
-}
-.final-inicio p {
-  margin: 9px 0 9px 0;
+  background: #f7c6d5;
+  border-radius: 22px;
 }
 
-/* CURSO */
+.comecar{
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.final-inicio h2 {
+  color: #650019;
+  font-size: 2.4rem;
+}
+
+.final-inicio p {
+  margin: 9px 0;
+}
+
 .pagina-aula {
   min-height: 100vh;
   padding-bottom: 70px;
 }
+
 .topo-aula {
   max-width: 850px;
   margin: auto;
@@ -537,209 +612,381 @@ button:hover {
   align-items: center;
   justify-content: space-between;
 }
+
 .voltar {
-  padding: 5px;
-  background: none;
-  color: #620017;
+  padding: 8px 12px;
+  background: transparent;
+  color: #650019;
 }
+
 .progresso {
   max-width: 790px;
-  height: 6px;
+  height: 8px;
   margin: 0 auto 40px;
-  background: #eadde0;
+  background: #f3d8c0;
   border-radius: 10px;
+  overflow: hidden;
 }
+
 .progresso div {
   height: 100%;
-  background: #8e2842;
+  background: #a52d43;
   border-radius: 10px;
+  transition: width 0.3s ease;
 }
+
 .conteudo {
-  max-width: 800px;
+  width: 66%;
   margin: auto;
   padding: 20px 40px;
 }
+
 .conteudo > h1 {
   margin-bottom: 10px;
   font-size: 45px;
-  color: #620017;
+  color: #650019;
 }
+
 .introducao {
   margin-bottom: 40px;
-  color: #8e2842;
+  color: #a52d43;
   font-size: 17px;
 }
 
-/* CONTEÚDO */
 .parte {
   margin-bottom: 30px;
 }
+
 .parte h2 {
-  font-size: 31.25px;
+  font-size: 31px;
+  color: #650019;
 }
+
 .parte p {
   font-size: 16px;
+  color: #650019;
 }
+
+.texto-modulo {
+  white-space: pre-line;
+  font-size: 16px;
+}
+
+
 .importante {
   margin: 35px 0;
   padding: 20px;
-  background: #f9e7ea;
-  border-left: 4px solid #8e2842;
-}
-.importante h3 {
-  margin-top: 0;
-  color: #620017;
+  background: #fdf0e1;
+  border-left: 4px solid #a52d43;
+  border-radius: 0 12px 12px 0;
 }
 
-/* QUESTIONÁRIO */
+.importante h3 {
+  margin-top: 0;
+  color: #650019;
+}
+
+.importante p {
+  color: #650019;
+}
+
+/* 11. QUESTIONÁRIO */
 .atividade {
   margin-top: 45px;
   padding: 35px 40px;
-  background: #fbe8d3;
+  background: #fdf0e1;
   border-radius: 20px;
 }
+
 .atividade h2 {
-  color: #4A0011;
+  color: #650019;
   text-align: center;
 }
+
 .instrucao {
-  color: #4A0011;
+  margin-bottom: 24px;
+  color: #650019;
   text-align: center;
-  margin-bottom: 30px;
 }
+
 .pergunta {
-  margin: 30px 0;
+  margin: 24px 0;
 }
+
 .pergunta h3 {
-  font-size: 16px;
-  font-weight: bold;
-  color: #4A0011;
   margin-bottom: 10px;
+  font-size: 17px;
+  font-weight: bold;
+  color: #650019;
 }
+
+
 .opcao {
   display: block;
   width: 100%;
-  margin: 10px 0;
-  padding: 14px 20px;
+  margin: 9px 0;
+  padding: 12px 16px;
   text-align: left;
-  background: #FEB9CD;
-  color: #4A0011;
-  border: 1px solid #f0d9bd;
-  border-radius: 17px;
+  background: #f7c6d5;
+  color: #650019;
+  border: 1px solid #e8b69a;
+  border-radius: 12px;
   font-size: 16px;
   font-family: Georgia, 'Times New Roman', Times, serif;
 }
+
 .opcao:hover {
-  background: #fce6c9;
+  background: #f2a9c1;
 }
+
 .opcao.correta {
   background: #e5f1e7;
   border-color: #8eb69a;
   color: #355c3f;
 }
+
 .opcao.incorreta {
   background: #f8e2e5;
   border-color: #d49aa4;
   color: #7a2532;
 }
+
 .resultado {
   font-size: 14px;
-  color: #66595b;
-  margin-top: 6px;
-  padding-left: 20px;
+  color: #650019;
+  margin-top: 10px;
+  padding-left: 8px;
 }
+
+
 .proxima {
   display: block;
-  margin: 30px auto 0;
+  margin: 25px auto 0;
   width: 100%;
   max-width: 320px;
-  border-radius: 999px;
-  background: #4A0011;
+  border-radius: 12px;
+  background: #650019;
   text-align: center;
 }
+
 .proxima:disabled {
-  opacity: .4;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
-/* CONCLUSÃO */
+
 .conclusao {
-  max-width: 700px;
+  width: 66%;
   margin: auto;
   padding: 90px 30px;
   text-align: center;
 }
+
 .icone {
-  width: 60px;
-  height: 60px;
+  width: 55px;
+  height: 55px;
   margin: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #f2c4d0;
-  color: #620017;
+  background: #f7c6d5;
+  color: #650019;
   font-size: 25px;
 }
+
 .conclusao h1 {
   font-size: 48px;
-  color: #620017;
+  color: #650019;
 }
+
+
 .certificado {
   margin-top: 60px;
   padding: 35px;
-  background: white;
-  border: 1px solid #ddc7cc;
-  border-radius: 10px;
+  background: #fdf0e1;
+  border: 1px solid #f3d8c0;
+  border-radius: 15px;
 }
-.certificado h2 {
-  color: #620017;
+
+.certificado h2,
+.certificado p {
+  color: #650019;
 }
+
 .certificado input {
   width: 90%;
   margin: 15px 0 20px;
   padding: 12px;
-  border: 1px solid #d8c7cb;
-  border-radius: 6px;
-  font-size: 20px;
+  border: 1px solid #e8b69a;
+  border-radius: 8px;
+  font-size: 18px;
+  font-family: inherit;
+  background: #ffffff;
 }
+
+
+.admin {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px 30px 70px;
+}
+
+.admin > h1 {
+  font-size: 34px;
+  color: #650019;
+}
+
+.linha-admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 12px;
+  padding: 16px 20px;
+  background: #fdf0e1;
+  border: 1px solid #f3d8c0;
+  border-radius: 12px;
+}
+
+.linha-admin h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #650019;
+}
+
+.botoes-admin {
+  display: flex;
+  gap: 8px;
+}
+
+.botoes-admin button {
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+
+.form-modulo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-modulo label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #650019;
+}
+
+.form-modulo input,
+.form-modulo textarea,
+.form-modulo select {
+  padding: 10px 12px;
+  border: 1px solid #e8b69a;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  background: #ffffff;
+  color: #650019;
+}
+
+.form-modulo .erro-form {
+  margin: 0;
+  color: #b81833;
+  font-weight: bold;
+}
+
+.form-modulo button[type='submit'] {
+  align-self: center;
+}
+
 
 @media (max-width: 700px) {
   .inicio {
     padding: 60px 25px;
   }
+
   .inicio h1 {
-    font-size: 53.75px;
+    font-size: 48px;
   }
+
   .inicio h2 {
-    font-size: 32.5px;
+    font-size: 30px;
   }
+
+  .inicio p {
+    font-size: 18px;
+  }
+
   .info {
     gap: 30px;
   }
+
   .conteudo {
     padding: 20px 25px;
   }
+
   .conteudo > h1 {
-    font-size: 45px;
+    font-size: 34px;
   }
+
   .topo-aula {
     padding: 20px;
   }
+
+  .card-aula {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .card-aula h3 {
+    font-size: 20px;
+  }
+
+  .card-aula p {
+    font-size: 15px;
+  }
+
+  .linha-admin {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .botoes-admin {
+    width: 100%;
+  }
+
+  .atividade {
+    padding: 25px 20px;
+  }
+
+  .conclusao h1 {
+    font-size: 36px;
+  }
 }
 
+/* 19. IMPRESSÃO DO CERTIFICADO */
 @media print {
   body * {
     visibility: hidden;
   }
-  .certificado, .certificado * {
+
+  .certificado,
+  .certificado * {
     visibility: visible;
   }
+
   .certificado {
     position: absolute;
     left: 5%;
     top: 20%;
     width: 90%;
+    background: white;
+    border: 2px solid #650019;
   }
 }
-</style>  
+</style>
+

@@ -68,15 +68,14 @@ function voltarInicio() {
 }
 
 .mensagem-sucesso {
-  width: 850px;
-  height: 500px;
+  width: 66%;
   max-width: 100%;
   padding: 55px 45px;
   text-align: center;
   background-color: #fff0dc;
   border-radius: 20px;
   color: #65071d;
-  box-shadow: 2px 8px 30px #65071d;
+  box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
 }
 
 .icone-sucesso {
@@ -97,21 +96,20 @@ function voltarInicio() {
   margin: 0 0 15px;
   color: #65071d;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 2.0rem;
+  font-size: 3.5rem;
 }
 
 .mensagem-sucesso p {
   margin: 8px 0;
   color: #65071d;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1.0rem;
-  line-height: 1.6;
+  font-size: 2.0rem;
 }
 
 .mensagem-sucesso .mensagem-final {
-  margin-top: 25px;
+  padding: 20px;
   font-weight: bold;
-  font-size: 1.0rem;
+  font-size: 1.5rem;
 }
 .area-button{
   display: flex;
