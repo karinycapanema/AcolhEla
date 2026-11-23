@@ -5,6 +5,7 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios'
 
 const iconeExcluir = faTrash
 
@@ -22,9 +23,7 @@ const contatos = ref([
   { nome: 'Fulana' }
 ])
 
-
-onMounted(
-  async () => {
+onMounted(async () => {
   const logado = localStorage.getItem('usuarioLogado')
   const tipoUsuario = localStorage.getItem('tipoUsuario')
 
@@ -52,6 +51,34 @@ onMounted(
 
   } catch (erro) {
     console.error('Erro ao buscar denúncias:', erro)
+  if (!dados) {
+    router.push('/login')
+    return
+  }
+
+  try {
+    const usuarioSalvo = JSON.parse(dados)
+
+    const resposta = await axios.get(
+      `http://localhost:3000/vitimas/${usuarioSalvo.id}`
+    )
+
+    vitima.value = resposta.data
+
+    localStorage.setItem('vitima', JSON.stringify(resposta.data))
+    localStorage.setItem('usuario', JSON.stringify(resposta.data))
+
+    const denunciasSalvas = JSON.parse(
+      localStorage.getItem('denuncias')
+    ) || []
+
+    denuncias.value = denunciasSalvas.filter(
+      denuncia => denuncia.emailVitima === vitima.value.email
+    )
+
+  } catch (erro) {
+    console.error('Erro ao buscar vítima:', erro)
+    alert('Não foi possível carregar os dados do perfil.')
   }
 })
 
@@ -114,28 +141,42 @@ const sair = () => {
 }
 
 const apagarConta = async () => {
-  const confirmar = window.confirm(
+  const confirmar = confirm(
     'Tem certeza que deseja apagar sua conta? Todas as suas denúncias também serão apagadas. Essa ação não poderá ser desfeita.'
   )
 
-  if (!confirmar) return
+  if (!confirmar) {
+    return
+  }
 
   try {
     const vitimaSalva = localStorage.getItem('vitima')
 
     if (!vitimaSalva) {
-      throw new Error('Não foi possível identificar a conta.')
+      alert('Não foi possível encontrar os dados da sua conta.')
+      return
     }
 
     const dadosVitima = JSON.parse(vitimaSalva)
 
-    if (!dadosVitima.email) {
-      throw new Error('O e-mail da vítima não foi encontrado.')
+    if (!dadosVitima.id) {
+      alert('Não foi possível identificar sua conta.')
+      return
     }
 
-    const resposta = await fetch(
-      `${API_URL}?emailVitima=${encodeURIComponent(dadosVitima.email)}`
+    await axios.delete(
+      `http://localhost:3000/vitimas/${dadosVitima.id}`
     )
+
+
+    const denunciasSalvas = localStorage.getItem('denuncias')
+
+    if (denunciasSalvas) {
+      const todasDenuncias = JSON.parse(denunciasSalvas)
+
+      const novasDenuncias = todasDenuncias.filter(
+        denuncia => denuncia.emailVitima !== dadosVitima.email
+      )
 
     if (!resposta.ok) {
       throw new Error('Não foi possível buscar suas denúncias.')
@@ -161,14 +202,14 @@ const apagarConta = async () => {
     localStorage.removeItem('vitima')
     localStorage.removeItem('usuarioLogado')
     localStorage.removeItem('tipoUsuario')
-    localStorage.removeItem('denuncia')
 
-    alert('Sua conta e suas denúncias foram apagadas com sucesso!')
+    alert('Sua conta foi apagada com sucesso!')
 
     router.push('/')
+
   } catch (erro) {
-    console.error('Erro ao apagar conta:', erro)
-    alert(erro.message || 'Não foi possível apagar sua conta. Tente novamente.')
+    console.error('Erro ao excluir conta:', erro)
+    alert('Não foi possível excluir sua conta. Tente novamente.')
   }
 }
 </script>

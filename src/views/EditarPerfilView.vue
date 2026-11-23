@@ -2,6 +2,7 @@
 import AppFooter from '@/components/layout/AppFooter.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -27,25 +28,60 @@ const tiposDeAjuda = [
 
 const tipoUsuario = ref('')
 
-onMounted(() => {
+
+onMounted(async () => {
   tipoUsuario.value = localStorage.getItem('tipoUsuario')
 
-  let dados = null
+  let usuario = null
 
   if (tipoUsuario.value === 'vitima') {
-    dados = localStorage.getItem('vitima')
+    const dados = localStorage.getItem('vitima')
+
+    if (dados) {
+      usuario = JSON.parse(dados)
+    }
   }
 
   if (tipoUsuario.value === 'voluntaria') {
-    dados = localStorage.getItem('voluntaria')
+    const dados = localStorage.getItem('voluntaria')
+
+    if (dados) {
+      usuario = JSON.parse(dados)
+    }
+
+    if (!usuario?.id) {
+      alert('Não foi possível identificar sua conta.')
+      router.push('/login')
+      return
+    }
+
+    try {
+      const resposta = await fetch(
+        `http://localhost:3000/voluntarias/${usuario.id}`
+      )
+
+      if (!resposta.ok) {
+        throw new Error('Erro ao buscar voluntária.')
+      }
+
+      usuario = await resposta.json()
+
+      localStorage.setItem(
+        'voluntaria',
+        JSON.stringify(usuario)
+      )
+    } catch (erro) {
+      console.error(erro)
+      alert('Não foi possível carregar seus dados.')
+      router.push('/perfil-voluntaria')
+      return
+    }
   }
 
-  if (!dados) {
+  if (!usuario) {
     router.push('/login')
     return
   }
-
-  const usuario = JSON.parse(dados)
 
   nome.value = usuario.nome || ''
   email.value = usuario.email || ''
@@ -56,8 +92,9 @@ onMounted(() => {
   ajudas.value = usuario.ajudas || []
 })
 
-const salvarPerfil = () => {
-  if (!nome.value || !email.value || !telefone.value) {
+
+const salvarPerfil = async () => {
+  if (!nome.value.trim() || !email.value.trim() || !telefone.value.trim()) {
     alert('Preencha todos os campos!')
     return
   }
@@ -68,51 +105,109 @@ const salvarPerfil = () => {
   }
 
   const dadosAtualizados = {
-  nome: nome.value,
-  email: email.value,
-  telefone: telefone.value,
-  senha: senha.value,
-  ajudas: ajudas.value
-}
-  if (tipoUsuario.value === 'vitima') {
-    localStorage.setItem(
-      'vitima',
-      JSON.stringify(dadosAtualizados)
-    )
-
-    localStorage.setItem(
-      'usuario',
-      JSON.stringify(dadosAtualizados)
-    )
+    nome: nome.value,
+    email: email.value,
+    telefone: telefone.value,
+    senha: senha.value,
+    ajudas: ajudas.value
   }
 
-  if (tipoUsuario.value === 'voluntaria') {
-    const dadosAntigos = JSON.parse(
-      localStorage.getItem('voluntaria')
-    ) || {}
+  try {
+    if (tipoUsuario.value === 'vitima') {
+      const dadosAntigos = JSON.parse(
+        localStorage.getItem('vitima')
+      )
 
-    const voluntariaAtualizada = {
-      ...dadosAntigos,
-      ...dadosAtualizados
+      if (!dadosAntigos || !dadosAntigos.id) {
+        alert('Não foi possível identificar sua conta.')
+        return
+      }
+
+      const resposta = await axios.put(
+        `http://localhost:3000/vitimas/${dadosAntigos.id}`,
+        {
+          ...dadosAntigos,
+          ...dadosAtualizados
+        }
+      )
+
+      localStorage.setItem(
+        'vitima',
+        JSON.stringify(resposta.data)
+      )
+
+      localStorage.setItem(
+        'usuario',
+        JSON.stringify(resposta.data)
+      )
     }
 
-    localStorage.setItem(
-      'voluntaria',
-      JSON.stringify(voluntariaAtualizada)
-    )
+    try {
+      const resposta = await fetch(
+        `http://localhost:3000/voluntarias/${dadosAntigos.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(voluntariaAtualizada)
+        }
+      )
 
-    localStorage.setItem(
-      'usuario',
-      JSON.stringify(voluntariaAtualizada)
-    )
+      if (!resposta.ok) {
+        throw new Error('Erro ao atualizar perfil.')
+      }
+
+      const dadosSalvos = await resposta.json()
+
+      localStorage.setItem(
+        'voluntaria',
+        JSON.stringify(dadosSalvos)
+      )
+
+      localStorage.setItem(
+        'usuario',
+        JSON.stringify(dadosSalvos)
+      )
+    } catch (erro) {
+      console.error(erro)
+      alert('Não foi possível atualizar seu perfil.')
+      return
+    }
   }
 
-  alert('Perfil atualizado com sucesso!')
+    if (tipoUsuario.value === 'voluntaria') {
+      const dadosAntigos = JSON.parse(
+        localStorage.getItem('voluntaria')
+      ) || {}
 
-  if (tipoUsuario.value === 'vitima') {
-    router.push('/perfil-vitima')
-  } else {
-    router.push('/perfil-voluntaria')
+      const voluntariaAtualizada = {
+        ...dadosAntigos,
+        ...dadosAtualizados
+      }
+
+      localStorage.setItem(
+        'voluntaria',
+        JSON.stringify(voluntariaAtualizada)
+      )
+
+      localStorage.setItem(
+        'usuario',
+        JSON.stringify(voluntariaAtualizada)
+      )
+    }
+
+    alert('Perfil atualizado com sucesso!')
+
+    if (tipoUsuario.value === 'vitima') {
+      router.push('/perfil-vitima')
+    } else {
+      router.push('/perfil-voluntaria')
+    }
+
+  } catch (erro) {
+    console.error('Erro ao atualizar perfil:', erro)
+    alert('Não foi possível atualizar seu perfil. Tente novamente.')
   }
 }
 

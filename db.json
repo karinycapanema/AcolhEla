@@ -1,3 +1,48 @@
 {
   "denuncias": []
+  "voluntarias": [
+    {
+      "nome": "kariny",
+      "email": "capanemakariny@gmail.com",
+      "telefone": "(47) 99966-5040",
+      "cidade": "joinville",
+      "estado": "Santa Catarina",
+      "senha": "senha123",
+      "ajudas": [
+        "Apoio Emocional",
+        "Abrigo Temporário",
+        "Orientação Jurídica"
+      ],
+      "mensagem": "",
+      "id": 1
+  "vitimas": [
+    {
+      "id": "1",
+      "nome": "Maria da Silva",
+      "email": "maria.teste@email.com",
+      "telefone": "(47) 99999-1111",
+      "senha": "senha123"
+    },
+    {
+      "id": "2",
+      "nome": "Ana Souza",
+      "email": "ana.teste@email.com",
+      "telefone": "(47) 98888-2222",
+      "senha": "senha456"
+    },
+    {
+      "nome": "pietra cavalheiro",
+      "email": "pietra.teste@email.com",
+      "telefone": "(47) 9999-3333",
+      "senha": "senha789",
+      "id": "wkT5FOz"
+    },
+    {
+      "nome": "julia calegarim",
+      "email": "julia.teste@email.com",
+      "telefone": "(47) 9999-4444",
+      "senha": "senha111",
+      "id": "6OrbNSu"
+    }
+  ]
 }
