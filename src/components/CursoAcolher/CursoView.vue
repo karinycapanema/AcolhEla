@@ -2,6 +2,7 @@
   import { ref, reactive, computed } from 'vue'
   import AppHeader from '../layout/AppHeader.vue'
   import AppFooter from '../layout/AppFooter.vue'
+  import AppButton from '../ui/AppButton.vue'
 
 
   function getUsuario() {
@@ -219,7 +220,9 @@
               Aprenda sobre violência, direitos, autodefesa,
               segurança e rede de apoio.
             </p>
-            <button v-if="aulas.length" @click="iniciar">Começar curso</button>
+            <div class="comecar">
+            <AppButton v-if="aulas.length" @click="iniciar">Começar agora</AppButton>
+            </div>
             <button v-if="ehAdmin" class="secundario" @click="tela = 'admin'">Gerenciar módulos</button>
           </div>
         </section>
@@ -261,7 +264,9 @@
 
         <section v-if="aulas.length" class="final-inicio">
           <h2>Vamos começar?</h2>
-          <button @click="iniciar">Começar agora</button>
+          <div class="comecar">
+          <AppButton @click="iniciar">Começar agora</AppButton>
+          </div>
         </section>
       </div>
 
@@ -402,7 +407,6 @@
 }
 
 .curso {
-  min-height: 100vh;
   background: #ffffff;
   color: #650019;
   font-family: Georgia, 'Times New Roman', Times, serif;
@@ -454,9 +458,11 @@ button.perigo {
 
 /* 3. INÍCIO DO CURSO */
 .inicio {
-  max-width: 1000px;
+  width: 66%;
   margin: auto;
-  padding: 90px 40px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
 }
 
 .inicio-texto {
@@ -464,21 +470,21 @@ button.perigo {
 }
 
 .inicio h1 {
-  margin: 0 0 15px;
-  font-size: 72px;
+  font-size: 3.5rem;
   color: #650019;
+  display: flex;
+  justify-content: center;
 }
 
 .inicio h2 {
-  font-size: 40px;
+  font-size: 2.0rem;
   color: #650019;
 }
 
 .inicio p {
-  max-width: 620px;
-  margin-top: 20px;
-  margin-bottom: 30px;
-  font-size: 21px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
   color: #650019;
 }
 
@@ -487,29 +493,34 @@ button.perigo {
 }
 
 .sobre {
-  max-width: 850px;
-  margin: auto;
-  padding: 50px 30px;
-  text-align: center;
+  width: 66%;
+  margin: 10px auto 20px;
+  padding: 25px 43px;
+  background: #fff0dc;
+  border-radius: 22px;  
+  box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
 }
 
 .sobre h2,
 .aulas h2 {
-  font-size: 40px;
+  font-size: 2.5rem;
   color: #650019;
+  display: flex;
+  justify-content: center;
 }
 
 .sobre > p {
-  max-width: 700px;
-  margin: auto;
   color: #650019;
+  display: flex;
+  justify-content: center;
+  font-size: 1.3rem;
 }
 
 .info {
   display: flex;
   justify-content: center;
   gap: 70px;
-  margin-top: 35px;
+  margin-top: 25px;
 }
 
 .info div {
@@ -518,7 +529,7 @@ button.perigo {
 }
 
 .info strong {
-  font-size: 34px;
+  font-size: 2.6rem;
   color: #a52d43;
 }
 
@@ -526,16 +537,6 @@ button.perigo {
   color: #650019;
 }
 
-.aulas {
-  max-width: 850px;
-  margin: auto;
-  padding: 50px 30px;
-}
-
-.aulas h2 {
-  text-align: center;
-  margin-bottom: 30px;
-}
 
 .lista-aulas {
   display: flex;
@@ -544,13 +545,17 @@ button.perigo {
 }
 
 .card-aula {
+  width: 66%;
+  min-height: 163px;
+  margin: 10px auto;
+  padding: 25px 43px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 20px;
-  background: #fdf0e1;
-  border: 1px solid #f3d8c0;
-  border-radius: 15px;
+  background: #fff0dc;
+  border-radius: 22px;
+  box-sizing: border-box;
+  box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
+  gap: 25px;
 }
 
 .card-aula > span {
@@ -571,17 +576,23 @@ button.perigo {
 }
 
 .final-inicio {
-  max-width: 600px;
-  margin: 50px auto 80px;
+  width: 66%;
+  margin: 20px auto;
   padding: 40px;
   text-align: center;
   background: #f7c6d5;
-  border-radius: 15px;
+  border-radius: 22px;
+}
+
+.comecar{
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 .final-inicio h2 {
-  margin-top: 0;
   color: #650019;
+  font-size: 2.4rem;
 }
 
 .final-inicio p {
@@ -625,7 +636,7 @@ button.perigo {
 }
 
 .conteudo {
-  max-width: 800px;
+  width: 66%;
   margin: auto;
   padding: 20px 40px;
 }
@@ -765,7 +776,7 @@ button.perigo {
 
 
 .conclusao {
-  max-width: 700px;
+  width: 66%;
   margin: auto;
   padding: 90px 30px;
   text-align: center;
