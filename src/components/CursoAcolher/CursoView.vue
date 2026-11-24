@@ -11,10 +11,9 @@ function getUsuario() {
   } catch {
     return null
 
-
+  }}
 const usuario = getUsuario()
-const ehAdmin = usuario?.tipo === 'admin'
-
+const ehAdmin = !!usuario
 const API = 'http://localhost:3000/modulos'
 
 const tela = ref('inicio')
@@ -213,33 +212,19 @@ async function excluirModulo(modulo) {
 }
 </script>
 
-  <template>
-    <AppHeader />
-
-    <div class="curso">
-      <!-- INÍCIO -->
-      <div v-if="tela === 'inicio'">
-        <section class="inicio">
-          <div class="inicio-texto">
-            <h1>Curso AcolhEla</h1>
-            <h2>Informação também é uma forma de proteção.</h2>
-            <p>
-              Aprenda sobre violência, direitos, autodefesa,
-              segurança e rede de apoio.
-            </p>
-            <div class="comecar">
-            <AppButton v-if="aulas.length" @click="iniciar">Começar agora</AppButton>
-            </div>
-            <button v-if="ehAdmin" class="secundario" @click="tela = 'admin'">Gerenciar módulos</button>
-          </div>
-        </section>
+  
+<template>
+  <AppHeader />
 
   <div class="curso">
+
+    <!-- INÍCIO -->
     <div v-if="tela === 'inicio'">
       <section class="inicio">
         <div class="inicio-texto">
           <h1>Curso AcolhEla</h1>
           <h2>Informação também é uma forma de proteção.</h2>
+
           <p>
             Aprenda sobre violência, direitos, autodefesa,
             segurança e rede de apoio.
@@ -248,15 +233,27 @@ async function excluirModulo(modulo) {
           <p v-if="carregando">Carregando módulos...</p>
           <p v-if="erroApi" class="erro-form">{{ erroApi }}</p>
 
-          <button v-if="aulas.length" @click="iniciar">Começar curso</button>
-          <button v-if="ehAdmin" class="secundario" @click="tela = 'admin'">
+         <div class="incio-button">
+           <div class="comecar">
+            <AppButton v-if="aulas.length" @click="iniciar">
+              Começar agora
+            </AppButton>
+          </div>
+
+          <button
+            v-if="ehAdmin"
+            class="secundario"
+            @click="tela = 'admin'"
+          >
             Gerenciar módulos
           </button>
+         </div>
         </div>
       </section>
 
       <section class="sobre">
         <h2>Sobre o curso</h2>
+
         <p>
           Ao longo dos módulos, você responderá atividades relacionadas
           diretamente ao conteúdo apresentado.
@@ -267,10 +264,12 @@ async function excluirModulo(modulo) {
             <strong>{{ aulas.length }}</strong>
             <span>Módulos</span>
           </div>
+
           <div>
             <strong>{{ aulas.length }}</strong>
             <span>Perguntas</span>
           </div>
+
           <div>
             <strong>100%</strong>
             <span>Gratuito</span>
@@ -288,6 +287,7 @@ async function excluirModulo(modulo) {
             class="card-aula"
           >
             <span>0{{ index + 1 }}</span>
+
             <div>
               <h3>{{ aulaItem.titulo }}</h3>
               <p>{{ aulaItem.resumo }}</p>
@@ -298,29 +298,35 @@ async function excluirModulo(modulo) {
 
       <section v-if="aulas.length" class="final-inicio">
         <h2>Vamos começar?</h2>
-        <button @click="iniciar">Começar agora</button>
+
+        <div class="comecar">
+          <AppButton @click="iniciar">
+            Começar agora
+          </AppButton>
+        </div>
       </section>
     </div>
 
-        <section v-if="aulas.length" class="final-inicio">
-          <h2>Vamos começar?</h2>
-          <div class="comecar">
-          <AppButton @click="iniciar">Começar agora</AppButton>
-          </div>
-        </section>
-      </div>
+    <!-- CURSO -->
+    <div v-if="tela === 'curso' && aulas[aula]">
 
       <div class="progresso">
         <div :style="{ width: progresso + '%' }"></div>
       </div>
 
-      <main v-if="aulas[aula]" class="conteudo">
+      <main class="conteudo">
         <h1>{{ aulas[aula].titulo }}</h1>
-        <p class="introducao">{{ aulas[aula].resumo }}</p>
+
+        <p class="introducao">
+          {{ aulas[aula].resumo }}
+        </p>
 
         <section class="conteudo-modulo">
+
           <div class="parte">
-            <p class="texto-modulo">{{ aulas[aula].texto }}</p>
+            <p class="texto-modulo">
+              {{ aulas[aula].texto }}
+            </p>
           </div>
 
           <div class="importante">
@@ -330,6 +336,7 @@ async function excluirModulo(modulo) {
 
           <div class="atividade">
             <h2>Questionário</h2>
+
             <p class="instrucao">
               Responda à pergunta com base no conteúdo apresentado anteriormente.
             </p>
@@ -342,15 +349,23 @@ async function excluirModulo(modulo) {
                 :key="i"
                 class="opcao"
                 :class="{
-                  correta: respostas[aula] === i && i === aulas[aula].correta,
-                  incorreta: respostas[aula] === i && i !== aulas[aula].correta
+                  correta:
+                    respostas[aula] === i &&
+                    i === aulas[aula].correta,
+
+                  incorreta:
+                    respostas[aula] === i &&
+                    i !== aulas[aula].correta
                 }"
                 @click="responder(i)"
               >
                 {{ opcao }}
               </button>
 
-              <p v-if="respostas[aula] !== null" class="resultado">
+              <p
+                v-if="respostas[aula] !== null"
+                class="resultado"
+              >
                 {{
                   respostas[aula] === aulas[aula].correta
                     ? '✓ ' + aulas[aula].explicacao
@@ -360,61 +375,108 @@ async function excluirModulo(modulo) {
             </div>
           </div>
 
-          <button class="proxima" :disabled="!podeContinuar" @click="proxima">
-            {{ aula === aulas.length - 1 ? 'Concluir curso' : 'Próximo módulo →' }}
+          <button
+            class="proxima"
+            :disabled="!podeContinuar"
+            @click="proxima"
+          >
+            {{
+              aula === aulas.length - 1
+                ? 'Concluir curso'
+                : 'Próximo módulo →'
+            }}
           </button>
+
         </section>
       </main>
     </div>
 
+    <!-- CONCLUSÃO -->
     <div v-if="tela === 'final'" class="conclusao">
       <div class="icone">✓</div>
+
       <h1>Curso concluído!</h1>
+
       <p>Parabéns! Você chegou ao final do Curso AcolhEla.</p>
 
       <div class="certificado">
         <h2>Certificado de conclusão</h2>
+
         <p>Digite seu nome para gerar o certificado.</p>
+
         <input v-model="nome" placeholder="Seu nome">
-        <button @click="imprimir">Gerar certificado</button>
+
+        <button @click="imprimir">
+          Gerar certificado
+        </button>
       </div>
     </div>
 
+    <!-- ADMINISTRAÇÃO DOS MÓDULOS -->
     <div v-if="tela === 'admin' && ehAdmin" class="admin">
+
       <div class="topo-aula">
-        <button class="voltar" @click="tela = 'inicio'">← Voltar</button>
-        <button @click="novoModulo">+ Novo módulo</button>
+        <button class="voltar" @click="tela = 'inicio'">
+          ← Voltar
+        </button>
+
+        <button @click="novoModulo">
+          + Novo módulo
+        </button>
       </div>
 
       <h1>Gerenciar módulos</h1>
 
       <p v-if="carregando">Carregando módulos...</p>
       <p v-if="erroApi" class="erro-form">{{ erroApi }}</p>
+
       <p v-if="!carregando && !erroApi && !modulos.length">
         Nenhum módulo cadastrado.
       </p>
 
-      <div v-for="m in modulos" :key="m.id" class="linha-admin">
+      <div
+        v-for="m in modulos"
+        :key="m.id"
+        class="linha-admin"
+      >
         <h3>{{ m.titulo }}</h3>
 
         <div class="botoes-admin">
-          <button class="secundario" @click="editarModulo(m)">Editar</button>
-          <button class="perigo" @click="excluirModulo(m)">Excluir</button>
+          <button
+            class="secundario"
+            @click="editarModulo(m)"
+          >
+            Editar
+          </button>
+
+          <button
+            class="perigo"
+            @click="excluirModulo(m)"
+          >
+            Excluir
+          </button>
         </div>
       </div>
     </div>
 
+    <!-- FORMULÁRIO DE MÓDULOS -->
     <div v-if="tela === 'form' && ehAdmin" class="admin">
+
       <div class="topo-aula">
-        <button class="voltar" @click="tela = 'admin'">← Cancelar</button>
+        <button class="voltar" @click="tela = 'admin'">
+          ← Cancelar
+        </button>
       </div>
 
-      <h1>{{ moduloForm.id ? 'Editar módulo' : 'Novo módulo' }}</h1>
+      <h1>
+        {{ moduloForm.id ? 'Editar módulo' : 'Novo módulo' }}
+      </h1>
 
       <form class="form-modulo" @submit.prevent="salvarModulo">
+
         <label>
           Título
-          <input v-model="moduloForm.titulo" type="text" />
+          <input v-model="moduloForm.titulo" type="text">
         </label>
 
         <label>
@@ -439,17 +501,17 @@ async function excluirModulo(modulo) {
 
         <label>
           Opção 1
-          <input v-model="moduloForm.opcao1" type="text" />
+          <input v-model="moduloForm.opcao1" type="text">
         </label>
 
         <label>
           Opção 2
-          <input v-model="moduloForm.opcao2" type="text" />
+          <input v-model="moduloForm.opcao2" type="text">
         </label>
 
         <label>
           Opção 3
-          <input v-model="moduloForm.opcao3" type="text" />
+          <input v-model="moduloForm.opcao3" type="text">
         </label>
 
         <label>
@@ -466,15 +528,22 @@ async function excluirModulo(modulo) {
           <textarea v-model="moduloForm.explicacao" rows="2"></textarea>
         </label>
 
-        <p v-if="erroForm" class="erro-form">{{ erroForm }}</p>
+        <p v-if="erroForm" class="erro-form">
+          {{ erroForm }}
+        </p>
 
-        <button type="submit">Salvar módulo</button>
+        <button type="submit">
+          Salvar módulo
+        </button>
+
       </form>
     </div>
+
   </div>
 
   <AppFooter />
 </template>
+
 
 <style scoped>
 * {
@@ -552,6 +621,12 @@ button:hover {
 
 .inicio-texto button + button {
   margin-left: 12px;
+}
+
+.incio-button{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .sobre {

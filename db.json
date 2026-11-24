@@ -62,5 +62,195 @@
       "senha": "senha123",
       "id": "eMpzTu-"
     }
+  ],
+  "modulos": [
+    {
+      "id": 1,
+      "titulo": "Informação também é uma forma de proteção.",
+      "resumo": "Aprenda a reconhecer os diferentes tipos de violência, inclusive os que não deixam marcas físicas.",
+      "texto": "A violência contra a mulher não é apenas física. A Lei Maria da Penha (Lei 11.340/2006) reconhece cinco formas de violência doméstica e familiar:\n\n• Física: tapas, empurrões, socos, puxões de cabelo, qualquer ato que machuque o corpo.\n• Psicológica: humilhações, ameaças, controle, isolamento de amigos e familiares, chantagem emocional.\n• Sexual: qualquer relação ou ato sexual forçado ou sem consentimento, inclusive dentro do casamento ou namoro.\n• Patrimonial: destruir documentos, objetos ou pertences, reter dinheiro ou impedir a mulher de trabalhar.\n• Moral: calúnia, difamação e injúria, como espalhar mentiras sobre ela.\n\nA violência costuma acontecer em ciclos: tensão, agressão, arrependimento e uma falsa \"lua de mel\". Esse ciclo tende a se repetir e a ficar mais grave com o tempo.",
+      "dica": "Violência não começa com um soco. Ciúme excessivo, controle de roupas, celular e amizades já são sinais de alerta. A culpa nunca é da vítima.",
+      "pergunta": "Qual das alternativas abaixo é reconhecida pela Lei Maria da Penha como violência contra a mulher?",
+      "opcao1": "Apenas agressões físicas que deixam marcas visíveis",
+      "opcao2": "Violência física, psicológica, sexual, patrimonial e moral",
+      "opcao3": "Somente agressões cometidas por desconhecidos na rua",
+      "correta": 1,
+      "explicacao": "A lei reconhece cinco formas de violência doméstica e familiar, e todas podem ser denunciadas, mesmo quando não deixam marcas no corpo."
+    },
+    {
+      "id": 2,
+      "titulo": "Sinais de relacionamento abusivo e situações de risco",
+      "resumo": "Saiba identificar sinais de alerta e os momentos em que o risco aumenta.",
+      "texto": "Um relacionamento abusivo costuma se construir aos poucos. Alguns sinais de alerta:\n\n• O parceiro controla com quem você fala, onde vai e o que veste.\n• Ele verifica seu celular e suas redes sociais.\n• Faz ameaças, quebra objetos ou te humilha em público.\n• Te isola de família e amigos.\n• Culpa você pelo comportamento dele.\n\nO risco aumenta em alguns momentos, principalmente durante a separação ou quando a mulher decide terminar o relacionamento. Ameaças de morte, acesso a armas, agressões que ficam mais frequentes e perseguição depois do término são sinais de perigo grave.\n\nSe você estiver em uma situação de risco, tenha um plano de segurança: separe documentos, mantenha um telefone carregado, combine uma palavra-código com alguém de confiança e saiba qual é o caminho mais seguro para sair de casa.",
+      "dica": "Ameaça de morte deve ser levada a sério. Em caso de perigo imediato, ligue para o 190 (Polícia Militar).",
+      "pergunta": "Em qual momento o risco de violência costuma aumentar?",
+      "opcao1": "Quando a mulher decide terminar o relacionamento",
+      "opcao2": "Quando o casal passa o fim de semana em casa",
+      "opcao3": "Quando a mulher conversa com amigas",
+      "correta": 0,
+      "explicacao": "A separação é um dos períodos de maior risco, por isso é importante ter um plano de segurança e buscar apoio antes de terminar."
+    },
+    {
+      "id": 3,
+      "titulo": "Conhecendo seus direitos",
+      "resumo": "Entenda as leis que protegem as mulheres e como acioná-las.",
+      "texto": "As mulheres têm direitos garantidos por lei, e conhecê-los é o primeiro passo para se proteger.\n\n• Lei Maria da Penha (Lei 11.340/2006): cria mecanismos para prevenir e punir a violência doméstica e familiar.\n• Medidas protetivas de urgência: o juiz pode determinar que o agressor se afaste de você, de sua casa e do seu local de trabalho, e proibir contato. O pedido pode ser feito na delegacia, e a decisão deve sair em até 48 horas.\n• Lei do Feminicídio (Lei 13.104/2015): o assassinato de mulher por razões da condição de sexo feminino é crime hediondo.\n• Você não precisa de advogado para fazer o registro na delegacia, e tem direito a atendimento humanizado e sem julgamentos.\n\nVocê também tem direito a atendimento de saúde, apoio psicológico e acompanhamento da Defensoria Pública, de forma gratuita.",
+      "dica": "Guarde provas: prints de mensagens, fotos, áudios, laudos e nomes de testemunhas. Elas ajudam no processo, mas a denúncia pode ser feita mesmo sem provas.",
+      "pergunta": "O que é uma medida protetiva de urgência?",
+      "opcao1": "Uma multa aplicada à vítima",
+      "opcao2": "Um benefício financeiro pago pelo governo",
+      "opcao3": "Uma decisão judicial que, por exemplo, afasta o agressor e proíbe contato com a vítima",
+      "correta": 2,
+      "explicacao": "A medida protetiva é uma decisão da Justiça para proteger a mulher, podendo afastar o agressor do lar e proibir que ele se aproxime ou entre em contato."
+    },
+    {
+      "id": 4,
+      "titulo": "Segurança e autodefesa",
+      "resumo": "Dicas práticas para aumentar sua segurança no dia a dia e reagir em situações de perigo.",
+      "texto": "Autodefesa não é apenas força física. Começa com atenção e prevenção.\n\n• Fique atenta ao ambiente: evite andar distraída com fone de ouvido em locais pouco movimentados.\n• Compartilhe sua localização em tempo real com pessoas de confiança quando estiver sozinha.\n• Prefira ruas iluminadas e movimentadas, e avise alguém quando chegar ao destino.\n• Confie na sua intuição: se algo parece errado, saia do local e procure um lugar com pessoas.\n• Em aplicativos de transporte, confira placa, modelo e motorista antes de entrar.\n\nSe for abordada, o mais importante é preservar a sua vida. Se possível, grite, chame atenção e se afaste. Use a voz firme, mire em pontos vulneráveis (olhos, nariz, garganta, joelhos) apenas para ter chance de fugir, e não para continuar a luta. Depois, procure um local seguro e peça ajuda.\n\nNo ambiente digital, use senhas fortes, desative a localização de aplicativos desconhecidos e cuidado ao compartilhar fotos íntimas.",
+      "dica": "O objetivo da autodefesa é escapar e pedir ajuda, e não vencer uma luta. Fuja assim que tiver uma chance.",
+      "pergunta": "Qual é o principal objetivo de uma técnica de autodefesa?",
+      "opcao1": "Vencer o agressor na luta",
+      "opcao2": "Ter chance de escapar e pedir ajuda",
+      "opcao3": "Provocar o agressor para que ele desista",
+      "correta": 1,
+      "explicacao": "A autodefesa serve para criar uma oportunidade de fuga. Depois de escapar, procure um local seguro e peça ajuda."
+    },
+    {
+      "id": 5,
+      "titulo": "Rede de apoio e canais de denúncia",
+      "resumo": "Saiba a quem recorrer e como buscar ajuda para você ou para outra mulher.",
+      "texto": "Ninguém precisa enfrentar a violência sozinha. Existem canais gratuitos e confidenciais:\n\n• Ligue 180: Central de Atendimento à Mulher, funciona 24 horas, todos os dias, e atende de todo o Brasil.\n• 190: Polícia Militar, para situações de perigo imediato.\n• Delegacia da Mulher (DEAM): registro de boletim de ocorrência e pedido de medidas protetivas.\n• Casa da Mulher Brasileira e CRAS/CREAS: atendimento psicossocial, jurídico e acolhimento.\n• Defensoria Pública: orientação jurídica gratuita.\n\nVocê também pode ajudar outras mulheres: escute sem julgar, acredite no relato, não cobre que ela termine o relacionamento de imediato e ofereça ajuda para buscar os canais acima. A decisão de sair é um processo, e cada mulher tem o seu tempo.\n\nA plataforma AcolhEla também conecta mulheres a voluntárias que oferecem orientação, acolhimento e apoio.",
+      "dica": "Ao presenciar uma situação de violência, ligue 190 ou 180. Em briga de marido e mulher, é sim para meter a colher.",
+      "pergunta": "Qual canal funciona 24 horas e atende mulheres em situação de violência em todo o Brasil?",
+      "opcao1": "Ligue 180",
+      "opcao2": "Ligue 193",
+      "opcao3": "Ligue 192",
+      "correta": 0,
+      "explicacao": "O Ligue 180 é a Central de Atendimento à Mulher: gratuito, confidencial, 24 horas por dia, em todo o país."
+    }
+  ],
+  "locais": [
+    {
+      "id": 1,
+      "tipo": "apoio",
+      "titulo": "CREAS Sul",
+      "descricao": "Oferece acolhimento e acompanhamento especializado para pessoas em situação de violência, auxiliando na proteção e no acesso à rede de apoio.",
+      "latitude": -26.32573273269251,
+      "longitude": -48.84054667963756
+    },
+    {
+      "id": 2,
+      "tipo": "apoio",
+      "titulo": "CREAS 3",
+      "descricao": "Realiza atendimento especializado e acompanhamento psicossocial para pessoas e famílias que enfrentam situações de violência ou vulnerabilidade social.",
+      "latitude": -26.293979946791847,
+      "longitude": -48.857005632479634
+    },
+    {
+      "id": 3,
+      "tipo": "apoio",
+      "titulo": "CREAS 2",
+      "descricao": "Oferece acolhimento, orientação e acompanhamento psicossocial para pessoas em situação de violência e outras violações de direitos.",
+      "latitude": -26.322462616653226,
+      "longitude": -48.83831129151787
+    },
+    {
+      "id": 4,
+      "tipo": "apoio",
+      "titulo": "CREAS 4",
+      "descricao": "Presta atendimento psicossocial especializado a pessoas e famílias que enfrentam situações de violência e violação de direitos.",
+      "latitude": -26.305799715833494,
+      "longitude": -48.84529060584507
+    },
+    {
+      "id": 5,
+      "tipo": "abrigo",
+      "titulo": "Abrigo temporário",
+      "descricao": "Espaço sigiloso e seguro para mulheres em situação de risco. Endereço fictício, favor ligar para obter mais informações.",
+      "telefone": "3436-3534 / 3434-5718",
+      "latitude": -26.309,
+      "longitude": -48.85
+    },
+    {
+      "id": 6,
+      "tipo": "hospital",
+      "titulo": "Hospital São José",
+      "descricao": "Referência dentre os hospitais públicos de grande porte.",
+      "latitude": -26.30976,
+      "longitude": -48.84713
+    },
+    {
+      "id": 7,
+      "tipo": "hospital",
+      "titulo": "Hospital Regional Hans Dieter",
+      "descricao": "Infraestrutura robusta de nível terciário, focada em alta complexidade médica.",
+      "latitude": -26.282,
+      "longitude": -48.813
+    },
+    {
+      "id": 8,
+      "tipo": "hospital",
+      "titulo": "Hospital Infantil Dr. Jeser Amarante",
+      "descricao": "Hospital público estadual de alta complexidade voltado exclusivamente para o atendimento pediátrico.",
+      "latitude": -26.299444,
+      "longitude": -48.840556
+    },
+    {
+      "id": 9,
+      "tipo": "delegacia",
+      "titulo": "Delegacia Especializada no Atendimento à Mulher",
+      "descricao": "O espaço físico é subdividido para oferecer um atendimento acolhedor e exclusivo para mulheres vítimas de violência doméstica e familiar.",
+      "latitude": -26.311409662464,
+      "longitude": -48.84299439203333
+    },
+    {
+      "id": 10,
+      "tipo": "delegacia",
+      "titulo": "DIC Polícia Civil",
+      "descricao": "Unidade da Polícia Civil localizada no complexo de segurança da Boa Vista.",
+      "latitude": -26.30602875753503,
+      "longitude": -48.833262904621044
+    },
+    {
+      "id": 11,
+      "tipo": "delegacia",
+      "titulo": "2ª Delegacia de Polícia Civil",
+      "descricao": "Responsável por ocorrências de diversos bairros da região sul de Joinville.",
+      "latitude": -26.33631408102287,
+      "longitude": -48.81958505921077
+    },
+    {
+      "id": 12,
+      "tipo": "delegacia",
+      "titulo": "4ª Delegacia de Polícia",
+      "descricao": "Unidade da Polícia Civil localizada na região do Aventureiro, atendendo ocorrências da região norte/nordeste de Joinville.",
+      "latitude": -26.26741329521001,
+      "longitude": -48.82210147578651
+    },
+    {
+      "id": 13,
+      "tipo": "delegacia",
+      "titulo": "1ª Delegacia de Polícia Civil",
+      "descricao": "Atende ocorrências da região de Costa e Silva e bairros próximos. Também pode receber registros de ocorrências envolvendo mulheres.",
+      "latitude": -26.27278927462599,
+      "longitude": -48.86329901379665
+    },
+    {
+      "id": 14,
+      "tipo": "juridica",
+      "titulo": "Defensoria Pública de Santa Catarina",
+      "descricao": "É uma das principais opções para assistência jurídica. Pode prestar orientação jurídica, atendimento e acompanhamento de medidas protetivas de urgência para mulheres.",
+      "latitude": -26.294931157539107,
+      "longitude": -48.83978170716148
+    },
+    {
+      "id": 15,
+      "tipo": "juridica",
+      "titulo": "Defensoria Pública da União",
+      "descricao": "Atende questões que pertencem à Justiça Federal.",
+      "latitude": -26.304840987511476,
+      "longitude": -48.846836518198806
+    }
   ]
 }
