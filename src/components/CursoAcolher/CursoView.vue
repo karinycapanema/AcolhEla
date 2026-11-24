@@ -1,406 +1,550 @@
-  <script setup>
-  import { ref, reactive, computed } from 'vue'
-  import AppHeader from '../layout/AppHeader.vue'
-  import AppFooter from '../layout/AppFooter.vue'
-  import AppButton from '../ui/AppButton.vue'
+<script setup>
+import { ref, reactive, computed, onMounted } from 'vue'
+import AppHeader from '../layout/AppHeader.vue'
+import AppFooter from '../layout/AppFooter.vue'
+import AppButton from '../ui/AppButton.vue'
 
+function getUsuario() {
+  try {
+    const u = JSON.parse(localStorage.getItem('usuario'))
+    return u && u.id ? u : null
+  } catch {
+    return null
 
-  function getUsuario() {
-    try {
-      const u = JSON.parse(localStorage.getItem('usuario'))
-      return u && u.id ? u : null
-    } catch {
-      return null
+  }}
+const usuario = getUsuario()
+const ehAdmin = !!usuario
+const API = 'http://localhost:3000/modulos'
+
+const tela = ref('inicio')
+const aula = ref(0)
+const nome = ref('')
+const respostas = ref([])
+
+const modulos = ref([])
+const carregando = ref(false)
+const erroApi = ref('')
+
+async function carregarModulos() {
+  carregando.value = true
+  erroApi.value = ''
+
+  try {
+    const resposta = await fetch(API)
+
+    if (!resposta.ok) {
+      throw new Error('Erro ao buscar módulos.')
     }
+
+    modulos.value = await resposta.json()
+  } catch (erro) {
+    console.error(erro)
+    erroApi.value = 'Não foi possível carregar os módulos. Verifique se o JSON Server está iniciado.'
+  } finally {
+    carregando.value = false
   }
-  const usuario = getUsuario()
-  const ehAdmin = usuario?.tipo === 'admin'
+}
 
-  const tela = ref('inicio')
-  const aula = ref(0)
-  const nome = ref('')
-  const respostas = ref([]) // uma resposta por módulo (null = ainda não respondeu)
+onMounted(() => {
+  carregarModulos()
+})
 
-  
-  const modulosIniciais = [
-    {
-      id: 1,
-      titulo: 'Entendendo a violência',
-      resumo: 'Aprenda a reconhecer os diferentes tipos de violência e como eles podem aparecer no dia a dia.',
-      texto: 'Violência é qualquer ação ou comportamento que cause dano, sofrimento, medo, constrangimento ou prejuízo a outra pessoa.\nA violência pode ser física, psicológica, sexual, moral ou patrimonial. Uma situação pode envolver mais de um tipo.',
-      dica: 'A violência não acontece somente de forma física. Comportamentos psicológicos, morais, sexuais e patrimoniais também podem causar danos.',
-      pergunta: 'Uma pessoa constantemente humilha outra, ameaça deixá-la e tenta controlar suas amizades. Esse comportamento pode ser considerado:',
-      opcao1: 'Violência psicológica',
-      opcao2: 'Apenas uma discussão comum',
-      opcao3: 'Uma demonstração de carinho',
-      correta: 0,
-      explicacao: 'Humilhações, ameaças e controle podem caracterizar violência psicológica.'
-    },
-    {
-      id: 2,
-      titulo: 'Reconhecendo situações de risco',
-      resumo: 'Aprenda a identificar comportamentos que podem indicar uma situação de risco ou abuso.',
-      texto: 'Ameaças, perseguição, isolamento, controle excessivo e invasão de privacidade podem indicar uma situação de risco.\nControlar amizades, roupas, redes sociais, localização ou exigir senhas pode representar uma tentativa de controlar outra pessoa.',
-      dica: 'A responsabilidade pela violência nunca é da vítima.',
-      pergunta: 'Uma pessoa exige a senha das redes sociais da parceira e fica irritada quando ela conversa com amigos. Esse comportamento pode indicar:',
-      opcao1: 'Controle excessivo',
-      opcao2: 'Comunicação saudável',
-      opcao3: 'Respeito à privacidade',
-      correta: 0,
-      explicacao: 'Exigir senhas e controlar amizades são exemplos de comportamentos de controle.'
-    },
-    {
-      id: 3,
-      titulo: 'Meus direitos',
-      resumo: 'Conheça informações básicas sobre direitos e mecanismos de proteção.',
-      texto: 'A Lei Maria da Penha estabelece mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.\nExistem mecanismos legais destinados à proteção de mulheres em situação de violência.',
-      dica: 'Conhecer seus direitos permite buscar orientação e proteção com mais informação.',
-      pergunta: 'Qual é um dos objetivos da Lei Maria da Penha?',
-      opcao1: 'Prevenir e combater a violência doméstica e familiar contra a mulher.',
-      opcao2: 'Regular o uso das redes sociais.',
-      opcao3: 'Criar regras para relacionamentos.',
-      correta: 0,
-      explicacao: 'A Lei Maria da Penha possui mecanismos para prevenir e combater a violência doméstica e familiar contra a mulher.'
-    },
-    {
-      id: 4,
-      titulo: 'Autodefesa e segurança',
-      resumo: 'Aprenda princípios de prevenção e planejamento para situações de risco.',
-      texto: 'Reconhecer situações de risco e pensar previamente em formas seguras de buscar ajuda pode fazer parte de um plano de segurança.\nUm plano pode envolver pessoas de confiança, lugares seguros, contatos importantes e estratégias para buscar ajuda.',
-      dica: 'Autodefesa também envolve prevenção, percepção de riscos e planejamento. Em situações perigosas, priorize sua segurança.',
-      pergunta: 'Qual elemento pode fazer parte de um plano de segurança?',
-      opcao1: 'Pessoas de confiança e lugares seguros.',
-      opcao2: 'Isolamento completo.',
-      opcao3: 'Compartilhar senhas com qualquer pessoa.',
-      correta: 0,
-      explicacao: 'Pessoas de confiança e lugares seguros podem fazer parte de um planejamento de segurança.'
-    },
-    {
-      id: 5,
-      titulo: 'Rede de apoio',
-      resumo: 'Entenda como pessoas e serviços podem ajudar em situações de violência.',
-      texto: 'Uma rede de apoio pode ser formada por familiares, amigos, professores, profissionais e outras pessoas de confiança.\nConversar com alguém de confiança e procurar serviços especializados pode ser um caminho para obter orientação e apoio.',
-      dica: 'Buscar ajuda não é sinal de fraqueza. Uma rede de apoio pode ajudar a encontrar caminhos de proteção.',
-      pergunta: 'Quem pode fazer parte de uma rede de apoio?',
-      opcao1: 'Somente familiares.',
-      opcao2: 'Pessoas de confiança, como amigos, familiares ou profissionais.',
-      opcao3: 'Somente pessoas que já passaram pela mesma situação.',
-      correta: 1,
-      explicacao: 'Uma rede de apoio pode envolver diferentes pessoas de confiança.'
-    }
+const aulas = computed(() =>
+  modulos.value.map((m) => ({
+    ...m,
+    opcoes: [m.opcao1, m.opcao2, m.opcao3]
+  }))
+)
+
+const progresso = computed(() =>
+  aulas.value.length ? ((aula.value + 1) / aulas.value.length) * 100 : 0
+)
+
+const podeContinuar = computed(() => {
+  const atual = aulas.value[aula.value]
+  return atual && respostas.value[aula.value] === atual.correta
+})
+
+function iniciar() {
+  if (!aulas.value.length) return
+
+  respostas.value = aulas.value.map(() => null)
+  tela.value = 'curso'
+  aula.value = 0
+  window.scrollTo(0, 0)
+}
+
+function responder(opcao) {
+  respostas.value[aula.value] = opcao
+}
+
+function proxima() {
+  if (!podeContinuar.value) return
+
+  if (aula.value < aulas.value.length - 1) {
+    aula.value++
+  } else {
+    tela.value = 'final'
+  }
+
+  window.scrollTo(0, 0)
+}
+
+function imprimir() {
+  if (!nome.value.trim()) {
+    alert('Digite seu nome primeiro!')
+    return
+  }
+
+  window.print()
+}
+
+const moduloVazio = () => ({
+  id: null,
+  titulo: '',
+  resumo: '',
+  texto: '',
+  dica: '',
+  pergunta: '',
+  opcao1: '',
+  opcao2: '',
+  opcao3: '',
+  correta: 0,
+  explicacao: ''
+})
+
+const moduloForm = reactive(moduloVazio())
+const erroForm = ref('')
+
+function novoModulo() {
+  Object.assign(moduloForm, moduloVazio())
+  erroForm.value = ''
+  tela.value = 'form'
+}
+
+function editarModulo(modulo) {
+  Object.assign(moduloForm, modulo)
+  erroForm.value = ''
+  tela.value = 'form'
+}
+
+async function salvarModulo() {
+  const campos = [
+    'titulo',
+    'resumo',
+    'texto',
+    'dica',
+    'pergunta',
+    'opcao1',
+    'opcao2',
+    'opcao3',
+    'explicacao'
   ]
 
-  const CHAVE = 'acolhela_modulos'
+  if (campos.some((c) => !String(moduloForm[c]).trim())) {
+    erroForm.value = 'Preencha todos os campos.'
+    return
+  }
 
-  function lerSalvos() {
-    try {
-      const salvo = localStorage.getItem(CHAVE)
-      return salvo ? JSON.parse(salvo) : modulosIniciais
-    } catch {
-      return modulosIniciais
+  try {
+    const dados = { ...moduloForm }
+    const id = dados.id
+
+    delete dados.id
+
+    const editando = id !== null && id !== undefined && id !== ''
+
+    const resposta = await fetch(
+      editando ? `${API}/${id}` : API,
+      {
+        method: editando ? 'PATCH' : 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dados)
+      }
+    )
+
+    if (!resposta.ok) {
+      throw new Error('Erro ao salvar módulo.')
     }
-  }
 
-  const modulos = ref(lerSalvos())
+    await carregarModulos()
 
-  function guardar() {
-    localStorage.setItem(CHAVE, JSON.stringify(modulos.value))
-  }
-
-  // junta as 3 opções numa lista, que é o formato que a tela do curso usa
-  const aulas = computed(() =>
-    modulos.value.map((m) => ({ ...m, opcoes: [m.opcao1, m.opcao2, m.opcao3] }))
-  )
-
-  const progresso = computed(() =>
-    aulas.value.length ? ((aula.value + 1) / aulas.value.length) * 100 : 0
-  )
-
-  const podeContinuar = computed(() => {
-    const atual = aulas.value[aula.value]
-    return atual && respostas.value[aula.value] === atual.correta
-  })
-
-  function iniciar() {
-    respostas.value = aulas.value.map(() => null)
-    tela.value = 'curso'
-    aula.value = 0
-    window.scrollTo(0, 0)
-  }
-
-  function responder(opcao) {
-    respostas.value[aula.value] = opcao
-  }
-
-  function proxima() {
-    if (!podeContinuar.value) return
-
-    if (aula.value < aulas.value.length - 1) {
-      aula.value++
-    } else {
-      tela.value = 'final'
+    if (erroApi.value) {
+      throw new Error('O módulo foi enviado, mas não foi possível atualizar a listagem.')
     }
-    window.scrollTo(0, 0)
-  }
 
-  function imprimir() {
-    if (!nome.value.trim()) {
-      alert('Digite seu nome primeiro!')
-      return
-    }
-    window.print()
-  }
-
-  const moduloVazio = () => ({
-    id: null,
-    titulo: '',
-    resumo: '',
-    texto: '',
-    dica: '',
-    pergunta: '',
-    opcao1: '',
-    opcao2: '',
-    opcao3: '',
-    correta: 0,
-    explicacao: ''
-  })
-  const moduloForm = reactive(moduloVazio())
-  const erroForm = ref('')
-
-  function novoModulo() {
     Object.assign(moduloForm, moduloVazio())
-    erroForm.value = ''
-    tela.value = 'form'
-  }
-
-  function editarModulo(modulo) {
-    Object.assign(moduloForm, modulo)
-    erroForm.value = ''
-    tela.value = 'form'
-  }
-
-  function salvarModulo() {
-    const campos = ['titulo', 'resumo', 'texto', 'dica', 'pergunta', 'opcao1', 'opcao2', 'opcao3', 'explicacao']
-    if (campos.some((c) => !String(moduloForm[c]).trim())) {
-      erroForm.value = 'Preencha todos os campos.'
-      return
-    }
-
-    if (moduloForm.id) {
-      modulos.value = modulos.value.map((m) =>
-        m.id === moduloForm.id ? { ...moduloForm } : m
-      )
-    } else {
-
-      modulos.value = [...modulos.value, { ...moduloForm, id: Date.now() }]
-    }
-
-    guardar()
     tela.value = 'admin'
+    alert(editando ? 'Módulo atualizado com sucesso!' : 'Módulo cadastrado com sucesso!')
+
+  } catch (erro) {
+    console.error(erro)
+    erroForm.value = 'Não foi possível salvar o módulo. Verifique a conexão com a API.'
   }
+}
 
-  function excluirModulo(modulo) {
-    if (!confirm(`Excluir o módulo "${modulo.titulo}"?`)) return
-    modulos.value = modulos.value.filter((m) => m.id !== modulo.id)
-    guardar()
+async function excluirModulo(modulo) {
+  if (!confirm(`Excluir o módulo "${modulo.titulo}"?`)) return
+
+  try {
+    const resposta = await fetch(`${API}/${modulo.id}`, {
+      method: 'DELETE'
+    })
+
+    if (!resposta.ok) {
+      throw new Error('Erro ao excluir módulo.')
+    }
+
+    await carregarModulos()
+
+    if (erroApi.value) {
+      throw new Error('Não foi possível atualizar a listagem.')
+    }
+
+    alert('Módulo excluído com sucesso!')
+
+  } catch (erro) {
+    console.error(erro)
+    alert('Não foi possível excluir o módulo.')
   }
-  </script>
+}
+</script>
 
-  <template>
-    <AppHeader />
+  
+<template>
+  <AppHeader />
 
-    <div class="curso">
-      <!-- INÍCIO -->
-      <div v-if="tela === 'inicio'">
-        <section class="inicio">
-          <div class="inicio-texto">
-            <h1>Curso AcolhEla</h1>
-            <h2>Informação também é uma forma de proteção.</h2>
-            <p>
-              Aprenda sobre violência, direitos, autodefesa,
-              segurança e rede de apoio.
-            </p>
-            <div class="comecar">
-            <AppButton v-if="aulas.length" @click="iniciar">Começar agora</AppButton>
-            </div>
-            <button v-if="ehAdmin" class="secundario" @click="tela = 'admin'">Gerenciar módulos</button>
-          </div>
-        </section>
+  <div class="curso">
 
-        <section class="sobre">
-          <h2>Sobre o curso</h2>
+    <!-- INÍCIO -->
+    <div v-if="tela === 'inicio'">
+      <section class="inicio">
+        <div class="inicio-texto">
+          <h1>Curso AcolhEla</h1>
+          <h2>Informação também é uma forma de proteção.</h2>
+
           <p>
-            Ao longo dos módulos, você responderá atividades relacionadas
-            diretamente ao conteúdo apresentado.
+            Aprenda sobre violência, direitos, autodefesa,
+            segurança e rede de apoio.
           </p>
-          <div class="info">
-            <div>
-              <strong>{{ aulas.length }}</strong>
-              <span>Módulos</span>
-            </div>
-            <div>
-              <strong>{{ aulas.length }}</strong>
-              <span>Perguntas</span>
-            </div>
-            <div>
-              <strong>100%</strong>
-              <span>Gratuito</span>
-            </div>
-          </div>
-        </section>
 
-        <section class="aulas">
-          <h2>Conteúdo do curso</h2>
-          <div class="lista-aulas">
-            <div v-for="(aulaItem, index) in aulas" :key="aulaItem.id" class="card-aula">
-              <span>0{{ index + 1 }}</span>
-              <div>
-                <h3>{{ aulaItem.titulo }}</h3>
-                <p>{{ aulaItem.resumo }}</p>
-              </div>
+          <p v-if="carregando">Carregando módulos...</p>
+          <p v-if="erroApi" class="erro-form">{{ erroApi }}</p>
+
+         <div class="incio-button">
+           <div class="comecar">
+            <AppButton v-if="aulas.length" @click="iniciar">
+              Começar agora
+            </AppButton>
+          </div>
+
+          <button
+            v-if="ehAdmin"
+            class="secundario"
+            @click="tela = 'admin'"
+          >
+            Gerenciar módulos
+          </button>
+         </div>
+        </div>
+      </section>
+
+      <section class="sobre">
+        <h2>Sobre o curso</h2>
+
+        <p>
+          Ao longo dos módulos, você responderá atividades relacionadas
+          diretamente ao conteúdo apresentado.
+        </p>
+
+        <div class="info">
+          <div>
+            <strong>{{ aulas.length }}</strong>
+            <span>Módulos</span>
+          </div>
+
+          <div>
+            <strong>{{ aulas.length }}</strong>
+            <span>Perguntas</span>
+          </div>
+
+          <div>
+            <strong>100%</strong>
+            <span>Gratuito</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="aulas">
+        <h2>Conteúdo do curso</h2>
+
+        <div class="lista-aulas">
+          <div
+            v-for="(aulaItem, index) in aulas"
+            :key="aulaItem.id"
+            class="card-aula"
+          >
+            <span>0{{ index + 1 }}</span>
+
+            <div>
+              <h3>{{ aulaItem.titulo }}</h3>
+              <p>{{ aulaItem.resumo }}</p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section v-if="aulas.length" class="final-inicio">
-          <h2>Vamos começar?</h2>
-          <div class="comecar">
-          <AppButton @click="iniciar">Começar agora</AppButton>
-          </div>
-        </section>
+      <section v-if="aulas.length" class="final-inicio">
+        <h2>Vamos começar?</h2>
+
+        <div class="comecar">
+          <AppButton @click="iniciar">
+            Começar agora
+          </AppButton>
+        </div>
+      </section>
+    </div>
+
+    <!-- CURSO -->
+    <div v-if="tela === 'curso' && aulas[aula]">
+
+      <div class="progresso">
+        <div :style="{ width: progresso + '%' }"></div>
       </div>
 
-      <div v-if="tela === 'curso'" class="pagina-aula">
-        <div class="topo-aula">
-          <button class="voltar" @click="tela = 'inicio'">← Voltar</button>
-          <span>Módulo {{ aula + 1 }} de {{ aulas.length }}</span>
-        </div>
+      <main class="conteudo">
+        <h1>{{ aulas[aula].titulo }}</h1>
 
-        <div class="progresso">
-          <div :style="{ width: progresso + '%' }"></div>
-        </div>
+        <p class="introducao">
+          {{ aulas[aula].resumo }}
+        </p>
 
-        <main class="conteudo">
-          <h1>{{ aulas[aula].titulo }}</h1>
-          <p class="introducao">{{ aulas[aula].resumo }}</p>
+        <section class="conteudo-modulo">
 
-          <section class="conteudo-modulo">
-            <div class="parte">
-              <p class="texto-modulo">{{ aulas[aula].texto }}</p>
-            </div>
+          <div class="parte">
+            <p class="texto-modulo">
+              {{ aulas[aula].texto }}
+            </p>
+          </div>
 
-            <div class="importante">
-              <h3>Importante</h3>
-              <p>{{ aulas[aula].dica }}</p>
-            </div>
+          <div class="importante">
+            <h3>Importante</h3>
+            <p>{{ aulas[aula].dica }}</p>
+          </div>
 
-            <div class="atividade">
-              <h2>Questionário</h2>
-              <p class="instrucao">
-                Responda à pergunta com base no conteúdo apresentado anteriormente.
+          <div class="atividade">
+            <h2>Questionário</h2>
+
+            <p class="instrucao">
+              Responda à pergunta com base no conteúdo apresentado anteriormente.
+            </p>
+
+            <div class="pergunta">
+              <h3>{{ aulas[aula].pergunta }}</h3>
+
+              <button
+                v-for="(opcao, i) in aulas[aula].opcoes"
+                :key="i"
+                class="opcao"
+                :class="{
+                  correta:
+                    respostas[aula] === i &&
+                    i === aulas[aula].correta,
+
+                  incorreta:
+                    respostas[aula] === i &&
+                    i !== aulas[aula].correta
+                }"
+                @click="responder(i)"
+              >
+                {{ opcao }}
+              </button>
+
+              <p
+                v-if="respostas[aula] !== null"
+                class="resultado"
+              >
+                {{
+                  respostas[aula] === aulas[aula].correta
+                    ? '✓ ' + aulas[aula].explicacao
+                    : '✕ Tente novamente!'
+                }}
               </p>
-
-              <div class="pergunta">
-                <h3>{{ aulas[aula].pergunta }}</h3>
-
-                <button
-                  v-for="(opcao, i) in aulas[aula].opcoes"
-                  :key="i"
-                  class="opcao"
-                  :class="{
-                    correta: respostas[aula] === i && i === aulas[aula].correta,
-                    incorreta: respostas[aula] === i && i !== aulas[aula].correta
-                  }"
-                  @click="responder(i)"
-                >
-                  {{ opcao }}
-                </button>
-
-                <p v-if="respostas[aula] !== null" class="resultado">
-                  {{
-                    respostas[aula] === aulas[aula].correta
-                      ? '✓ ' + aulas[aula].explicacao
-                      : '✕ Tente novamente!'
-                  }}
-                </p>
-              </div>
             </div>
-
-            <button class="proxima" :disabled="!podeContinuar" @click="proxima">
-              {{ aula === aulas.length - 1 ? 'Concluir curso' : 'Próximo módulo →' }}
-            </button>
-          </section>
-        </main>
-      </div>
-
-      <div v-if="tela === 'final'" class="conclusao">
-        <div class="icone">✓</div>
-        <h1>Curso concluído!</h1>
-        <p>Parabéns! Você chegou ao final do Curso AcolhEla.</p>
-
-        <div class="certificado">
-          <h2>Certificado de conclusão</h2>
-          <p>Digite seu nome para gerar o certificado.</p>
-          <input v-model="nome" placeholder="Seu nome">
-          <button @click="imprimir">Gerar certificado</button>
-        </div>
-      </div>
-
-      <div v-if="tela === 'admin' && ehAdmin" class="admin">
-        <div class="topo-aula">
-          <button class="voltar" @click="tela = 'inicio'">← Voltar</button>
-          <button @click="novoModulo">+ Novo módulo</button>
-        </div>
-
-        <h1>Gerenciar módulos</h1>
-
-        <div v-for="m in modulos" :key="m.id" class="linha-admin">
-          <h3>{{ m.titulo }}</h3>
-          <div class="botoes-admin">
-            <button class="secundario" @click="editarModulo(m)">Editar</button>
-            <button class="perigo" @click="excluirModulo(m)">Excluir</button>
           </div>
-        </div>
-      </div>
 
-      <div v-if="tela === 'form' && ehAdmin" class="admin">
-        <div class="topo-aula">
-          <button class="voltar" @click="tela = 'admin'">← Cancelar</button>
-        </div>
+          <button
+            class="proxima"
+            :disabled="!podeContinuar"
+            @click="proxima"
+          >
+            {{
+              aula === aulas.length - 1
+                ? 'Concluir curso'
+                : 'Próximo módulo →'
+            }}
+          </button>
 
-        <h1>{{ moduloForm.id ? 'Editar módulo' : 'Novo módulo' }}</h1>
+        </section>
+      </main>
+    </div>
 
-        <form class="form-modulo" @submit.prevent="salvarModulo">
-          <label>Título <input v-model="moduloForm.titulo" type="text" /></label>
-          <label>Resumo <textarea v-model="moduloForm.resumo" rows="2"></textarea></label>
-          <label>Texto do módulo <textarea v-model="moduloForm.texto" rows="5"></textarea></label>
-          <label>Dica (caixa "Importante") <textarea v-model="moduloForm.dica" rows="2"></textarea></label>
+    <!-- CONCLUSÃO -->
+    <div v-if="tela === 'final'" class="conclusao">
+      <div class="icone">✓</div>
 
-          <label>Pergunta <textarea v-model="moduloForm.pergunta" rows="2"></textarea></label>
-          <label>Opção 1 <input v-model="moduloForm.opcao1" type="text" /></label>
-          <label>Opção 2 <input v-model="moduloForm.opcao2" type="text" /></label>
-          <label>Opção 3 <input v-model="moduloForm.opcao3" type="text" /></label>
-          <label>
-            Qual é a opção correta?
-            <select v-model.number="moduloForm.correta">
-              <option :value="0">Opção 1</option>
-              <option :value="1">Opção 2</option>
-              <option :value="2">Opção 3</option>
-            </select>
-          </label>
-          <label>Explicação da resposta <textarea v-model="moduloForm.explicacao" rows="2"></textarea></label>
+      <h1>Curso concluído!</h1>
 
-          <p v-if="erroForm" class="erro-form">{{ erroForm }}</p>
+      <p>Parabéns! Você chegou ao final do Curso AcolhEla.</p>
 
-          <button type="submit">Salvar módulo</button>
-        </form>
+      <div class="certificado">
+        <h2>Certificado de conclusão</h2>
+
+        <p>Digite seu nome para gerar o certificado.</p>
+
+        <input v-model="nome" placeholder="Seu nome">
+
+        <button @click="imprimir">
+          Gerar certificado
+        </button>
       </div>
     </div>
 
-    <AppFooter />
-  </template>
+    <!-- ADMINISTRAÇÃO DOS MÓDULOS -->
+    <div v-if="tela === 'admin' && ehAdmin" class="admin">
 
-  
+      <div class="topo-aula">
+        <button class="voltar" @click="tela = 'inicio'">
+          ← Voltar
+        </button>
+
+        <button @click="novoModulo">
+          + Novo módulo
+        </button>
+      </div>
+
+      <h1>Gerenciar módulos</h1>
+
+      <p v-if="carregando">Carregando módulos...</p>
+      <p v-if="erroApi" class="erro-form">{{ erroApi }}</p>
+
+      <p v-if="!carregando && !erroApi && !modulos.length">
+        Nenhum módulo cadastrado.
+      </p>
+
+      <div
+        v-for="m in modulos"
+        :key="m.id"
+        class="linha-admin"
+      >
+        <h3>{{ m.titulo }}</h3>
+
+        <div class="botoes-admin">
+          <button
+            class="secundario"
+            @click="editarModulo(m)"
+          >
+            Editar
+          </button>
+
+          <button
+            class="perigo"
+            @click="excluirModulo(m)"
+          >
+            Excluir
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMULÁRIO DE MÓDULOS -->
+    <div v-if="tela === 'form' && ehAdmin" class="admin">
+
+      <div class="topo-aula">
+        <button class="voltar" @click="tela = 'admin'">
+          ← Cancelar
+        </button>
+      </div>
+
+      <h1>
+        {{ moduloForm.id ? 'Editar módulo' : 'Novo módulo' }}
+      </h1>
+
+      <form class="form-modulo" @submit.prevent="salvarModulo">
+
+        <label>
+          Título
+          <input v-model="moduloForm.titulo" type="text">
+        </label>
+
+        <label>
+          Resumo
+          <textarea v-model="moduloForm.resumo" rows="2"></textarea>
+        </label>
+
+        <label>
+          Texto do módulo
+          <textarea v-model="moduloForm.texto" rows="5"></textarea>
+        </label>
+
+        <label>
+          Dica (caixa "Importante")
+          <textarea v-model="moduloForm.dica" rows="2"></textarea>
+        </label>
+
+        <label>
+          Pergunta
+          <textarea v-model="moduloForm.pergunta" rows="2"></textarea>
+        </label>
+
+        <label>
+          Opção 1
+          <input v-model="moduloForm.opcao1" type="text">
+        </label>
+
+        <label>
+          Opção 2
+          <input v-model="moduloForm.opcao2" type="text">
+        </label>
+
+        <label>
+          Opção 3
+          <input v-model="moduloForm.opcao3" type="text">
+        </label>
+
+        <label>
+          Qual é a opção correta?
+          <select v-model.number="moduloForm.correta">
+            <option :value="0">Opção 1</option>
+            <option :value="1">Opção 2</option>
+            <option :value="2">Opção 3</option>
+          </select>
+        </label>
+
+        <label>
+          Explicação da resposta
+          <textarea v-model="moduloForm.explicacao" rows="2"></textarea>
+        </label>
+
+        <p v-if="erroForm" class="erro-form">
+          {{ erroForm }}
+        </p>
+
+        <button type="submit">
+          Salvar módulo
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+
+  <AppFooter />
+</template>
+
+
 <style scoped>
 * {
   box-sizing: border-box;
@@ -419,10 +563,8 @@ p {
   line-height: 1.6;
 }
 
-h1,
-h2,
-h3 {
-  font-weight: bold;
+h1 {
+  font-weight: 400;
 }
 
 p {
@@ -431,32 +573,21 @@ p {
 
 button {
   border: none;
-  border-radius: 12px;
-  padding: 12px 24px;
-  background: #650019;
-  color: #ffffff;
-  font-size: 16px;
-  font-family: inherit;
+  border-radius: 16px;
+  padding: 14px 27px;
+  background: #620017;
+  color: white;
+  font-size: 18.75px;
   cursor: pointer;
-  transition: 0.3s ease;
 }
 
 button:hover {
-  opacity: 0.9;
-  transform: scale(1.02);
+  opacity: .9;
+  transform: scale(1.04);
+  transition: 0.35s ease;
+  border: none;
 }
 
-button.secundario {
-  background: #f7c6d5;
-  color: #650019;
-}
-
-button.perigo {
-  background: #b81833;
-  color: #ffffff;
-}
-
-/* 3. INÍCIO DO CURSO */
 .inicio {
   width: 66%;
   margin: auto;
@@ -490,6 +621,12 @@ button.perigo {
 
 .inicio-texto button + button {
   margin-left: 12px;
+}
+
+.incio-button{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .sobre {
@@ -560,19 +697,19 @@ button.perigo {
 
 .card-aula > span {
   font-size: 27px;
-  color: #a52d43;
+  color: #a52d47;
 }
 
 .card-aula h3 {
   margin: 0 0 5px;
   font-size: 25px;
-  color: #650019;
+  color: #4A0011;
 }
 
 .card-aula p {
   margin: 0;
-  font-size: 17px;
-  color: #650019;
+  font-size: 17.5px;
+  color: #4A0011;
 }
 
 .final-inicio {
@@ -596,7 +733,7 @@ button.perigo {
 }
 
 .final-inicio p {
-  margin: 9px 0;
+  margin: 9px 0 9px 0;
 }
 
 .pagina-aula {
@@ -614,25 +751,23 @@ button.perigo {
 }
 
 .voltar {
-  padding: 8px 12px;
-  background: transparent;
-  color: #650019;
+  padding: 5px;
+  background: none;
+  color: #620017;
 }
 
 .progresso {
   max-width: 790px;
-  height: 8px;
+  height: 6px;
   margin: 0 auto 40px;
-  background: #f3d8c0;
+  background: #eadde0;
   border-radius: 10px;
-  overflow: hidden;
 }
 
 .progresso div {
   height: 100%;
-  background: #a52d43;
+  background: #8e2842;
   border-radius: 10px;
-  transition: width 0.3s ease;
 }
 
 .conteudo {
@@ -644,12 +779,12 @@ button.perigo {
 .conteudo > h1 {
   margin-bottom: 10px;
   font-size: 45px;
-  color: #650019;
+  color: #620017;
 }
 
 .introducao {
   margin-bottom: 40px;
-  color: #a52d43;
+  color: #8e2842;
   font-size: 17px;
 }
 
@@ -658,85 +793,69 @@ button.perigo {
 }
 
 .parte h2 {
-  font-size: 31px;
-  color: #650019;
+  font-size: 31.25px;
 }
 
 .parte p {
   font-size: 16px;
-  color: #650019;
 }
-
-.texto-modulo {
-  white-space: pre-line;
-  font-size: 16px;
-}
-
 
 .importante {
   margin: 35px 0;
   padding: 20px;
-  background: #fdf0e1;
-  border-left: 4px solid #a52d43;
-  border-radius: 0 12px 12px 0;
+  background: #f9e7ea;
+  border-left: 4px solid #8e2842;
 }
 
 .importante h3 {
   margin-top: 0;
-  color: #650019;
+  color: #620017;
 }
 
-.importante p {
-  color: #650019;
-}
-
-/* 11. QUESTIONÁRIO */
 .atividade {
   margin-top: 45px;
   padding: 35px 40px;
-  background: #fdf0e1;
+  background: #fbe8d3;
   border-radius: 20px;
 }
 
 .atividade h2 {
-  color: #650019;
+  color: #4A0011;
   text-align: center;
 }
 
 .instrucao {
-  margin-bottom: 24px;
-  color: #650019;
+  color: #4A0011;
   text-align: center;
+  margin-bottom: 30px;
 }
 
 .pergunta {
-  margin: 24px 0;
+  margin: 30px 0;
 }
 
 .pergunta h3 {
-  margin-bottom: 10px;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: bold;
-  color: #650019;
+  color: #4A0011;
+  margin-bottom: 10px;
 }
-
 
 .opcao {
   display: block;
   width: 100%;
-  margin: 9px 0;
-  padding: 12px 16px;
+  margin: 10px 0;
+  padding: 14px 20px;
   text-align: left;
-  background: #f7c6d5;
-  color: #650019;
-  border: 1px solid #e8b69a;
-  border-radius: 12px;
+  background: #FEB9CD;
+  color: #4A0011;
+  border: 1px solid #f0d9bd;
+  border-radius: 17px;
   font-size: 16px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .opcao:hover {
-  background: #f2a9c1;
+  background: #fce6c9;
 }
 
 .opcao.correta {
@@ -753,27 +872,25 @@ button.perigo {
 
 .resultado {
   font-size: 14px;
-  color: #650019;
-  margin-top: 10px;
-  padding-left: 8px;
+  color: #66595b;
+  margin-top: 6px;
+  padding-left: 20px;
 }
-
 
 .proxima {
   display: block;
-  margin: 25px auto 0;
+  margin: 30px auto 0;
   width: 100%;
   max-width: 320px;
-  border-radius: 12px;
-  background: #650019;
+  border-radius: 999px;
+  background: #4A0011;
   text-align: center;
 }
 
 .proxima:disabled {
-  opacity: 0.45;
+  opacity: .4;
   cursor: not-allowed;
 }
-
 
 .conclusao {
   width: 66%;
@@ -783,48 +900,108 @@ button.perigo {
 }
 
 .icone {
-  width: 55px;
-  height: 55px;
+  width: 60px;
+  height: 60px;
   margin: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #f7c6d5;
-  color: #650019;
+  background: #f2c4d0;
+  color: #620017;
   font-size: 25px;
 }
 
 .conclusao h1 {
   font-size: 48px;
-  color: #650019;
+  color: #620017;
 }
-
 
 .certificado {
   margin-top: 60px;
   padding: 35px;
-  background: #fdf0e1;
-  border: 1px solid #f3d8c0;
-  border-radius: 15px;
+  background: white;
+  border: 1px solid #ddc7cc;
+  border-radius: 10px;
 }
 
-.certificado h2,
-.certificado p {
-  color: #650019;
+.certificado h2 {
+  color: #620017;
 }
 
 .certificado input {
   width: 90%;
   margin: 15px 0 20px;
   padding: 12px;
-  border: 1px solid #e8b69a;
-  border-radius: 8px;
-  font-size: 18px;
-  font-family: inherit;
-  background: #ffffff;
+  border: 1px solid #d8c7cb;
+  border-radius: 6px;
+  font-size: 20px;
 }
 
+@media (max-width: 700px) {
+  .inicio {
+    padding: 60px 25px;
+  }
+
+  .inicio h1 {
+    font-size: 53.75px;
+  }
+
+  .inicio h2 {
+    font-size: 32.5px;
+  }
+
+  .info {
+    gap: 30px;
+  }
+
+  .conteudo {
+    padding: 20px 25px;
+  }
+
+  .conteudo > h1 {
+    font-size: 45px;
+  }
+
+  .topo-aula {
+    padding: 20px;
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .certificado, .certificado * {
+    visibility: visible;
+  }
+
+  .certificado {
+    position: absolute;
+    left: 5%;
+    top: 20%;
+    width: 90%;
+  }
+}
+
+.texto-modulo {
+  white-space: pre-line;
+  font-size: 16px;
+}
+
+button.secundario {
+  background: #F5D0D0;
+  color: #4A0011;
+}
+
+button.perigo {
+  background: #B81833;
+}
+
+.inicio-texto button + button {
+  margin-left: 12px;
+}
 
 .admin {
   max-width: 800px;
@@ -833,26 +1010,26 @@ button.perigo {
 }
 
 .admin > h1 {
-  font-size: 34px;
-  color: #650019;
+  font-size: 40px;
+  color: #620017;
 }
 
 .linha-admin {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 20px;
   margin-bottom: 12px;
   padding: 16px 20px;
-  background: #fdf0e1;
-  border: 1px solid #f3d8c0;
-  border-radius: 12px;
+  background: #FEB9CD;
+  border: 1px solid #e2728e;
+  border-radius: 10px;
 }
 
 .linha-admin h3 {
   margin: 0;
   font-size: 20px;
-  color: #650019;
+  color: #4A0011;
 }
 
 .botoes-admin {
@@ -861,10 +1038,9 @@ button.perigo {
 }
 
 .botoes-admin button {
-  padding: 8px 14px;
+  padding: 8px 16px;
   font-size: 14px;
 }
-
 
 .form-modulo {
   display: flex;
@@ -878,115 +1054,27 @@ button.perigo {
   gap: 6px;
   font-size: 14px;
   font-weight: bold;
-  color: #650019;
+  color: #4A0011;
 }
 
 .form-modulo input,
 .form-modulo textarea,
 .form-modulo select {
   padding: 10px 12px;
-  border: 1px solid #e8b69a;
+  border: 1px solid #d8c7cb;
   border-radius: 8px;
   font-size: 15px;
-  font-family: inherit;
-  background: #ffffff;
-  color: #650019;
+  background: white;
 }
 
-.form-modulo .erro-form {
+.form-modulo .erro-form,
+.erro-form {
   margin: 0;
-  color: #b81833;
+  color: #B81833;
   font-weight: bold;
 }
 
 .form-modulo button[type='submit'] {
   align-self: center;
 }
-
-
-@media (max-width: 700px) {
-  .inicio {
-    padding: 60px 25px;
-  }
-
-  .inicio h1 {
-    font-size: 48px;
-  }
-
-  .inicio h2 {
-    font-size: 30px;
-  }
-
-  .inicio p {
-    font-size: 18px;
-  }
-
-  .info {
-    gap: 30px;
-  }
-
-  .conteudo {
-    padding: 20px 25px;
-  }
-
-  .conteudo > h1 {
-    font-size: 34px;
-  }
-
-  .topo-aula {
-    padding: 20px;
-  }
-
-  .card-aula {
-    gap: 12px;
-    padding: 16px;
-  }
-
-  .card-aula h3 {
-    font-size: 20px;
-  }
-
-  .card-aula p {
-    font-size: 15px;
-  }
-
-  .linha-admin {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .botoes-admin {
-    width: 100%;
-  }
-
-  .atividade {
-    padding: 25px 20px;
-  }
-
-  .conclusao h1 {
-    font-size: 36px;
-  }
-}
-
-/* 19. IMPRESSÃO DO CERTIFICADO */
-@media print {
-  body * {
-    visibility: hidden;
-  }
-
-  .certificado,
-  .certificado * {
-    visibility: visible;
-  }
-
-  .certificado {
-    position: absolute;
-    left: 5%;
-    top: 20%;
-    width: 90%;
-    background: white;
-    border: 2px solid #650019;
-  }
-}
 </style>
-
