@@ -2,6 +2,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import AppHeader from '../layout/AppHeader.vue'
 import AppFooter from '../layout/AppFooter.vue'
+import AppButton from '../ui/AppButton.vue'
 
 function getUsuario() {
   try {
@@ -9,8 +10,7 @@ function getUsuario() {
     return u && u.id ? u : null
   } catch {
     return null
-  }
-}
+
 
 const usuario = getUsuario()
 const ehAdmin = usuario?.tipo === 'admin'
@@ -213,8 +213,26 @@ async function excluirModulo(modulo) {
 }
 </script>
 
-<template>
-  <AppHeader />
+  <template>
+    <AppHeader />
+
+    <div class="curso">
+      <!-- INÍCIO -->
+      <div v-if="tela === 'inicio'">
+        <section class="inicio">
+          <div class="inicio-texto">
+            <h1>Curso AcolhEla</h1>
+            <h2>Informação também é uma forma de proteção.</h2>
+            <p>
+              Aprenda sobre violência, direitos, autodefesa,
+              segurança e rede de apoio.
+            </p>
+            <div class="comecar">
+            <AppButton v-if="aulas.length" @click="iniciar">Começar agora</AppButton>
+            </div>
+            <button v-if="ehAdmin" class="secundario" @click="tela = 'admin'">Gerenciar módulos</button>
+          </div>
+        </section>
 
   <div class="curso">
     <div v-if="tela === 'inicio'">
@@ -284,10 +302,12 @@ async function excluirModulo(modulo) {
       </section>
     </div>
 
-    <div v-if="tela === 'curso'" class="pagina-aula">
-      <div class="topo-aula">
-        <button class="voltar" @click="tela = 'inicio'">← Voltar</button>
-        <span>Módulo {{ aula + 1 }} de {{ aulas.length }}</span>
+        <section v-if="aulas.length" class="final-inicio">
+          <h2>Vamos começar?</h2>
+          <div class="comecar">
+          <AppButton @click="iniciar">Começar agora</AppButton>
+          </div>
+        </section>
       </div>
 
       <div class="progresso">
@@ -462,10 +482,16 @@ async function excluirModulo(modulo) {
 }
 
 .curso {
-  min-height: 100vh;
-  background: #fffaf8;
-  color: #3d3033;
-  zoom: 1.66;
+  background: #ffffff;
+  color: #650019;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+h1,
+h2,
+h3,
+p {
+  line-height: 1.6;
 }
 
 h1 {
@@ -494,9 +520,11 @@ button:hover {
 }
 
 .inicio {
-  max-width: 1000px;
+  width: 66%;
   margin: auto;
-  padding: 90px 40px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
 }
 
 .inicio-texto {
@@ -504,48 +532,57 @@ button:hover {
 }
 
 .inicio h1 {
-  margin: 0 0 15px;
-  font-size: 72.5px;
-  color: #620017;
-  font-weight: bold;
+  font-size: 3.5rem;
+  color: #650019;
+  display: flex;
+  justify-content: center;
 }
 
 .inicio h2 {
-  font-size: 40px;
-  color: #620017;
+  font-size: 2.0rem;
+  color: #650019;
 }
 
 .inicio p {
-  max-width: 620px;
-  margin-bottom: 30px;
-  font-size: 21px;
-  color: #4A0011;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  color: #650019;
+}
+
+.inicio-texto button + button {
+  margin-left: 12px;
 }
 
 .sobre {
-  max-width: 850px;
-  margin: auto;
-  padding: 50px 30px;
-  text-align: center;
+  width: 66%;
+  margin: 10px auto 20px;
+  padding: 25px 43px;
+  background: #fff0dc;
+  border-radius: 22px;  
+  box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
 }
 
-.sobre h2, .aulas h2 {
-  font-size: 40px;
-  color: #620017;
+.sobre h2,
+.aulas h2 {
+  font-size: 2.5rem;
+  color: #650019;
+  display: flex;
+  justify-content: center;
 }
 
 .sobre > p {
-  max-width: 700px;
-  margin: auto;
-  color: #3A3A3A;
+  color: #650019;
+  display: flex;
+  justify-content: center;
+  font-size: 1.3rem;
 }
 
 .info {
   display: flex;
   justify-content: center;
   gap: 70px;
-  margin-top: 35px;
+  margin-top: 25px;
 }
 
 .info div {
@@ -554,20 +591,14 @@ button:hover {
 }
 
 .info strong {
-  font-size: 33.75px;
-  color: #8e2842;
+  font-size: 2.6rem;
+  color: #a52d43;
 }
 
-.aulas {
-  max-width: 850px;
-  margin: auto;
-  padding: 50px 30px;
+.info span {
+  color: #650019;
 }
 
-.aulas h2 {
-  text-align: center;
-  margin-bottom: 30px;
-}
 
 .lista-aulas {
   display: flex;
@@ -576,15 +607,17 @@ button:hover {
 }
 
 .card-aula {
+  width: 66%;
+  min-height: 163px;
+  margin: 10px auto;
+  padding: 25px 43px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 20px;
-  background: white;
-  border: 1px solid #eadde0;
-  border-radius: 10px;
-  background-color: #FEB9CD;
-  border-color: #e2728e;
+  background: #fff0dc;
+  border-radius: 22px;
+  box-sizing: border-box;
+  box-shadow: 0 5px 15px rgba(74, 0, 17, 0.2);
+  gap: 25px;
 }
 
 .card-aula > span {
@@ -605,18 +638,23 @@ button:hover {
 }
 
 .final-inicio {
-  max-width: 600px;
-  margin: 50px auto 80px;
+  width: 66%;
+  margin: 20px auto;
   padding: 40px;
   text-align: center;
-  background: #f9e7ea;
-  border-radius: 12px;
-  background-color: #FEB9CD;
+  background: #f7c6d5;
+  border-radius: 22px;
+}
+
+.comecar{
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 .final-inicio h2 {
-  margin-top: 0;
-  color: #620017;
+  color: #650019;
+  font-size: 2.4rem;
 }
 
 .final-inicio p {
@@ -658,7 +696,7 @@ button:hover {
 }
 
 .conteudo {
-  max-width: 800px;
+  width: 66%;
   margin: auto;
   padding: 20px 40px;
 }
@@ -780,7 +818,7 @@ button:hover {
 }
 
 .conclusao {
-  max-width: 700px;
+  width: 66%;
   margin: auto;
   padding: 90px 30px;
   text-align: center;

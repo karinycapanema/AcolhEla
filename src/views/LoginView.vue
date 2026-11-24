@@ -4,6 +4,7 @@ import { useRouter, useRoute, RouterLink } from 'vue-router'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
+import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
@@ -12,79 +13,86 @@ const email = ref('')
 const senha = ref('')
 const erro = ref('')
 
-const fazerLogin = () => {
 
+const fazerLogin = async () => {
   erro.value = ''
 
-  if (!email.value || !senha.value) {
+  if (!email.value.trim() || !senha.value) {
     erro.value = 'Preencha todos os campos.'
     return
   }
 
-  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const emailDigitado = email.value.trim().toLowerCase()
 
-  if (!emailValido.test(email.value)) {
-    erro.value = 'Digite um e-mail válido.'
-    return
-  }
-  // LOGIN DA VOLUNTÁRIA
+  try {
+    const respostaVoluntarias = await axios.get(
+      'http://localhost:3000/voluntarias'
+    )
 
-  const voluntariaSalva = localStorage.getItem('voluntaria')
+    const voluntaria = respostaVoluntarias.data.find(
+      item =>
+        item.email?.trim().toLowerCase() === emailDigitado &&
+        item.senha === senha.value
+    )
 
-  if (voluntariaSalva) {
+    if (voluntaria) {
+      localStorage.removeItem('vitima')
 
-    const voluntaria = JSON.parse(voluntariaSalva)
+      localStorage.setItem(
+        'voluntaria',
+        JSON.stringify(voluntaria)
+      )
 
-    if (
-      email.value === voluntaria.email &&
-      senha.value === voluntaria.senha
-    ) {
+      localStorage.setItem(
+        'usuario',
+        JSON.stringify(voluntaria)
+      )
 
       localStorage.setItem('usuarioLogado', 'true')
       localStorage.setItem('tipoUsuario', 'voluntaria')
 
       router.push('/perfil-voluntaria')
-
       return
     }
-  }
 
-  // LOGIN DA VÍTIMA
+    const respostaVitimas = await axios.get(
+      'http://localhost:3000/vitimas'
+    )
 
-  const usuarioSalvo = localStorage.getItem('usuario')
+    const vitima = respostaVitimas.data.find(
+      item =>
+        item.email?.trim().toLowerCase() === emailDigitado &&
+        item.senha === senha.value
+    )
 
-  if (usuarioSalvo) {
+    if (vitima) {
+      localStorage.removeItem('voluntaria')
 
-    const usuario = JSON.parse(usuarioSalvo)
+      localStorage.setItem(
+        'vitima',
+        JSON.stringify(vitima)
+      )
 
-    if (
-      email.value === usuario.email &&
-      senha.value === usuario.senha
-    ) {
+      localStorage.setItem(
+        'usuario',
+        JSON.stringify(vitima)
+      )
 
       localStorage.setItem('usuarioLogado', 'true')
       localStorage.setItem('tipoUsuario', 'vitima')
 
-      localStorage.setItem(
-        'vitima',
-        JSON.stringify(usuario)
-      )
-
-    if (route.query.redirect) {
-      router.push(route.query.redirect)
-    } else {
-  router.push('/perfil-vitima')
+      router.push('/perfil-vitima')
+      return
     }
 
-  return
+    erro.value = 'E-mail ou senha incorretos.'
 
-    }
+  } catch (erroApi) {
+    console.error('Erro ao realizar login:', erroApi)
+    erro.value = 'Não foi possível conectar ao servidor. Tente novamente.'
   }
-
-  // LOGIN INVÁLIDO
-
-  erro.value = 'E-mail ou senha incorretos.'
 }
+
 </script>
 <template>
   <header>

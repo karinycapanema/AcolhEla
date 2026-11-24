@@ -5,12 +5,15 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios'
 
 const iconeExcluir = faTrash
 
 const router = useRouter()
 const vitima = ref(null)
 const denuncias = ref([])
+
+const API_URL = 'http://localhost:3000/denuncias'
 
 const contatos = ref([
   { nome: 'Fulana' },
@@ -20,37 +23,59 @@ const contatos = ref([
   { nome: 'Fulana' }
 ])
 
-onMounted(() => {
 
+onMounted(async () => {
   const logado = localStorage.getItem('usuarioLogado')
   const tipoUsuario = localStorage.getItem('tipoUsuario')
 
-  if (
-    logado !== 'true' ||
-    tipoUsuario !== 'vitima'
-  ) {
+  if (logado !== 'true' || tipoUsuario !== 'vitima') {
     router.push('/login')
     return
   }
 
   const dados = localStorage.getItem('vitima')
 
-  if (dados) {
-     vitima.value = JSON.parse(dados)
+  if (!dados) {
+    router.push('/login')
+    return
+  }
 
-      const denunciasSalvas = JSON.parse(
-        localStorage.getItem('denuncias')
-      ) || []
+  try {
+    const usuarioSalvo = JSON.parse(dados)
 
-   if (vitima.value) {
+    const respostaVitima = await axios.get(
+      `http://localhost:3000/vitimas/${usuarioSalvo.id}`
+    )
 
-        denuncias.value = denunciasSalvas.filter(
-          denuncia =>
-            denuncia.emailVitima === vitima.value.email
-        )
-      }
-  } 
+    vitima.value = respostaVitima.data
+
+    localStorage.setItem(
+      'vitima',
+      JSON.stringify(respostaVitima.data)
+    )
+
+    localStorage.setItem(
+      'usuario',
+      JSON.stringify(respostaVitima.data)
+    )
+
+   
+    const respostaDenuncias = await fetch(
+      `${API_URL}?emailVitima=${encodeURIComponent(vitima.value.email)}`
+    )
+
+    if (!respostaDenuncias.ok) {
+      throw new Error('Não foi possível carregar as denúncias.')
+    }
+
+    denuncias.value = await respostaDenuncias.json()
+
+  } catch (erro) {
+    console.error('Erro ao carregar perfil:', erro)
+    alert('Não foi possível carregar os dados do perfil.')
+  }
 })
+
 
 const editarPerfil = () => {
   router.push('/editar-perfil')
@@ -64,43 +89,42 @@ const irParaDenuncia = () => {
   router.push('/denuncia')
 }
 
-const abrirDenuncia = (denuncia) => {
-  alert(`Abrindo: ${denuncia.nome}`)
+const irParaMinhasDenuncias = () => {
+  router.push('/minhas-denuncias')
+}
+
+const abrirDenuncia = () => {
+  router.push('/minhas-denuncias')
 }
 
 const abrirContato = (contato) => {
   alert(`Abrindo conversa com ${contato.nome}`)
 }
 
-const apagarDenuncia = (id) => {
-  const confirmar = confirm(
+const apagarDenuncia = async (id) => {
+  const confirmar = window.confirm(
     'Tem certeza que deseja apagar esta denúncia?'
   )
 
-  if (!confirmar) {
-    return
+  if (!confirmar) return
+
+  try {
+    const resposta = await fetch(`${API_URL}/${id}`, {
+      method: 'DELETE'
+    })
+
+    if (!resposta.ok) {
+      throw new Error('Não foi possível apagar a denúncia.')
+    }
+
+    denuncias.value = denuncias.value.filter(
+      denuncia => denuncia.id !== id
+    )
+
+  } catch (erro) {
+    console.error('Erro ao apagar denúncia:', erro)
+    alert('Não foi possível apagar a denúncia. Tente novamente.')
   }
-
-  const denunciasSalvas = localStorage.getItem('denuncias')
-
-  if (!denunciasSalvas) {
-    return
-  }
-
-  const todasDenuncias = JSON.parse(denunciasSalvas)
-
-  const novasDenuncias = todasDenuncias.filter(
-    denuncia => denuncia.id !== id
-  )
-
-  localStorage.setItem(
-    'denuncias',
-    JSON.stringify(novasDenuncias)
-  )
-
-  denuncias.value = novasDenuncias.filter(
-    denuncia => denuncia.emailVitima === vitima.value.email
-  )
 }
 
 const sair = () => {
@@ -111,42 +135,70 @@ const sair = () => {
   router.push('/')
 }
 
-const apagarConta = () => {
-  const confirmar = confirm(
+
+const apagarConta = async () => {
+  const confirmar = window.confirm(
     'Tem certeza que deseja apagar sua conta? Todas as suas denúncias também serão apagadas. Essa ação não poderá ser desfeita.'
   )
 
-  if (!confirmar) {
-    return
-  }
-  const vitimaSalva = localStorage.getItem('vitima')
+  if (!confirmar) return
 
-  if (vitimaSalva) {
-    const vitima = JSON.parse(vitimaSalva)
-    const denunciasSalvas = localStorage.getItem('denuncias')
+  try {
+    const vitimaSalva = localStorage.getItem('vitima')
 
-    if (denunciasSalvas) {
-      const denuncias = JSON.parse(denunciasSalvas)
-
-      const novasDenuncias = denuncias.filter(
-        denuncia => denuncia.emailVitima !== vitima.email
-      )
-
-      localStorage.setItem(
-        'denuncias',
-        JSON.stringify(novasDenuncias)
-      )
+    if (!vitimaSalva) {
+      throw new Error('Não foi possível encontrar os dados da sua conta.')
     }
+
+    const dadosVitima = JSON.parse(vitimaSalva)
+
+    if (!dadosVitima.id || !dadosVitima.email) {
+      throw new Error('Não foi possível identificar sua conta.')
+    }
+
+    const respostaDenuncias = await fetch(
+      `${API_URL}?emailVitima=${encodeURIComponent(dadosVitima.email)}`
+    )
+
+    if (!respostaDenuncias.ok) {
+      throw new Error('Não foi possível buscar suas denúncias.')
+    }
+
+    const denunciasDaVitima = await respostaDenuncias.json()
+
+    for (const denuncia of denunciasDaVitima) {
+      const respostaDelete = await fetch(
+        `${API_URL}/${denuncia.id}`,
+        {
+          method: 'DELETE'
+        }
+      )
+
+      if (!respostaDelete.ok) {
+        throw new Error('Não foi possível excluir todas as denúncias.')
+      }
+    }
+
+    await axios.delete(
+      `http://localhost:3000/vitimas/${dadosVitima.id}`
+    )
+
+    localStorage.removeItem('usuario')
+    localStorage.removeItem('vitima')
+    localStorage.removeItem('usuarioLogado')
+    localStorage.removeItem('tipoUsuario')
+    localStorage.removeItem('denuncia')
+
+    alert('Sua conta e suas denúncias foram apagadas com sucesso!')
+
+    router.push('/')
+
+  } catch (erro) {
+    console.error('Erro ao excluir conta:', erro)
+    alert(erro.message || 'Não foi possível excluir sua conta. Tente novamente.')
   }
-  localStorage.removeItem('usuario')
-  localStorage.removeItem('vitima')
-  localStorage.removeItem('usuarioLogado')
-  localStorage.removeItem('tipoUsuario')
-
-  alert('Sua conta e suas denúncias foram apagadas com sucesso!')
-
-  router.push('/')
 }
+
 </script>
 
 <template>
@@ -179,13 +231,13 @@ const apagarConta = () => {
 
         <div class="perfil-botoes">
 
-          <button class="perfil-botao" @click="editarPerfil">
-            Editar Perfil
-          </button>
+         <button class="perfil-botao" @click="editarPerfil">
+          Editar Perfil
+         </button>
 
-          <button class="perfil-botao" @click="mensagens">
-            Mensagens
-          </button>
+         <button class="perfil-botao" @click="mensagens">
+          Mensagens
+         </button>
 
         </div>
 
@@ -245,7 +297,8 @@ const apagarConta = () => {
     </div>
 
     <div class="apagar">
-      <button class="botao-excluir-denuncia" @click="apagarDenuncia(denuncia.id)" title="Apagar denúncia">
+      <button class="botao-excluir-denuncia"
+        @click.stop="apagarDenuncia(denuncia.id)" title="Apagar denúncia">
       <font-awesome-icon :icon="iconeExcluir" />
     </button>
 
@@ -253,7 +306,14 @@ const apagarConta = () => {
 
   </div>
 
+    <div v-if="denuncias.length > 0" class="minhas-denuncias-area">
+      <AppButton @click="irParaMinhasDenuncias">
+        Ver todas as denúncias
+      </AppButton>
+    </div>
+
   </section>
+
     <!-- contato -->
 
     <h2 class="secao-titulo contatos-titulo">
@@ -394,7 +454,7 @@ const apagarConta = () => {
 .denuncias-card {
   width: 66%;
   margin: 0 auto;
-  padding: 38px 25px;
+  padding: 18px 25px 18px 25px;
   display: flex;
   flex-direction: column-reverse;
   gap: 25px;
@@ -509,6 +569,11 @@ const apagarConta = () => {
 
 .botao-primeira-denuncia:hover {
   background-color: #800023;
+}
+
+.minhas-denuncias-area {
+  display: flex;
+  justify-content: center;
 }
 
 /*contato*/

@@ -1,0 +1,66 @@
+{
+  "conversas": [
+    {
+      "emailVitima": "capanemakariny@gmail.com",
+      "emailVoluntaria": "pipi@gmail.com",
+      "nomeVitima": "kariny",
+      "nomeVoluntaria": "pietra cavalheiro",
+      "mensagens": [],
+      "id": 1
+    }
+  ],
+  "denuncias": [],
+  "voluntarias": [
+    {
+      "nome": "Julia Bittencourt",
+      "email": "bitten@gmail.com",
+      "telefone": "(22) 22222-2222",
+      "cidade": "teste",
+      "estado": "teste",
+      "senha": "senha456",
+      "ajudas": [
+        "Orientação e Informação",
+        "Transporte"
+      ],
+      "mensagem": "",
+      "id": 1
+    }
+  ],
+  "vitimas": [
+    {
+      "id": "1",
+      "nome": "Maria da Silva",
+      "email": "maria.teste@email.com",
+      "telefone": "(47) 99999-1111",
+      "senha": "senha123"
+    },
+    {
+      "id": "2",
+      "nome": "Ana Souza",
+      "email": "ana.teste@email.com",
+      "telefone": "(47) 98888-2222",
+      "senha": "senha456"
+    },
+    {
+      "nome": "pietra cavalheiro",
+      "email": "pietra.teste@email.com",
+      "telefone": "(47) 9999-3333",
+      "senha": "senha789",
+      "id": "wkT5FOz"
+    },
+    {
+      "nome": "julia calegarim",
+      "email": "julia.teste@email.com",
+      "telefone": "(47) 9999-4444",
+      "senha": "senha111",
+      "id": "6OrbNSu"
+    },
+    {
+      "nome": "kariny capanema",
+      "email": "capanemakariny@gmail.com",
+      "telefone": "(47) 99966-5040",
+      "senha": "senha123",
+      "id": "eMpzTu-"
+    }
+  ]
+}
