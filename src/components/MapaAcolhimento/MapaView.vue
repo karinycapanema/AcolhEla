@@ -1,9 +1,11 @@
-<script setup>
+  <script setup>
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import AppHeader from '../layout/AppHeader.vue'
 import AppFooter from '../layout/AppFooter.vue'
+
+const API = 'http://localhost:3000/locais'
 
 const busca = ref('')
 const filtroSelecionado = ref('todos')
@@ -12,9 +14,6 @@ let mapa = null
 let marcadores = []
 let marcadorTemp = null
 
-/* ---------- USUÁRIO LOGADO ----------
-   Lê do localStorage, na chave "usuario", algo como { "id": 7 }.
-   Se o login de vocês guarda de outro jeito, ajuste só esta função. */
 function getUsuario() {
   try {
     const u = JSON.parse(localStorage.getItem('usuario'))
@@ -23,6 +22,7 @@ function getUsuario() {
     return null
   }
 }
+
 const usuario = getUsuario()
 
 const cores = {
@@ -32,6 +32,7 @@ const cores = {
   delegacia: '#812E81',
   juridica: '#29689E'
 }
+
 const nomesTipo = {
   apoio: 'Apoio psicológico',
   abrigo: 'Casa de acolhimento',
@@ -40,9 +41,6 @@ const nomesTipo = {
   juridica: 'Assistência Jurídica'
 }
 
-/* ---------- DADOS ----------
-   Começam com os locais abaixo. Depois que alguém adiciona, edita ou exclui,
-   tudo fica salvo no navegador (localStorage) e continua lá ao recarregar. */
 const locaisIniciais = [
   { id: 1, tipo: 'apoio', titulo: 'CREAS Sul', descricao: 'Oferece acolhimento e acompanhamento especializado para pessoas em situação de violência, auxiliando na proteção e no acesso à rede de apoio.', latitude: -26.32573273269251, longitude: -48.84054667963756 },
   { id: 2, tipo: 'apoio', titulo: 'CREAS 3', descricao: 'Realiza atendimento especializado e acompanhamento psicossocial para pessoas e famílias que enfrentam situações de violência ou vulnerabilidade social.', latitude: -26.293979946791847, longitude: -48.857005632479634 },
@@ -61,28 +59,51 @@ const locaisIniciais = [
   { id: 15, tipo: 'juridica', titulo: 'Defensoria Pública da União', descricao: 'Atende questões que pertencem à Justiça Federal.', latitude: -26.304840987511476, longitude: -48.846836518198806 }
 ]
 
-const CHAVE = 'acolhela_locais'
+const locais = ref([])
 
-function lerSalvos() {
+async function carregarLocais() {
   try {
-    const salvo = localStorage.getItem(CHAVE)
-    return salvo ? JSON.parse(salvo) : locaisIniciais
-  } catch {
-    return locaisIniciais
+    const resposta = await fetch(API)
+
+    if (!resposta.ok) {
+      throw new Error('Não foi possível carregar os locais.')
+    }
+
+    let dados = await resposta.json()
+
+    if (dados.length === 0) {
+      for (const local of locaisIniciais) {
+        const respostaCadastro = await fetch(API, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(local)
+        })
+
+        if (!respostaCadastro.ok) {
+          throw new Error('Não foi possível cadastrar os locais iniciais.')
+        }
+      }
+
+      const novaResposta = await fetch(API)
+      dados = await novaResposta.json()
+    }
+
+    locais.value = dados
+  } catch (erro) {
+    console.error(erro)
+    alert('Não foi possível conectar ao JSON Server. Verifique se ele está funcionando.')
   }
-}
-
-const locais = ref(lerSalvos())
-
-function guardar() {
-  localStorage.setItem(CHAVE, JSON.stringify(locais.value))
 }
 
 const locaisFiltrados = computed(() => {
   return locais.value.filter((local) => {
     const correspondeFiltro =
       filtroSelecionado.value === 'todos' || local.tipo === filtroSelecionado.value
+
     const textoBusca = `${local.titulo} ${local.descricao}`.toLowerCase()
+
     return correspondeFiltro && textoBusca.includes(busca.value.toLowerCase())
   })
 })
@@ -96,7 +117,6 @@ function acaoLocal(local) {
   window.open(url, '_blank')
 }
 
-/* ---------- FORMULÁRIO (cadastrar e editar) ---------- */
 const mostrarForm = ref(false)
 const editandoId = ref(null)
 const erroForm = ref('')
@@ -110,12 +130,15 @@ const formVazio = () => ({
   latitude: null,
   longitude: null
 })
+
 const form = reactive(formVazio())
 
 function marcarPonto(lat, lng) {
   form.latitude = Number(lat.toFixed(6))
   form.longitude = Number(lng.toFixed(6))
+
   if (marcadorTemp) mapa.removeLayer(marcadorTemp)
+
   marcadorTemp = L.circleMarker([lat, lng], {
     radius: 11,
     color: '#620017',
@@ -138,52 +161,97 @@ function editarLocal(local) {
     tipo: local.tipo,
     endereco: local.endereco || '',
     telefone: local.telefone || '',
-    descricao: local.descricao
+    descricao: local.descricao,
+    latitude: local.latitude,
+    longitude: local.longitude
   })
+
   editandoId.value = local.id
   erroForm.value = ''
   mostrarForm.value = true
+
   marcarPonto(local.latitude, local.longitude)
+
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 function cancelar() {
   mostrarForm.value = false
-  if (marcadorTemp) mapa.removeLayer(marcadorTemp)
+
+  if (marcadorTemp && mapa) {
+    mapa.removeLayer(marcadorTemp)
+  }
+
   marcadorTemp = null
 }
 
-function salvar() {
+async function salvar() {
   if (!form.titulo.trim() || !form.descricao.trim()) {
     erroForm.value = 'Preencha o nome e a descrição.'
     return
   }
+
   if (form.latitude === null) {
     erroForm.value = 'Clique no mapa para marcar a localização.'
     return
   }
 
-  if (editandoId.value) {
-    // EDITAR: troca o local antigo pelo editado
-    locais.value = locais.value.map((l) =>
-      l.id === editandoId.value ? { ...form, id: editandoId.value } : l
-    )
-  } else {
-    // CADASTRAR: adiciona no final da lista
-    locais.value = [...locais.value, { ...form, id: Date.now() }]
+  try {
+    const dados = { ...form }
+
+    let resposta
+
+    if (editandoId.value !== null) {
+      resposta = await fetch(`${API}/${editandoId.value}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dados)
+      })
+    } else {
+      resposta = await fetch(API, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dados)
+      })
+    }
+
+    if (!resposta.ok) {
+      throw new Error('Não foi possível salvar o local.')
+    }
+
+    await carregarLocais()
+    cancelar()
+
+  } catch (erro) {
+    console.error(erro)
+    erroForm.value = 'Erro ao salvar. Verifique se o JSON Server está funcionando.'
   }
-
-  guardar()
-  cancelar()
 }
 
-function excluir(local) {
+async function excluir(local) {
   if (!confirm(`Excluir "${local.titulo}"?`)) return
-  locais.value = locais.value.filter((l) => l.id !== local.id)
-  guardar()
+
+  try {
+    const resposta = await fetch(`${API}/${local.id}`, {
+      method: 'DELETE'
+    })
+
+    if (!resposta.ok) {
+      throw new Error('Não foi possível excluir o local.')
+    }
+
+    await carregarLocais()
+
+  } catch (erro) {
+    console.error(erro)
+    alert('Erro ao excluir o local.')
+  }
 }
 
-/* ---------- MAPA ---------- */
 function escapeHtml(texto) {
   const div = document.createElement('div')
   div.textContent = texto ?? ''
@@ -209,6 +277,7 @@ function atualizarMarcadores() {
 
     const popupEl = document.createElement('div')
     popupEl.className = 'popup-mapa'
+
     popupEl.innerHTML = `
       <strong>${escapeHtml(local.titulo)}</strong>
       <p>${escapeHtml(local.descricao)}</p>
@@ -217,6 +286,7 @@ function atualizarMarcadores() {
 
     const botao = document.createElement('button')
     botao.textContent = 'Saiba mais'
+
     botao.style.cssText = `
       background:${cor};
       color:white;
@@ -225,7 +295,9 @@ function atualizarMarcadores() {
       padding:7px 15px;
       cursor:pointer;
     `
+
     botao.addEventListener('click', () => acaoLocal(local))
+
     popupEl.appendChild(botao)
 
     marcador.bindPopup(popupEl)
@@ -236,7 +308,7 @@ function atualizarMarcadores() {
 
 watch(locaisFiltrados, atualizarMarcadores)
 
-onMounted(() => {
+onMounted(async () => {
   mapa = L.map('mapaInterativo', { zoomControl: true }).setView([-26.3044, -48.8487], 13)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -244,11 +316,11 @@ onMounted(() => {
     maxZoom: 19
   }).addTo(mapa)
 
-  // com o formulário aberto, clicar no mapa escolhe a localização
   mapa.on('click', (e) => {
     if (mostrarForm.value) marcarPonto(e.latlng.lat, e.latlng.lng)
   })
 
+  await carregarLocais()
   atualizarMarcadores()
 })
 
@@ -260,542 +332,542 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<template>
-  <header>
-    <AppHeader />
-  </header>
-  <div class="pagina">
-    <div class="intro">
-      <h1>Mapa de Acolhimento</h1>
-      <p>Encontre locais de apoio próximos a você</p>
+  <template>
+    <header>
+      <AppHeader />
+    </header>
+    <div class="pagina">
+      <div class="intro">
+        <h1>Mapa de Acolhimento</h1>
+        <p>Encontre locais de apoio próximos a você</p>
 
-      <button v-if="usuario && !mostrarForm" class="btn-add" @click="novoLocal">
-        + Adicionar local
-      </button>
-      <p v-if="!usuario" class="aviso-login">Faça login para adicionar locais no mapa.</p>
+        <button v-if="usuario && !mostrarForm" class="btn-add" @click="novoLocal">
+          + Adicionar local
+        </button>
+        <p v-if="!usuario" class="aviso-login">Faça login para adicionar locais no mapa.</p>
+      </div>
+
+      <section class="segmento1">
+        <div class="mapa">
+          <div id="mapaInterativo"></div>
+
+          <div id="tituMapa">
+            <h3>Mapa Interativo</h3>
+            <p v-if="mostrarForm">Clique no mapa para marcar a localização</p>
+            <p v-else>Visualize os locais de apoio no mapa abaixo</p>
+          </div>
+        </div>
+
+        <div class="Buscalocal">
+          <input
+            v-model="busca"
+            type="text"
+            placeholder="Buscar local..."
+            aria-label="Buscar local"
+          />
+
+          <div class="tiposLocais" role="group" aria-label="Filtrar por categoria">
+            <button :class="{ selecionado: filtroSelecionado === 'todos' }" @click="selecionarFiltro('todos')">Todos</button>
+            <button :class="{ selecionado: filtroSelecionado === 'delegacia' }" @click="selecionarFiltro('delegacia')">Delegacia</button>
+            <button :class="{ selecionado: filtroSelecionado === 'hospital' }" @click="selecionarFiltro('hospital')">Hospital</button>
+            <button :class="{ selecionado: filtroSelecionado === 'abrigo' }" @click="selecionarFiltro('abrigo')">Casa de acolhimento</button>
+            <button :class="{ selecionado: filtroSelecionado === 'apoio' }" @click="selecionarFiltro('apoio')">Apoio psicológico</button>
+            <button :class="{ selecionado: filtroSelecionado === 'juridica' }" @click="selecionarFiltro('juridica')">Assistência Jurídica</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FORMULÁRIO -->
+      <section v-if="mostrarForm" class="form-local">
+        <h2>{{ editandoId ? 'Editar local' : 'Novo local' }}</h2>
+
+        <form @submit.prevent="salvar">
+          <label>
+            Nome do local
+            <input v-model="form.titulo" type="text" />
+          </label>
+
+          <label>
+            Categoria
+            <select v-model="form.tipo">
+              <option v-for="(nome, chave) in nomesTipo" :key="chave" :value="chave">{{ nome }}</option>
+            </select>
+          </label>
+
+          <label>
+            Endereço
+            <input v-model="form.endereco" type="text" />
+          </label>
+
+          <label>
+            Telefone
+            <input v-model="form.telefone" type="text" />
+          </label>
+
+          <label class="larga">
+            Descrição
+            <textarea v-model="form.descricao" rows="3"></textarea>
+          </label>
+
+          <p class="ponto larga">
+            {{ form.latitude !== null ? '✓ Localização marcada' : 'Clique no mapa para marcar a localização.' }}
+          </p>
+
+          <p v-if="erroForm" class="erro-form larga">{{ erroForm }}</p>
+
+          <div class="acoes-form larga">
+            <button type="submit">Salvar</button>
+            <button type="button" class="secundario" @click="cancelar">Cancelar</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- CARDS -->
+      <section class="segmento2">
+        <div
+          v-for="local in locaisFiltrados"
+          :key="local.id"
+          class="card-local"
+          :class="local.tipo"
+          :style="{ '--cor': cores[local.tipo] || '#555555' }"
+        >
+          <h2>{{ local.titulo }}</h2>
+          <p>{{ local.descricao }}</p>
+          <p v-if="local.endereco">📍 {{ local.endereco }}</p>
+          <p v-if="local.telefone">📞 {{ local.telefone }}</p>
+
+          <button @click="acaoLocal(local)">Saiba mais</button>
+
+          <div v-if="usuario" class="acoes">
+            <button class="btn-editar" @click="editarLocal(local)">Editar</button>
+            <button class="btn-excluir" @click="excluir(local)">Excluir</button>
+          </div>
+        </div>
+
+        <div v-if="locaisFiltrados.length === 0" class="nenhum">
+          <h2>Nenhum local encontrado</h2>
+          <p>Tente buscar por outro local ou categoria.</p>
+        </div>
+      </section>
     </div>
-
-    <section class="segmento1">
-      <div class="mapa">
-        <div id="mapaInterativo"></div>
-
-        <div id="tituMapa">
-          <h3>Mapa Interativo</h3>
-          <p v-if="mostrarForm">Clique no mapa para marcar a localização</p>
-          <p v-else>Visualize os locais de apoio no mapa abaixo</p>
-        </div>
-      </div>
-
-      <div class="Buscalocal">
-        <input
-          v-model="busca"
-          type="text"
-          placeholder="Buscar local..."
-          aria-label="Buscar local"
-        />
-
-        <div class="tiposLocais" role="group" aria-label="Filtrar por categoria">
-          <button :class="{ selecionado: filtroSelecionado === 'todos' }" @click="selecionarFiltro('todos')">Todos</button>
-          <button :class="{ selecionado: filtroSelecionado === 'delegacia' }" @click="selecionarFiltro('delegacia')">Delegacia</button>
-          <button :class="{ selecionado: filtroSelecionado === 'hospital' }" @click="selecionarFiltro('hospital')">Hospital</button>
-          <button :class="{ selecionado: filtroSelecionado === 'abrigo' }" @click="selecionarFiltro('abrigo')">Casa de acolhimento</button>
-          <button :class="{ selecionado: filtroSelecionado === 'apoio' }" @click="selecionarFiltro('apoio')">Apoio psicológico</button>
-          <button :class="{ selecionado: filtroSelecionado === 'juridica' }" @click="selecionarFiltro('juridica')">Assistência Jurídica</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- FORMULÁRIO -->
-    <section v-if="mostrarForm" class="form-local">
-      <h2>{{ editandoId ? 'Editar local' : 'Novo local' }}</h2>
-
-      <form @submit.prevent="salvar">
-        <label>
-          Nome do local
-          <input v-model="form.titulo" type="text" />
-        </label>
-
-        <label>
-          Categoria
-          <select v-model="form.tipo">
-            <option v-for="(nome, chave) in nomesTipo" :key="chave" :value="chave">{{ nome }}</option>
-          </select>
-        </label>
-
-        <label>
-          Endereço
-          <input v-model="form.endereco" type="text" />
-        </label>
-
-        <label>
-          Telefone
-          <input v-model="form.telefone" type="text" />
-        </label>
-
-        <label class="larga">
-          Descrição
-          <textarea v-model="form.descricao" rows="3"></textarea>
-        </label>
-
-        <p class="ponto larga">
-          {{ form.latitude !== null ? '✓ Localização marcada' : 'Clique no mapa para marcar a localização.' }}
-        </p>
-
-        <p v-if="erroForm" class="erro-form larga">{{ erroForm }}</p>
-
-        <div class="acoes-form larga">
-          <button type="submit">Salvar</button>
-          <button type="button" class="secundario" @click="cancelar">Cancelar</button>
-        </div>
-      </form>
-    </section>
-
-    <!-- CARDS -->
-    <section class="segmento2">
-      <div
-        v-for="local in locaisFiltrados"
-        :key="local.id"
-        class="card-local"
-        :class="local.tipo"
-        :style="{ '--cor': cores[local.tipo] || '#555555' }"
-      >
-        <h2>{{ local.titulo }}</h2>
-        <p>{{ local.descricao }}</p>
-        <p v-if="local.endereco">📍 {{ local.endereco }}</p>
-        <p v-if="local.telefone">📞 {{ local.telefone }}</p>
-
-        <button @click="acaoLocal(local)">Saiba mais</button>
-
-        <div v-if="usuario" class="acoes">
-          <button class="btn-editar" @click="editarLocal(local)">Editar</button>
-          <button class="btn-excluir" @click="excluir(local)">Excluir</button>
-        </div>
-      </div>
-
-      <div v-if="locaisFiltrados.length === 0" class="nenhum">
-        <h2>Nenhum local encontrado</h2>
-        <p>Tente buscar por outro local ou categoria.</p>
-      </div>
-    </section>
-  </div>
-  <footer>
-    <AppFooter />
-  </footer>
-</template>
-
-<style scoped>
-.pagina {
-  width: 100%;
-  max-width: 1250px;
-  margin: 0 auto;
-  padding: 35px 40px 70px;
-  box-sizing: border-box;
-}
-
-.intro {
-  margin-bottom: 30px;
-}
-
-.intro h1 {
-  margin: 0 0 8px;
-  font-size: 34px;
-  font-weight: bold;
-  color: black;
-}
-
-.intro p {
-  margin: 0;
-  font-size: 17px;
-}
-
-.segmento1 {
-  width: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 30px;
-  align-items: start;
-}
-
-.segmento1 .mapa {
-  position: relative;
-  width: 100%;
-  height: 430px;
-  margin: 0;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-#mapaInterativo {
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-
-.segmento1 .mapa #tituMapa {
-  position: absolute;
-  z-index: 1000;
-  top: 15px;
-  left: 15px;
-  width: 260px;
-  padding: 15px 18px;
-  background-color: #FEB9CD;
-  border-radius: 20px;
-  text-align: center;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.10);
-  box-sizing: border-box;
-}
-
-.segmento1 .mapa #tituMapa h3 {
-  margin: 0 0 6px;
-  font-size: 21px;
-  font-weight: bold;
-}
-
-.segmento1 .mapa #tituMapa p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.segmento1 .Buscalocal {
-  width: 100%;
-}
-
-.segmento1 .Buscalocal input {
-  width: 100%;
-  height: 45px;
-  padding: 8px 15px;
-  margin: 0 0 18px;
-  background-color: #FFECCC;
-  border-radius: 15px;
-  border: none;
-  outline: none;
-  font-size: 15px;
-  box-sizing: border-box;
-}
-
-.segmento1 .Buscalocal .tiposLocais {
-  width: 100%;
-  padding: 20px 16px;
-  background-color: #FFECCC;
-  border-radius: 20px;
-  box-sizing: border-box;
-  color: #4A0011;
-}
-
-.segmento1 .Buscalocal .tiposLocais button {
-  display: block;
-  width: 100%;
-  padding: 10px 12px;
-  margin: 0 0 12px;
-  background-color: #F5D0D0;
-  border: none;
-  outline: none;
-  border-radius: 10px;
-  font-size: 15px;
-  text-align: left;
-  cursor: pointer;
-  transition: 0.2s;
-  box-sizing: border-box;
-  color: #4A0011;
-}
-
-.segmento1 .Buscalocal .tiposLocais button:last-child {
-  margin-bottom: 0;
-}
-
-.segmento1 .Buscalocal .tiposLocais button:hover,
-.segmento1 .Buscalocal .tiposLocais button.selecionado {
-  background-color: #FEB9CD;
-}
-
-.segmento1 .Buscalocal .tiposLocais button.selecionado {
-  font-weight: bold;
-}
-
-.segmento2 {
-  width: 100%;
-  margin: 30px 0 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 22px;
-}
-
-.card-local {
-  width: 100%;
-  min-height: 190px;
-  padding: 25px 30px;
-  background-color: #FADADA;
-  border-radius: 20px;
-  box-sizing: border-box;
-  transition: 0.2s;
-}
-
-.card-local:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
-}
-
-.card-local h2 {
-  margin: 0 0 10px;
-  color: var(--cor);
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.card-local p {
-  margin: 0;
-  color: var(--cor);
-  font-size: 15px;
-  line-height: 1.5;
-}
-
-.card-local button {
-  display: block;
-  width: 75%;
-  max-width: 280px;
-  margin: 22px auto 0;
-  padding: 10px 20px;
-  background-color: var(--cor);
-  border: none;
-  border-radius: 20px;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.card-local button:hover {
-  opacity: 0.85;
-}
-
-.nenhum {
-  grid-column: 1 / -1;
-  width: 100%;
-  padding: 40px;
-  background-color: #FFECCC;
-  border-radius: 20px;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-.nenhum h2 {
-  margin: 0 0 10px;
-}
-
-.nenhum p {
-  margin: 0;
-}
-
-.segmento2 .juridica {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 190px;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-.segmento2 .juridica h2 {
-  width: 100%;
-  margin: 0 0 10px;
-  text-align: center;
-}
-
-.segmento2 .juridica p {
-  width: 100%;
-  margin: 0;
-  text-align: center;
-}
-
-.segmento2 .juridica button {
-  display: block;
-  width: 75%;
-  max-width: 280px;
-  margin: 22px auto 0;
-}
-
-/* ===== NOVO: adicionar / editar / excluir ===== */
-
-.btn-add {
-  margin-top: 14px;
-  padding: 10px 22px;
-  background-color: #620017;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.aviso-login {
-  margin-top: 14px;
-  font-size: 15px;
-}
-
-.form-local {
-  margin-top: 30px;
-  padding: 25px 30px;
-  background-color: #FFECCC;
-  border-radius: 20px;
-  color: #4A0011;
-  box-sizing: border-box;
-}
-
-.form-local form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px 20px;
-}
-
-.form-local label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-weight: bold;
-}
-
-.form-local .larga {
-  grid-column: 1 / -1;
-}
-
-.form-local input,
-.form-local select,
-.form-local textarea {
-  padding: 10px 12px;
-  border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  font-family: inherit;
-  box-sizing: border-box;
-}
-
-.form-local .erro-form {
-  margin: 0;
-  color: #B81833;
-  font-weight: bold;
-}
-
-.form-local .acoes-form {
-  display: flex;
-  gap: 12px;
-}
-
-.form-local .acoes-form button {
-  padding: 10px 24px;
-  background-color: #620017;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.form-local .acoes-form button.secundario {
-  background-color: #F5D0D0;
-  color: #4A0011;
-}
-
-.card-local .acoes {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.card-local .acoes button {
-  width: auto;
-  margin: 0;
-  padding: 6px 18px;
-  font-size: 14px;
-  background-color: transparent;
-  border: 2px solid var(--cor);
-  color: var(--cor);
-}
-
-.card-local .acoes button.btn-excluir {
-  border-color: #B81833;
-  color: #B81833;
-}
-
-/* ===== RESPONSIVO ===== */
-
-@media (max-width: 1000px) {
+    <footer>
+      <AppFooter />
+    </footer>
+  </template>
+
+  <style scoped>
   .pagina {
-    padding: 30px;
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 35px 40px 70px;
+    box-sizing: border-box;
   }
 
-  .segmento1 {
-    grid-template-columns: minmax(0, 1fr) 250px;
-    gap: 20px;
-  }
-
-  .segmento1 .mapa {
-    height: 400px;
-  }
-}
-
-@media (max-width: 800px) {
-  .pagina {
-    padding: 25px 20px 50px;
-  }
-
-  .segmento1 {
-    grid-template-columns: 1fr;
-  }
-
-  .segmento1 .mapa {
-    height: 400px;
-  }
-
-  .segmento2 {
-    grid-template-columns: 1fr;
-  }
-
-  .form-local form {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .pagina {
-    padding: 20px 15px 40px;
+  .intro {
+    margin-bottom: 30px;
   }
 
   .intro h1 {
-    font-size: 28px;
-    color: #4A0011;
+    margin: 0 0 8px;
+    font-size: 34px;
+    font-weight: bold;
+    color: black;
   }
 
   .intro p {
-    font-size: 15px;
-    color: #4A0011;
+    margin: 0;
+    font-size: 17px;
+  }
+
+  .segmento1 {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 30px;
+    align-items: start;
   }
 
   .segmento1 .mapa {
-    height: 350px;
+    position: relative;
+    width: 100%;
+    height: 430px;
+    margin: 0;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  #mapaInterativo {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
   }
 
   .segmento1 .mapa #tituMapa {
-    width: 230px;
-    padding: 14px 15px;
+    position: absolute;
+    z-index: 1000;
+    top: 15px;
+    left: 15px;
+    width: 260px;
+    padding: 15px 18px;
+    background-color: #FEB9CD;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.10);
+    box-sizing: border-box;
   }
 
   .segmento1 .mapa #tituMapa h3 {
-    font-size: 18px;
+    margin: 0 0 6px;
+    font-size: 21px;
+    font-weight: bold;
   }
 
   .segmento1 .mapa #tituMapa p {
-    font-size: 12px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .segmento1 .Buscalocal {
+    width: 100%;
+  }
+
+  .segmento1 .Buscalocal input {
+    width: 100%;
+    height: 45px;
+    padding: 8px 15px;
+    margin: 0 0 18px;
+    background-color: #FFECCC;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    box-sizing: border-box;
+  }
+
+  .segmento1 .Buscalocal .tiposLocais {
+    width: 100%;
+    padding: 20px 16px;
+    background-color: #FFECCC;
+    border-radius: 20px;
+    box-sizing: border-box;
+    color: #4A0011;
+  }
+
+  .segmento1 .Buscalocal .tiposLocais button {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    margin: 0 0 12px;
+    background-color: #F5D0D0;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.2s;
+    box-sizing: border-box;
+    color: #4A0011;
+  }
+
+  .segmento1 .Buscalocal .tiposLocais button:last-child {
+    margin-bottom: 0;
+  }
+
+  .segmento1 .Buscalocal .tiposLocais button:hover,
+  .segmento1 .Buscalocal .tiposLocais button.selecionado {
+    background-color: #FEB9CD;
+  }
+
+  .segmento1 .Buscalocal .tiposLocais button.selecionado {
+    font-weight: bold;
   }
 
   .segmento2 {
-    grid-template-columns: 1fr;
+    width: 100%;
+    margin: 30px 0 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
   }
 
   .card-local {
-    min-height: 180px;
-    padding: 22px;
+    width: 100%;
+    min-height: 190px;
+    padding: 25px 30px;
+    background-color: #FADADA;
+    border-radius: 20px;
+    box-sizing: border-box;
+    transition: 0.2s;
   }
-}
-</style>
+
+  .card-local:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+  }
+
+  .card-local h2 {
+    margin: 0 0 10px;
+    color: var(--cor);
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .card-local p {
+    margin: 0;
+    color: var(--cor);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .card-local button {
+    display: block;
+    width: 75%;
+    max-width: 280px;
+    margin: 22px auto 0;
+    padding: 10px 20px;
+    background-color: var(--cor);
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .card-local button:hover {
+    opacity: 0.85;
+  }
+
+  .nenhum {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 40px;
+    background-color: #FFECCC;
+    border-radius: 20px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .nenhum h2 {
+    margin: 0 0 10px;
+  }
+
+  .nenhum p {
+    margin: 0;
+  }
+
+  .segmento2 .juridica {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 190px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .segmento2 .juridica h2 {
+    width: 100%;
+    margin: 0 0 10px;
+    text-align: center;
+  }
+
+  .segmento2 .juridica p {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+  }
+
+  .segmento2 .juridica button {
+    display: block;
+    width: 75%;
+    max-width: 280px;
+    margin: 22px auto 0;
+  }
+
+  /* ===== NOVO: adicionar / editar / excluir ===== */
+
+  .btn-add {
+    margin-top: 14px;
+    padding: 10px 22px;
+    background-color: #620017;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .aviso-login {
+    margin-top: 14px;
+    font-size: 15px;
+  }
+
+  .form-local {
+    margin-top: 30px;
+    padding: 25px 30px;
+    background-color: #FFECCC;
+    border-radius: 20px;
+    color: #4A0011;
+    box-sizing: border-box;
+  }
+
+  .form-local form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 20px;
+  }
+
+  .form-local label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-weight: bold;
+  }
+
+  .form-local .larga {
+    grid-column: 1 / -1;
+  }
+
+  .form-local input,
+  .form-local select,
+  .form-local textarea {
+    padding: 10px 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+
+  .form-local .erro-form {
+    margin: 0;
+    color: #B81833;
+    font-weight: bold;
+  }
+
+  .form-local .acoes-form {
+    display: flex;
+    gap: 12px;
+  }
+
+  .form-local .acoes-form button {
+    padding: 10px 24px;
+    background-color: #620017;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .form-local .acoes-form button.secundario {
+    background-color: #F5D0D0;
+    color: #4A0011;
+  }
+
+  .card-local .acoes {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .card-local .acoes button {
+    width: auto;
+    margin: 0;
+    padding: 6px 18px;
+    font-size: 14px;
+    background-color: transparent;
+    border: 2px solid var(--cor);
+    color: var(--cor);
+  }
+
+  .card-local .acoes button.btn-excluir {
+    border-color: #B81833;
+    color: #B81833;
+  }
+
+  /* ===== RESPONSIVO ===== */
+
+  @media (max-width: 1000px) {
+    .pagina {
+      padding: 30px;
+    }
+
+    .segmento1 {
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 20px;
+    }
+
+    .segmento1 .mapa {
+      height: 400px;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .pagina {
+      padding: 25px 20px 50px;
+    }
+
+    .segmento1 {
+      grid-template-columns: 1fr;
+    }
+
+    .segmento1 .mapa {
+      height: 400px;
+    }
+
+    .segmento2 {
+      grid-template-columns: 1fr;
+    }
+
+    .form-local form {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .pagina {
+      padding: 20px 15px 40px;
+    }
+
+    .intro h1 {
+      font-size: 28px;
+      color: #4A0011;
+    }
+
+    .intro p {
+      font-size: 15px;
+      color: #4A0011;
+    }
+
+    .segmento1 .mapa {
+      height: 350px;
+    }
+
+    .segmento1 .mapa #tituMapa {
+      width: 230px;
+      padding: 14px 15px;
+    }
+
+    .segmento1 .mapa #tituMapa h3 {
+      font-size: 18px;
+    }
+
+    .segmento1 .mapa #tituMapa p {
+      font-size: 12px;
+    }
+
+    .segmento2 {
+      grid-template-columns: 1fr;
+    }
+
+    .card-local {
+      min-height: 180px;
+      padding: 22px;
+    }
+  }
+  </style>
